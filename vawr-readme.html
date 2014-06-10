@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>AWR Miner</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+</head>
+
+<body>
+<h1>Visual&nbsp;AWR&nbsp;-&nbsp; Readme</h1>
+
+<p>Author: Stephen Furlong, steve.furlong@oracle.com</p>
+
+    <p>
+      <strong>NOTE1:</strong>
+       &nbsp;Visual AWR is not supported or endorsed by Oracle. &nbsp;It was
+      developed independenly by me and is inteded for experienced DBAs and
+      performance engineers.
+    </p>
+
+<h2>Diagnostic Pack License Required</h2>This script queries DBA_HIST_ views in
+                                         the Automatic Workload Repository
+(AWR). To generate AWR reports, take AWR snapshots, or queries these views
+requires a license for the Diagnostic Pack (<a
+href="http://docs.oracle.com/cd/E16655_01/license.121/e17614/options.htm#DBLIC165"
+ target="_blank">12.1 document</a>, <a
+href="http://docs.oracle.com/cd/E11882_01/license.112/e10594/options.htm#CIHIHDDJ"
+ target="_blank">11.2 document</a> or <a
+href="http://docs.oracle.com/cd/B19306_01/license.102/b14199/options.htm#sthref76" target="_blank">10.2
+document</a>). You should NOT run this script on any Database that is not
+licensed for the Diagnostic Pack .
+
+<p>
+      &nbsp;
+    </p>
+
+<p>
+       This tool queries the AWR repository and gathers key database
+      metrics from each AWR snapshot over the last n days. These metrics can
+      assist in sizing and tuning excercises. An AWR report provides much more
+      detailed metrics but only between 2 snapshots. This script and the
+      subsequent graphs produced from its data provide higher level aggregate
+      data over a longer period of time.</p>
+
+
+    <img src="./lib/db-connections-screen.gif"
+         height="319" width="510"/>
+
+  </body>
+</html>
