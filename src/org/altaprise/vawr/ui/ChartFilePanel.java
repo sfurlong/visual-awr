@@ -91,12 +91,17 @@ public class ChartFilePanel extends JPanel {
 
     private void jButton_chart_actionPerformed(ActionEvent e) {
         String selectedFile = this.jTextField_fileName.getText();
+
+        //SetCursor
+        RootFrame.startWaitCursor();
+
         if (!AWR_FILE_NAME.equals(selectedFile)) {
             AWR_FILE_NAME = selectedFile;
             _awrParser = new ReadAWRMinerFile();
             _awrParser.parse(AWR_FILE_NAME);
             _awrParser.dumpData();
         }
+        
         //Chart the data
         AWRData awrData = _awrParser.getAWRData();
         String metricName = (String)jComboBox_metricName.getSelectedItem();
@@ -108,6 +113,9 @@ public class ChartFilePanel extends JPanel {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(), metricName + " Metric Does not exist in this file.", "Error",
                                           JOptionPane.ERROR_MESSAGE);
         }
+        //SetCursor
+        RootFrame.stopWaitCursor();
+
     }
 
     private void setComboBoxOptions() {

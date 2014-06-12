@@ -109,4 +109,171 @@ public class AWRCollectionSQL {
 
         return allSnaps;
     }
+    
+    /*
+    REPHEADER PAGE LEFT '~~BEGIN-MEMORY~~'
+    REPFOOTER PAGE LEFT '~~END-MEMORY~~'
+
+    SELECT snap_id,
+        instance_number,
+        MAX (DECODE (stat_name, 'SGA', stat_value, NULL)) "SGA",
+        MAX (DECODE (stat_name, 'PGA', stat_value, NULL)) "PGA",
+        MAX (DECODE (stat_name, 'SGA', stat_value, NULL)) + MAX (DECODE (stat_name, 'PGA', stat_value,
+        NULL)) "TOTAL"
+       FROM
+        (SELECT snap_id,
+            instance_number,
+            ROUND (SUM (bytes) / 1024 / 1024 / 1024, 1) stat_value,
+            MAX ('SGA') stat_name
+           FROM dba_hist_sgastat
+          WHERE dbid = &DBID
+            AND snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX
+       GROUP BY snap_id,
+            instance_number
+      UNION ALL
+         SELECT snap_id,
+            instance_number,
+            ROUND (value / 1024 / 1024 / 1024, 1) stat_value,
+            'PGA' stat_name
+           FROM dba_hist_pgastat
+          WHERE dbid = &DBID
+            AND snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX
+            AND NAME = 'total PGA allocated'
+        )
+    GROUP BY snap_id,
+        instance_number
+    ORDER BY snap_id,
+        instance_number;
+
+    prompt 
+    prompt 
+
+    -- ##############################################################################################
+
+
+    REPHEADER PAGE LEFT '~~BEGIN-MEMORY-SGA-ADVICE~~'
+    REPFOOTER PAGE LEFT '~~END-MEMORY-SGA-ADVICE~~'
+
+    select snap_id,instance_number,sga_target_gb,size_factor,ESTD_PHYSICAL_READS,lead_read_diff
+    from(
+    with top_n_dbtime as(
+    select snap_id from(
+    select snap_id, sum(average) dbtime_p_s,
+      dense_rank() over (order by sum(average) desc nulls last) rnk
+     from dba_hist_sysmetric_summary
+    where dbid = &DBID
+     and snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
+     and metric_name = 'Database Time Per Sec'
+     group by snap_id)
+     where rnk <= 5)
+    SELECT a.SNAP_ID,
+      INSTANCE_NUMBER,
+      ROUND(sga_size/1024,1) sga_target_gb,
+      sga_size_FACTOR size_factor,
+      ESTD_PHYSICAL_READS,
+      round((ESTD_PHYSICAL_READS - lead(ESTD_PHYSICAL_READS,1,ESTD_PHYSICAL_READS) over (partition by a.snap_id,instance_number order by sga_size_FACTOR asc nulls last)),1) lead_read_diff,
+      min(sga_size_FACTOR) over (partition by a.snap_id,instance_number) min_factor,
+      max(sga_size_FACTOR) over (partition by a.snap_id,instance_number) max_factor
+    FROM DBA_HIST_SGA_TARGET_ADVICE a,top_n_dbtime tn
+    WHERE dbid          = &DBID
+    AND a.snap_id         = tn.snap_id)
+    where (size_factor = 1
+    or size_factor = min_factor
+    or size_factor = max_factor
+    or lead_read_diff > 1)
+    order by snap_id asc,instance_number, size_factor asc nulls last;
+
+
+    prompt 
+    prompt 
+
+    -- ##############################################################################################
+
+
+    REPHEADER PAGE LEFT '~~BEGIN-MEMORY-PGA-ADVICE~~'
+    REPFOOTER PAGE LEFT '~~END-MEMORY-PGA-ADVICE~~'
+
+
+    SELECT SNAP_ID,
+      INSTANCE_NUMBER,
+      PGA_TARGET_GB,
+      SIZE_FACTOR,
+      ESTD_EXTRA_MB_RW,
+      LEAD_SIZE_DIFF_MB,
+      ESTD_PGA_CACHE_HIT_PERCENTAGE
+    FROM
+      ( WITH top_n_dbtime AS
+      (SELECT snap_id
+      FROM
+        (SELECT snap_id,
+          SUM(average) dbtime_p_s,
+          dense_rank() over (order by SUM(average) DESC nulls last) rnk
+        FROM dba_hist_sysmetric_summary
+          where dbid = &DBID
+          and snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
+        AND metric_name = 'Database Time Per Sec'
+        GROUP BY snap_id
+        )
+      WHERE rnk <= 5
+      )
+    SELECT a.SNAP_ID,
+      INSTANCE_NUMBER,
+      ROUND(PGA_TARGET_FOR_ESTIMATE/1024/1024/1024,1) pga_target_gb,
+      PGA_TARGET_FACTOR size_factor,
+      ROUND(ESTD_EXTRA_BYTES_RW  /1024/1024,1) ESTD_EXTRA_MB_RW,
+      ROUND((ESTD_EXTRA_BYTES_RW - lead(ESTD_EXTRA_BYTES_RW,1,ESTD_EXTRA_BYTES_RW) over (partition BY a.snap_id,instance_number order by PGA_TARGET_FACTOR ASC nulls last))/1024/1024,1) lead_size_diff_mb,
+      ESTD_PGA_CACHE_HIT_PERCENTAGE,
+      MIN(PGA_TARGET_FACTOR) over (partition BY a.snap_id,instance_number) min_factor,
+      MAX(PGA_TARGET_FACTOR) over (partition BY a.snap_id,instance_number) max_factor
+    FROM DBA_HIST_PGA_TARGET_ADVICE a,
+      top_n_dbtime tn
+    WHERE dbid = &DBID
+    AND a.snap_id = tn.snap_id
+      )
+    WHERE (size_factor   = 1
+    OR size_factor       = min_factor
+    OR size_factor       = max_factor
+    OR lead_size_diff_mb > 1)
+    ORDER BY snap_id ASC,
+      instance_number,
+      size_factor ASC nulls last;
+
+
+    prompt 
+    prompt 
+
+    -- ##############################################################################################
+
+
+     
+    REPHEADER PAGE LEFT '~~BEGIN-SIZE-ON-DISK~~'
+    REPFOOTER PAGE LEFT '~~END-SIZE-ON-DISK~~'
+     WITH ts_info as (
+    select dbid, ts#, tsname, max(block_size) block_size
+    from dba_hist_datafile
+    where dbid = &DBID
+    group by dbid, ts#, tsname),
+    -- Get the maximum snaphsot id for each day from dba_hist_snapshot
+    snap_info as (
+    select dbid,to_char(trunc(end_interval_time,'DD'),'MM/DD/YY') dd, max(s.snap_id) snap_id
+    FROM dba_hist_snapshot s
+    where s.snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
+    and dbid = &DBID
+    --where s.end_interval_time > to_date(:start_time,'MMDDYYYY')
+    --and s.end_interval_time < to_date(:end_time,'MMDDYYYY')
+    group by dbid,trunc(end_interval_time,'DD'))
+    -- Sum up the sizes of all the tablespaces for the last snapshot of each day
+    select s.snap_id, round(sum(tablespace_size*f.block_size)/1024/1024/1024,2) size_gb
+    from dba_hist_tbspc_space_usage sp,
+    ts_info f,
+    snap_info s
+    WHERE s.dbid = sp.dbid
+    AND s.dbid = &DBID
+     and s.snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
+    and s.snap_id = sp.snap_id
+    and sp.dbid = f.dbid
+    AND sp.tablespace_id = f.ts#
+    GROUP BY  s.snap_id,s.dd, s.dbid
+    order by  s.snap_id;     * 
+     */
 }
