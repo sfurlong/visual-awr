@@ -3,9 +3,6 @@
 <!--Generated May 9, 2014 4:39:29 PM-->
 <project name="AWRParser" default="all">
   <property file="build.properties"/>
-  <property file="build.properties"/>
-  <property file="build.properties"/>
-  <property file="build.properties"/>
   <property name="build.root.dir" value="."/>
   <property name="version.number" value=".01"/>
   <path id="library.Jcommon-1.0.22.jar">
@@ -40,29 +37,19 @@
     </delete>
   </target>
   
-  <target name="build">
+  <target name="build" description="Compile Java source files">
     <mkdir dir="${build.root.dir}/classes"/>
     <javac srcdir="${build.root.dir}/src" destdir="${build.root.dir}/classes"
            classpath="${classpath}" includes="*/**/*.java" deprecation="on"
            failonerror="true" debug="${debug}"/>
   </target>
   
-  <target name="jar">
+  <target name="jar" description="Build the Jar file(s)">
     <jar jarfile="${build.root.dir}/lib/vawr.jar"
          basedir="${build.root.dir}/classes"/>
   </target>
   
-  <!-- TARGET COMPILE -->
-  <target name="compile" description="Compile Java source files" depends="init">
-    <javac destdir="${output.dir}" classpathref="classpath"
-           debug="${javac.debug}" nowarn="${javac.nowarn}"
-           deprecation="${javac.deprecation}" encoding="Cp1252" source="1.6"
-           target="1.6">
-      <src path="src"/>
-    </javac>
-  </target>
-  
-  <target name="dist">
+  <target name="dist" description="create the distribution">
     <delete includeemptydirs="true" dir="${build.root.dir}/dist"/>
     <mkdir dir="${build.root.dir}/dist"/>
     <copy todir="${build.root.dir}/dist/lib">
@@ -85,12 +72,11 @@
         <include name="*A606*.out"/>
       </fileset>
     </copy>
-  </target>
-  
-  <target name="dist-zip">
+
     <delete file="${build.root.dir}/visual-awr-${version.number}.zip"/>
     <zip destfile="${build.root.dir}/dist/visual-awr${version.number}.zip"
          basedir="${build.root.dir}/dist/" excludes="jdk/**, *.zip"/>
+
   </target>
   
   <!-- TARGET YGUARD -->

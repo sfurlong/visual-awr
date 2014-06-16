@@ -30,7 +30,7 @@ import org.altaprise.vawr.utils.PropertyFile;
 import org.altaprise.vawr.ui.RootFrame;
 
 public class DBConnectPanel extends WizardContentBasePanel {
-    daiComboBox comboBox_DBConns = new daiComboBox();
+    //private static daiComboBox comboBox_DBConns = new daiComboBox();
     private static JComboBox jComboBox_dbConnect = new JComboBox();
     private JButton jButton_connectDB = new JButton("Connect");
     private JTextArea textArea_DBConn = new JTextArea();
@@ -62,8 +62,6 @@ public class DBConnectPanel extends WizardContentBasePanel {
         this.setLayout(null);
         this.setSize(new Dimension(660, 520));
 
-        comboBox_DBConns.setBounds(new Rectangle(155, 200, 55, 21));
-        comboBox_DBConns.setVisible(true);
         jComboBox_dbConnect.setBounds(new Rectangle(105, 65, 250, 20));
         jButton_connectDB.setBounds(new Rectangle(365, 65, 75, 21));
         jButton_connectDB.addActionListener(new ActionListener() {
@@ -78,18 +76,24 @@ public class DBConnectPanel extends WizardContentBasePanel {
         this.add(jLabel1, null);
         this.add(jButton_connectDB, null);
         this.add(jComboBox_dbConnect, null);
-        PropertyFile propFile = PropertyFile.getInstance();
-        ArrayList<DBConnectionProps> dbProps = propFile.getDBConnectionProps();
-        for (int i=0; i<dbProps.size(); i++) {
-            jComboBox_dbConnect.addItem(dbProps.get(i).getConnectionName());
-            comboBox_DBConns.addItem(dbProps.get(i).getConnectionName());
-        }
-
+        
+        setDBConnections();
     }
 
     public static String getDBConnectName() {
         String dbConnName = (String)jComboBox_dbConnect.getSelectedItem();
         return dbConnName;
+    }
+    
+    //Just in case we added some connections since we started, allow other windows
+    //to call this.
+    public static void setDBConnections() {
+        jComboBox_dbConnect.removeAllItems();
+        PropertyFile propFile = PropertyFile.getInstance();
+        ArrayList<DBConnectionProps> dbProps = propFile.getDBConnectionProps();
+        for (int i=0; i<dbProps.size(); i++) {
+            jComboBox_dbConnect.addItem(dbProps.get(i).getConnectionName());
+        }
     }
     
     private void jButton_connectDB_actionPerformed(ActionEvent e) {

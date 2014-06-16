@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 
 import javax.swing.border.EtchedBorder;
 
+import org.altaprise.vawr.ui.dbwizard.DBConnectPanel;
 import org.altaprise.vawr.utils.DBConnectionProps;
 import org.altaprise.vawr.utils.PropertyFile;
 
@@ -183,6 +184,9 @@ public class DBConnectionsPanel extends JPanel {
         _propFile.serializeIt();
 
         jList_connectionNames.addItemDistinct(dbConnName);
+        
+        //Update the DBConnections combobox
+        DBConnectPanel.setDBConnections();
 
     }
 
