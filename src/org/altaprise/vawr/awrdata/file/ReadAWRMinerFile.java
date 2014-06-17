@@ -2,6 +2,7 @@ package org.altaprise.vawr.awrdata.file;
 
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import java.util.ArrayList;
@@ -27,17 +28,21 @@ public class ReadAWRMinerFile {
         return _awrData;    
     }
     
-    public void parse(String fileName) {
+    public void parse(String fileName) throws Exception {
         try {
             _fileReader = new BufferedReader(new FileReader(fileName));
 
             readData();
+        } catch (FileNotFoundException fnfe) {
+                fnfe.printStackTrace();
+                throw new Exception("File Not Found: "+fileName);
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
-    private void readData() {
+    private void readData() throws Exception {
         String rec = "";
         try {
             //Priming read
@@ -94,6 +99,7 @@ public class ReadAWRMinerFile {
             System.out.println("PropertyFileReader::readData\n" +
                     e.getLocalizedMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 

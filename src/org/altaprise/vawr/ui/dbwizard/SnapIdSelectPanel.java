@@ -6,6 +6,7 @@ import dai.shared.businessObjs.DBRecSet;
 
 import daiBeans.daiComboBox;
 
+import daiBeans.daiDetailInfoDialog;
 import daiBeans.daiListBox;
 
 import dai.server.dbService.dbconnect;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
@@ -33,6 +35,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
+import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.utils.DBConnectionProps;
 import org.altaprise.vawr.utils.PropertyFile;
 
@@ -47,6 +50,7 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
     private JTextField jTextField_dbId = new JTextField();
     private JLabel jLabel1 = new JLabel("Select Begining Snapshot ID");
     private JLabel jLabel2 = new JLabel("Select Ending Snapshot ID");
+    private JLabel jLabel3 = new JLabel("Database ID:");
 
     public SnapIdSelectPanel() {
         super();
@@ -76,16 +80,18 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
         scrollPane_startSnapId.setBounds(new Rectangle(55, 70, 200, 280));
         scrollPane_endSnapId.setBounds(new Rectangle(345, 70, 200, 280));
         jButton1.setText("Get Snapshot Ids");
-        jButton1.setBounds(new Rectangle(250, 25, 125, 20));
+        jButton1.setBounds(new Rectangle(345, 25, 125, 20));
         jButton1.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton1_actionPerformed(e);
                 }
             });
-        jTextField_dbId.setBounds(new Rectangle(95, 25, 145, 20));
+        jTextField_dbId.setBounds(new Rectangle(135, 25, 145, 20));
         jTextField_dbId.setEditable(false);
         jLabel1.setBounds(new Rectangle(60, 55, 150, 15));
         jLabel2.setBounds(new Rectangle(345, 55, 140, 15));
+        jLabel3.setBounds(new Rectangle(60, 30, 70, 15));
+        this.add(jLabel3, null);
         this.add(jLabel2, null);
         this.add(jLabel1, null);
         this.add(jTextField_dbId, null);
@@ -125,6 +131,7 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
     private void showSnapShots() {
         this.refreshPanel();
         SQLResolver sqlResolver = new SQLResolver();
+
         try {
             long dbId = Long.parseLong(jTextField_dbId.getText());
 
@@ -152,13 +159,19 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
             }
 
         } catch (Exception ex) {
-            daiBeans.daiDetailInfoDialog dialog = new daiBeans.daiDetailInfoDialog(null, "Error", true,
+            daiDetailInfoDialog dialog = new daiDetailInfoDialog(null, "Error", true,
                     ex.getLocalizedMessage());
             ex.printStackTrace();
         }
     }
 
     private void jButton1_actionPerformed(ActionEvent e) {
+        if (jTextField_dbId.getText() == null || jTextField_dbId.getText().length() == 0) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          "Invalid Database ID",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         this.showSnapShots();
     }
     

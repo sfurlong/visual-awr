@@ -25,7 +25,7 @@ public class ChartFilePanel extends JPanel {
     private JButton jButton_chart = new JButton();
     private JComboBox jComboBox_metricName = new JComboBox();
 
-    private static String AWR_FILE_NAME = "";
+    private static String AWR_FILE_NAME = "INITIALIZED";
     private ReadAWRMinerFile _awrParser = null;
 
     /**The default constructor for form
@@ -52,7 +52,7 @@ public class ChartFilePanel extends JPanel {
 
         jTextField_fileName.setBounds(new Rectangle(40, 40, 545, 20));
         String appHome = SessionMetaData.getInstance().getDaiHome();
-//        jTextField_fileName.setText(appHome + "\\testing\\awr-hist-389926331-U-775-985.out");
+        //        jTextField_fileName.setText(appHome + "\\testing\\awr-hist-389926331-U-775-985.out");
         jButton_selectFile.setText("Select File");
         jButton_selectFile.setBounds(new Rectangle(590, 40, 85, 20));
         jButton_selectFile.addActionListener(new ActionListener() {
@@ -95,22 +95,36 @@ public class ChartFilePanel extends JPanel {
         //SetCursor
         RootFrame.startWaitCursor();
 
-        if (!AWR_FILE_NAME.equals(selectedFile)) {
-            AWR_FILE_NAME = selectedFile;
-            _awrParser = new ReadAWRMinerFile();
-            _awrParser.parse(AWR_FILE_NAME);
-            _awrParser.dumpData();
-        }
-        
-        //Chart the data
-        AWRData awrData = _awrParser.getAWRData();
-        String metricName = (String)jComboBox_metricName.getSelectedItem();
-        
-        if (awrData.awrMetricExists(metricName)) {
-            AWRTimeSeriesChart cpuChart =
-                new AWRTimeSeriesChart(metricName, awrData);
-        } else {
-            JOptionPane.showMessageDialog(RootFrame.getFrameRef(), metricName + " Metric Does not exist in this file.", "Error",
+        try {
+
+            if (!AWR_FILE_NAME.equals(selectedFile)) {
+                _awrParser = new ReadAWRMinerFile();
+                _awrParser.parse(selectedFile);
+                AWR_FILE_NAME = selectedFile;
+                _awrParser.dumpData();
+            }
+
+            //Chart the data
+            AWRData awrData = _awrParser.getAWRData();
+            String metricName = (String)jComboBox_metricName.getSelectedItem();
+
+            if (awrData.awrMetricExists(metricName)) {
+                AWRTimeSeriesChart cpuChart =
+                    new AWRTimeSeriesChart(metricName, awrData);
+            } else {
+                JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                              metricName +
+                                              " Metric Does not exist in this file.",
+                                              "Error",
+                                              JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception ex) {
+            //SetCursor
+            RootFrame.stopWaitCursor();
+
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          ex.getLocalizedMessage(), "Error",
                                           JOptionPane.ERROR_MESSAGE);
         }
         //SetCursor
@@ -119,8 +133,9 @@ public class ChartFilePanel extends JPanel {
     }
 
     private void setComboBoxOptions() {
-        ArrayList<String> metricNames = AWRMetrics.getInstance().getMetricNames();
-        for (int i=0; i < metricNames.size(); i++) {
+        ArrayList<String> metricNames =
+            AWRMetrics.getInstance().getMetricNames();
+        for (int i = 0; i < metricNames.size(); i++) {
             jComboBox_metricName.addItem(metricNames.get(i));
         }
     }

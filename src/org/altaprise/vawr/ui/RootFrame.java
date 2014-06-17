@@ -19,9 +19,6 @@ public class RootFrame extends JFrame {
     private JMenuBar menubarFrame = new JMenuBar();
     private JMenu menuFile = new JMenu();
     private JMenuItem itemFileExit = new JMenuItem();
-    private JMenu menuDatabase = new JMenu();
-    private JMenuItem itemDatabaseConnect = new JMenuItem();
-    private JMenuItem itemDatabaseDisconnect = new JMenuItem();
     private JMenu menuHelp = new JMenu();
     private JMenuItem itemHelpAbout = new JMenuItem();
     private String aboutMessage =
@@ -67,33 +64,6 @@ public class RootFrame extends JFrame {
         menuFile.setText("File");
         menuFile.setMnemonic('F');
         menubarFrame.add(menuFile);
-        menuDatabase.setText("Database");
-        menuDatabase.setMnemonic('D');
-        itemDatabaseConnect.setText("Connect");
-        itemDatabaseConnect.setMnemonic('C');
-        itemDatabaseConnect.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HOME,
-                                                                  Event.ALT_MASK,
-                                                                  false));
-        itemDatabaseConnect.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    connect_action(e);
-                }
-            });
-        menuDatabase.add(itemDatabaseConnect);
-
-        itemDatabaseDisconnect.setText("Disconnect");
-        itemDatabaseDisconnect.setMnemonic('D');
-        itemDatabaseDisconnect.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-                                                                     Event.ALT_MASK,
-                                                                     false));
-
-        itemDatabaseDisconnect.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    disconnect_action(e);
-                }
-            });
-        menuDatabase.add(itemDatabaseDisconnect);
-        menubarFrame.add(menuDatabase);
         menuHelp.setText("Help");
         menuHelp.setMnemonic('H');
         itemHelpAbout.setText("About");
@@ -111,16 +81,6 @@ public class RootFrame extends JFrame {
 
     }
 
-
-    private void connect_action(ActionEvent e) {
-        //hiddenNavBar.doAction(JUNavigationBar.BUTTON_FIRST);
-    }
-
-
-    private void disconnect_action(ActionEvent e) {
-        //hiddenNavBar.doAction(JUNavigationBar.BUTTON_EXECUTE);
-    }
-
     private void file_exit_action(ActionEvent e) {
         System.exit(0);
     }
@@ -128,11 +88,6 @@ public class RootFrame extends JFrame {
     private void help_about_action(ActionEvent e) {
         JOptionPane.showMessageDialog(this, aboutMessage, aboutTitle,
                                       JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void menuItemsUpdate() {
-        itemDatabaseConnect.setEnabled(true);
-        itemDatabaseDisconnect.setEnabled(true);
     }
 
     public static void startWaitCursor() {

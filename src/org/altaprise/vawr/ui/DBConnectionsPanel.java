@@ -49,7 +49,7 @@ public class DBConnectionsPanel extends JPanel {
     private daiListBox jList_connectionNames = new daiListBox();
     private JButton jButton_testConn = new JButton("Test Connection");
     private JButton jButton_save = new JButton("Save");
-    private JButton jButton_cancel = new JButton("Cancel");
+    private JButton jButton_reset = new JButton("Reset");
     private JTextArea jTextArea_dbTestResults = new JTextArea();
     private JScrollPane jScrollPane1 =
         new JScrollPane(jTextArea_dbTestResults);
@@ -97,10 +97,10 @@ public class DBConnectionsPanel extends JPanel {
                     jButton_save_actionPerformed(e);
                 }
             });
-        jButton_cancel.setBounds(new Rectangle(545, 390, 75, 21));
-        jButton_cancel.addActionListener(new ActionListener() {
+        jButton_reset.setBounds(new Rectangle(545, 390, 75, 21));
+        jButton_reset.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    jButton_cancel_actionPerformed(e);
+                    jButton_reset_actionPerformed(e);
                 }
             });
         jTextArea_dbTestResults.setBounds(new Rectangle(195, 295, 430, 85));
@@ -116,7 +116,7 @@ public class DBConnectionsPanel extends JPanel {
 
             });
         this.add(jScrollPane1, null);
-        this.add(jButton_cancel, null);
+        this.add(jButton_reset, null);
         this.add(jButton_save, null);
         this.add(jButton_testConn, null);
         this.add(jList_connectionNames, null);
@@ -238,7 +238,7 @@ public class DBConnectionsPanel extends JPanel {
         RootFrame.stopWaitCursor();
     }
 
-    private void jButton_cancel_actionPerformed(ActionEvent e) {
+    private void jButton_reset_actionPerformed(ActionEvent e) {
         jTextField_connName.setText("");
         jTextField_hostName.setText("");
         jTextField_port.setText("");

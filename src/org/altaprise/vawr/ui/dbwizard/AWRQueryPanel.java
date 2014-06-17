@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
@@ -29,9 +30,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
+import org.altaprise.vawr.ui.RootFrame;
 
 public class AWRQueryPanel extends WizardContentBasePanel {
-    private JButton jButton_connectDB = new JButton("Query AWR Data");
+    private JButton jButton_doQuery = new JButton("Query AWR Data");
     private JTextArea textArea_awrData = new JTextArea();
     private JScrollPane scrollPaneTextArea = new JScrollPane(textArea_awrData);
     private JTextField jTextField_connName = new JTextField();
@@ -39,9 +41,9 @@ public class AWRQueryPanel extends WizardContentBasePanel {
     private JTextField jTextField_startSnapId = new JTextField();
     private JTextField jTextField_endSnapId = new JTextField();
     private JLabel jLabel_connName = new JLabel("Connection Name:");
-    private JLabel jLabel_dbId = new JLabel("DBId:");
+    private JLabel jLabel_dbId = new JLabel("Databse ID:");
     private JLabel jLabel_startSnapId = new JLabel("Start Snapshot ID:");
-    private JLabel jLabel_endSnapId = new JLabel("End SnapShot Id:");
+    private JLabel jLabel_endSnapId = new JLabel("End Snapshot ID:");
     private static DBRecSet _awrRecSetData = null;
     private static ArrayList<String> _awrStringRecs = new ArrayList<String>();
 
@@ -70,10 +72,10 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.setLayout(null);
         this.setSize(new Dimension(760, 429));
 
-        jButton_connectDB.setBounds(new Rectangle(310, 20, 150, 20));
-        jButton_connectDB.addActionListener(new ActionListener() {
+        jButton_doQuery.setBounds(new Rectangle(310, 20, 150, 20));
+        jButton_doQuery.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    jButton_connectDB_actionPerformed(e);
+                    jButton_doQuery_actionPerformed(e);
                 }
             });
         scrollPaneTextArea.setBounds(new Rectangle(15, 145, 500, 185));
@@ -100,7 +102,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.add(jTextField_endSnapId, null);
         this.add(jTextField_startSnapId, null);
         this.add(jTextField_dbId, null);
-        this.add(jButton_connectDB, null);
+        this.add(jButton_doQuery, null);
         this.add(scrollPaneTextArea, null);
     }
 
@@ -175,7 +177,26 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.textArea_awrData.setCaretPosition(0);
     }
 
-    private void jButton_connectDB_actionPerformed(ActionEvent e) {
+    private void jButton_doQuery_actionPerformed(ActionEvent e) {
+        if (jTextField_dbId.getText() == null || jTextField_dbId.getText().length() == 0) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          "Invalid Database ID",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (jTextField_startSnapId.getText() == null || jTextField_startSnapId.getText().length() == 0) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          "Invalid Start Snapshot ID",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (jTextField_endSnapId.getText() == null || jTextField_endSnapId.getText().length() == 0) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          "Invalid End Snapshot ID",
+                                          "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         //Clear the previous AWRData
         this.doAWRQuery();
     }
