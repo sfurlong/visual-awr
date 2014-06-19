@@ -101,7 +101,9 @@ public class ChartFilePanel extends JPanel {
                 _awrParser = new ReadAWRMinerFile();
                 _awrParser.parse(selectedFile);
                 AWR_FILE_NAME = selectedFile;
-                _awrParser.dumpData();
+                if (SessionMetaData.getInstance().debugOn()) {
+                    _awrParser.dumpData();
+                }
             }
 
             //Chart the data

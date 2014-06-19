@@ -45,17 +45,19 @@
   </target>
   
   <target name="jar" description="Build the Jar file(s)">
+   <delete file="${build.root.dir}/vawr.jar"/>
     <jar jarfile="${build.root.dir}/lib/vawr.jar"
          basedir="${build.root.dir}/classes"/>
   </target>
   
-  <target name="dist" description="create the distribution">
+  <target name="dist" description="create the distribution" depends="jar">
     <delete includeemptydirs="true" dir="${build.root.dir}/dist"/>
     <mkdir dir="${build.root.dir}/dist"/>
     <copy todir="${build.root.dir}/dist/lib">
       <fileset dir="${build.root.dir}/lib">
         <include name="jfreechart*.jar"/>
         <include name="jcommon*.jar"/>
+        <include name="ojdbc*.jar"/>
         <include name="vawr*.jar"/>
         <include name="*.gif"/>
       </fileset>
@@ -69,7 +71,7 @@
     </copy>
     <copy todir="${build.root.dir}/dist/testing">
       <fileset dir="${build.root.dir}/testing">
-        <include name="*A606*.out"/>
+        <include name="*EDWPRD*.out"/>
       </fileset>
     </copy>
 
@@ -85,7 +87,7 @@
              classpath="yguard.jar"/>
     <!-- the following can be adjusted to your needs -->
     <yguard>
-      <inoutpair in="./deploy/odba.jar" out="./deploy/o-odba.jar"/>
+      <inoutpair in="./lib/vawr.jar" out="./lib/vawr-o.jar"/>
       <shrink logfile="${shrinklog}"></shrink>
     </yguard>
   </target>

@@ -26,6 +26,8 @@ import org.altaprise.vawr.awrdata.AWRMetrics;
 
 import org.altaprise.vawr.awrdata.AWRRecord;
 
+import org.altaprise.vawr.utils.SessionMetaData;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -159,12 +161,16 @@ public class AWRTimeSeriesChart extends ApplicationFrame {
             Date date = awrData.get(i).getSnapShotDateTime();
             try {
                 if (instI == racInstance) {
-                    System.out.println("insert# " + i + ", inst: " + instI +
-                                       " " + date.toString());
+                    if (SessionMetaData.getInstance().debugOn()) {
+                        System.out.println("insert# " + i + ", inst: " + instI +
+                                           " " + date.toString());
+                    }
                     s1.add(new Minute(date), metricValD);
                     //                s1.addOrUpdate(new Day(date), os_cpu_val);
                 }
             } catch (Exception e) {
+                System.out.println("insert# " + i + ", inst: " + instI +
+                                   " " + date.toString());
                 e.printStackTrace();
             }
         }

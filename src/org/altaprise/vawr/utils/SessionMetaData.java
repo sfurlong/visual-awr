@@ -61,6 +61,13 @@ public class SessionMetaData {
         return System.getProperty("APP_HOME");
     }
 
+    public boolean debugOn() {
+        String debugS = System.getProperty("DEBUG");
+        boolean debugOn = false;
+        if (debugS != null) debugOn = true; 
+        return debugOn;
+    }
+
     public String getDaiLibHome() {
         return System.getProperty("APP_HOME") + "/lib/";
     }
@@ -198,7 +205,7 @@ public class SessionMetaData {
 
     private void loadVersionInfo() {
         try {
-            String filePath = System.getProperty("DAI_HOME") + "/version.txt";
+            String filePath = System.getProperty("APP_HOME") + "/version.txt";
             Properties prop = new Properties();
             prop.load(new FileInputStream(filePath));
             _build = prop.getProperty("buildDate");
@@ -237,4 +244,10 @@ public class SessionMetaData {
     private String _build = null;
     private String _version = null;
     private String _patchNum = null;
+    
+    public static void main(String[] args) {
+        SessionMetaData data = SessionMetaData.getInstance();
+        System.out.println(data.debugOn());
+        System.out.println(data.getDaiHome());
+    }
 }
