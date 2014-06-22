@@ -5,7 +5,7 @@ public class AWRCollectionSQL {
 
     public static String getDbIdSQL() {
         String dbIdSQL =
-            " SELECT  dbid, db_name FROM dba_hist_database_instance ";
+            " SELECT  distinct dbid, db_name FROM dba_hist_database_instance ";
         return dbIdSQL;
     }
 
@@ -105,7 +105,7 @@ public class AWRCollectionSQL {
     public static String getAllSnapIdsAndTimesSQL(long dbId) {
         String allSnaps =
             "SELECT snap_id, startup_time, begin_interval_time, end_interval_time " +
-            " FROM dba_hist_snapshot " + " WHERE dbid = " + dbId;
+            " FROM dba_hist_snapshot " + " WHERE dbid = " + dbId + " order by snap_id";
 
         return allSnaps;
     }

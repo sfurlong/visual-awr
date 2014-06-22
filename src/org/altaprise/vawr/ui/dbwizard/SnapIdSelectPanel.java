@@ -144,7 +144,7 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
                 String beginIntervalTime =
                     snapIds.getRec(i).getAttribVal("BEGIN_INTERVAL_TIME");
 
-                this.jList_startSnapId.addItem(snapId + "---->" +
+                this.jList_startSnapId.addItemDistinct(snapId + "---->" +
                                                beginIntervalTime);
             }
 
@@ -154,7 +154,7 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
                 String beginIntervalTime =
                     snapIds.getRec(i).getAttribVal("BEGIN_INTERVAL_TIME");
 
-                this.jList_endSnapId.addItem(snapId + "---->" +
+                this.jList_endSnapId.addItemDistinct(snapId + "---->" +
                                              beginIntervalTime);
             }
 
