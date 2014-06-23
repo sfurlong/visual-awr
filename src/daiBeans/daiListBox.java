@@ -78,6 +78,10 @@ public class daiListBox extends JPanel {
         listModel.clear();
     }
 
+    public void removeItem(String item) {
+        listModel.removeElement(item);
+    }
+
     public String getSelectedValue() {
         return (String)theList.getSelectedValue();
     }

@@ -99,6 +99,11 @@ public class PropertyFile implements Serializable {
         _theInstance._propertyData.dbConnectInfo.put(props.connectionName, props);
     }
 
+    public void removeDBConnectionProp(String connName) {
+
+        _theInstance._propertyData.dbConnectInfo.remove(connName);
+    }
+
     public void dumpProps() {
         _theInstance._propertyData.dump();
     }

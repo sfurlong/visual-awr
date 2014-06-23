@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -50,6 +51,7 @@ public class DBConnectionsPanel extends JPanel {
     private JButton jButton_testConn = new JButton("Test Connection");
     private JButton jButton_save = new JButton("Save");
     private JButton jButton_reset = new JButton("Reset");
+    private JButton jButton_delete = new JButton("Delete");
     private JTextArea jTextArea_dbTestResults = new JTextArea();
     private JScrollPane jScrollPane1 =
         new JScrollPane(jTextArea_dbTestResults);
@@ -91,6 +93,12 @@ public class DBConnectionsPanel extends JPanel {
                     jButton_testConn_actionPerformed(e);
                 }
             });
+        jButton_delete.setBounds(new Rectangle(330, 390, 75, 21));
+        jButton_delete.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    jButton_delete_actionPerformed(e);
+                }
+            });
         jButton_save.setBounds(new Rectangle(430, 390, 75, 21));
         jButton_save.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -109,7 +117,7 @@ public class DBConnectionsPanel extends JPanel {
         buttonGroup_SID.add(jRadioButton_SID);
         buttonGroup_SID.add(jRadioButton_serviceName);
         jRadioButton_SID.setSelected(true);
-        this.jList_connectionNames.adddaiListBoxItemSelectedListener(new daiBeans.daiGenericEventListener() {
+        jList_connectionNames.adddaiListBoxItemSelectedListener(new daiBeans.daiGenericEventListener() {
                 public void genericEventAction(daiBeans.daiGenericEvent e) {
                     doListBoxClickedEvent(e);
                 }
@@ -118,6 +126,7 @@ public class DBConnectionsPanel extends JPanel {
         this.add(jScrollPane1, null);
         this.add(jButton_reset, null);
         this.add(jButton_save, null);
+        this.add(jButton_delete, null);
         this.add(jButton_testConn, null);
         this.add(jList_connectionNames, null);
         this.add(jPasswordField_pwd, null);
@@ -188,6 +197,27 @@ public class DBConnectionsPanel extends JPanel {
         //Update the DBConnections combobox
         DBConnectPanel.setDBConnections();
 
+    }
+
+    private void jButton_delete_actionPerformed(ActionEvent e) {
+        String itemName = jList_connectionNames.getSelectedValue();
+        if (itemName == null) return;
+        int resp = JOptionPane.showConfirmDialog(RootFrame.getFrameRef(), "Delete connection properties for: "+itemName+"?", "Delete Connection", JOptionPane.YES_NO_OPTION);
+        System.out.println(resp);
+        if (resp == 0) {
+            jList_connectionNames.removeItem(itemName);
+            
+            //Update the DBConnections combobox
+            DBConnectPanel.setDBConnections();
+
+            _propFile.removeDBConnectionProp(itemName);
+
+            _propFile.serializeIt();
+
+            //Update the DBConnections combobox
+            DBConnectPanel.setDBConnections();
+
+        }
     }
 
     private void jButton_testConn_actionPerformed(ActionEvent e) {
