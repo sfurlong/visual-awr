@@ -87,33 +87,51 @@ public class AWRMetrics {
         //read_iops read_iops_max write_mb_s write_mb_s_max write_iops write_iops_max  redo_mb_s
         //db_block_gets_s db_block_changes_s
         //Metric Name, Metric Desc, Chart Raange Desc, Chart Title, Is Chartable
-        _awrMetrics.put("OS_CPU", new AWRMetric("OS_CPU", "", "% Utilized",  "Host CPU Utilization %", true));
-        _awrMetrics.put("OS_CPU_MAX", new AWRMetric("OS_CPU_MAX", "", "% Utilized", "Host MAX CPU Utilization %", true));
-        _awrMetrics.put("OS_CPU_SD", new AWRMetric("OS_CPU_SD", "", "% Utilized", "Host Standard Deviation CPU Utilization %", true));
-        _awrMetrics.put("DB_WAIT_RATIO", new AWRMetric("DB_WAIT_RATIO", "", "Ratio", "DB Wait Time Ratio", true));
-        _awrMetrics.put("DB_CPU_RATIO", new AWRMetric("DB_CPU_RATIO", "", "Ratio", "DB CPU Time Ratio", true));
-        _awrMetrics.put("CPU_PER_S", new AWRMetric("CPU_PER_S", "", "Ratio", "CPU Usage Per Second", true));
-        _awrMetrics.put("AAS", new AWRMetric("AAS", "", "Active Sessions", "Average Active Sessions", true));
-        _awrMetrics.put("AAS_MAX", new AWRMetric("AAS_MAX", "", "AAS Max", "Max Average Active Sessions", true));
-        _awrMetrics.put("SQL_RES_T_CS", new AWRMetric("SQL_RES_T_CS", "", "", "", true));
-        _awrMetrics.put("BKGD_T_PER_S", new AWRMetric("BKGD_T_PER_S", "", "", "", true));
-        _awrMetrics.put("LOGONS_S", new AWRMetric("LOGONS_S", "", "Logons", "Logons/s", true));
-        _awrMetrics.put("LOGONS_TOTAL", new AWRMetric("LOGONS_TOTAL", "", "Logons", "Total Logons", true));
-        _awrMetrics.put("EXEC_S", new AWRMetric("EXEC_S", "", "Exec", "Exec/s", true));
+        _awrMetrics.put("OS_CPU", new AWRMetric("OS_CPU", "Host CPU Utilization (%)", "% Utilized",  "Host CPU Utilization %", true));
+        _awrMetrics.put("OS_CPU_MAX", new AWRMetric("OS_CPU_MAX", "Host CPU Utilization (%)", "% Utilized", "Host MAX CPU Utilization %", true));
+        _awrMetrics.put("OS_CPU_SD", new AWRMetric("OS_CPU_SD", "Host CPU Utilization (%)", "% Utilized", "Host Standard Deviation CPU Utilization %", true));
+        _awrMetrics.put("DB_WAIT_RATIO", new AWRMetric("DB_WAIT_RATIO", "Database Wait Time Ratio", "Ratio", "DB Wait Time Ratio", true));
+        _awrMetrics.put("DB_CPU_RATIO", new AWRMetric("DB_CPU_RATIO", "Database CPU Time Ratio", "Ratio", "DB CPU Time Ratio", true));
+        _awrMetrics.put("CPU_PER_S", new AWRMetric("CPU_PER_S", "CPU Usage Per Sec", "Ratio", "CPU Usage Per Second", true));
+        _awrMetrics.put("H_CPU_PER_S_SD", new AWRMetric("H_CPU_PER_S_SD", "CPU Usage Per Sec", "Ratio", "CPU Usage Per Second", true));
+        _awrMetrics.put("AAS", new AWRMetric("AAS", "Average Active Sessions", "Active Sessions", "Average Active Sessions", true));
+        _awrMetrics.put("AAS_SD", new AWRMetric("AAS_SD", "Average Active Sessions", "AAS SD", "Active Sessions Standard Deviation", true));
+        _awrMetrics.put("AAS_MAX", new AWRMetric("AAS_MAX", "Average Active Sessions", "AAS Max", "Max Average Active Sessions", true));
+        _awrMetrics.put("DB_TIME", new AWRMetric("DB_TIME", "Database Time Per Sec", "DB Time", "Database Time Per Second", true));
+        _awrMetrics.put("DB_TIME_SD", new AWRMetric("DB_TIME_SD", "Database Time Standard Deviation", "DB Time", "Database Time Standard Deviation", true));
+        _awrMetrics.put("SQL_RES_T_CS", new AWRMetric("SQL_RES_T_CS", "SQL Service Response Time", "", "SQL Service Response Time", true));
+        _awrMetrics.put("BKGD_T_PER_S", new AWRMetric("BKGD_T_PER_S", "Background Time Per Sec", "", "Background Time Per Sec", true));
+        _awrMetrics.put("LOGONS_S", new AWRMetric("LOGONS_S", "Logons Per Sec", "Logons", "Logons Per Sec", true));
+        _awrMetrics.put("LOGONS_TOTAL", new AWRMetric("LOGONS_TOTAL", "Current Logons Count", "Logons", "Current Logons Count", true));
+        _awrMetrics.put("EXEC_S", new AWRMetric("EXEC_S", "Executions Per Sec", "Exec", "Executions Per Sec", true));
         _awrMetrics.put("HARD_P_S", new AWRMetric("HARD_P_S", "", "Hard_P", "HARD_P/s", true));
-        _awrMetrics.put("L_READS_S", new AWRMetric("L_READS_S", "", "Reads", "Reads/s", true));
-        _awrMetrics.put("COMMITS_S", new AWRMetric("COMMITS_S", "", "Commits", "Commits/s", true));
-        _awrMetrics.put("READ_MB_S", new AWRMetric("READ_MB_S", "", "MB", "Read MB/s", true));
-        _awrMetrics.put("READ_MB_S_MAX", new AWRMetric("READ_MB_S_MAX", "", "MB", "Max Read MB/s", true));
-        _awrMetrics.put("READ_IOPS", new AWRMetric("READ_IOPS", "", "IOPs", "Read IOPs", true));
-        _awrMetrics.put("READ_IOPS_MAX", new AWRMetric("READ_IOPS_MAXx", "", "IOPs", "Max Read IOPs", true));
-        _awrMetrics.put("WRITE_MB_S", new AWRMetric("WRITE_MB_S", "", "MB", "Write MB/s", true));
-        _awrMetrics.put("WRITE_MB_S_MAX", new AWRMetric("WRITE_MB_S_MAX", "", "MB", "Max Write MB/s", true));
-        _awrMetrics.put("WRITE_IOPS", new AWRMetric("WRITE_IOPS", "", "IOPs", "Write IOPs", true));
-        _awrMetrics.put("WRITE_IOPS_MAX", new AWRMetric("WRITE_IOPS_MAX", "", "IOPs", "Max Write IOPs", true));
-        _awrMetrics.put("REDO_MB_S", new AWRMetric("REDO_MB_S", "", "MB", "REDO MB/s", true));
-        _awrMetrics.put("DB_BLOCK_GETS_S", new AWRMetric("DB_BLOCK_GETS_S", "", "", "", true));
-        _awrMetrics.put("DB_BLOCK_CHANGES_S", new AWRMetric("DB_BLOCK_CHANGES_S", "", "", "", true));
+        _awrMetrics.put("L_READS_S", new AWRMetric("L_READS_S", "Logical Reads Per Sec", "Reads", "Logical Reads Per Sec", true));
+        _awrMetrics.put("COMMITS_S", new AWRMetric("COMMITS_S", "User Commits Per Sec", "Commits", "User Commits Per Sec", true));
+        _awrMetrics.put("READ_MB_S", new AWRMetric("READ_MB_S", "Physical Read Total Bytes Per Sec", "MB", "Physical Read Total Bytes Per Sec", true));
+        _awrMetrics.put("READ_MB_S_MAX", new AWRMetric("READ_MB_S_MAX", "Physical Read Total Bytes Per Sec", "MB", "Physical Read Total Bytes Per Sec MAX", true));
+        _awrMetrics.put("READ_IOPS", new AWRMetric("READ_IOPS", "Physical Read Total IO Requests Per Sec", "IOPs", "Physical Read Total IO Requests Per Sec", true));
+        _awrMetrics.put("READ_IOPS_MAX", new AWRMetric("READ_IOPS_MAX", "Physical Read Total IO Requests Per Sec", "IOPs", "Physical Read Total IO Requests Per Sec MAX", true));
+        _awrMetrics.put("READ_BKS", new AWRMetric("READ_BKS", "Physical Reads Per Sec", "Reads", "Physical Reads Per Sec", true));
+        _awrMetrics.put("READ_BKS_DIRECT", new AWRMetric("READ_BKS_DIRECT", "Physical Reads Direct Per Sec", "Reads", "Physical Reads Direct Per Sec", true));
+        _awrMetrics.put("WRITE_MB_S", new AWRMetric("WRITE_MB_S", "Physical Write Total Bytes Per Sec", "MB", "Write MB/s", true));
+        _awrMetrics.put("WRITE_MB_S_MAX", new AWRMetric("WRITE_MB_S_MAX", "Physical Write Total Bytes Per Sec", "MB", "Max Write MB/s", true));
+        _awrMetrics.put("WRITE_IOPS", new AWRMetric("WRITE_IOPS", "Physical Write Total IO Requests Per Sec", "IOPs", "Physical Write Total IO Requests Per Sec", true));
+        _awrMetrics.put("WRITE_IOPS_MAX", new AWRMetric("WRITE_IOPS_MAX", "Physical Write Total IO Requests Per Sec", "IOPs", "Physical Write Total IO Requests Per Sec MAX", true));
+        _awrMetrics.put("WRITE_BKS", new AWRMetric("WRITE_BKS", "Physical Writes Per Sec", "Writes", "Physical Writes Per Sec", true));
+        _awrMetrics.put("WRITE_BKS_DIRECT", new AWRMetric("WRITE_BKS_DIRECT", "Physical Writes Direct Per Sec", "Writes", "Physical Writes Direct Per Sec", true));
+        _awrMetrics.put("REDO_MB_S", new AWRMetric("REDO_MB_S", "Redo Generated Per Sec", "MB", "REDO MB/s", true));
+        _awrMetrics.put("DB_BLOCK_GETS_S", new AWRMetric("DB_BLOCK_GETS_S", "DB Block Gets Per Sec", "", "DB Block Gets Per Sec", true));
+        _awrMetrics.put("DB_BLOCK_CHANGES_S", new AWRMetric("DB_BLOCK_CHANGES_S", "DB Block Changes Per Sec", "", "DB Block Changes Per Sec", true));
+        _awrMetrics.put("DB_CR_REC_S", new AWRMetric("DB_CR_REC_S", "GC CR Block Received Per Second", "", "GC CR Block Received Per Second", true));
+        _awrMetrics.put("GC_CU_REC_S", new AWRMetric("GC_CU_REC_S", "GC Current Block Received Per Second", "", "GC Current Block Received Per Second", true));
+        _awrMetrics.put("GC_CR_GET_CS", new AWRMetric("GC_CR_GET_CS", "Global Cache Average CR Get Time", "", "Global Cache Average CR Get Time", true));
+        _awrMetrics.put("GC_BK_CORRUPTED", new AWRMetric("GC_BK_CORRUPTED", "Global Cache Blocks Corrupted", "", "Global Cache Blocks Corrupted", true));
+        _awrMetrics.put("GC_BK_LOST", new AWRMetric("GC_BK_LOST", "Global Cache Blocks Lost", "", "Global Cache Blocks Lost", true));
+        _awrMetrics.put("PX_SESS", new AWRMetric("PX_SESS", "Active Parallel Sessions", "", "Active Parallel Sessions", true));
+        _awrMetrics.put("SE_SESS", new AWRMetric("SE_SESS", "Active Serial Sessions", "", "Active Serial Sessions", true));
+        _awrMetrics.put("S_BLK_R_LAT", new AWRMetric("S_BLK_R_LAT", "Average Synchronous Single-Block Read Latency", "", "Average Synchronous Single-Block Read Latency", true));
+        _awrMetrics.put("CELL_IO_INT_MB", new AWRMetric("CELL_IO_INT_MB", "Cell Physical IO Interconnect Bytes", "", "Cell Physical IO Interconnect Bytes", true));
+        _awrMetrics.put("CELL_IO_INT_MB_MAX", new AWRMetric("CELL_IO_INT_MB_MAX", "Cell Physical IO Interconnect Bytes", "", "Cell Physical IO Interconnect Bytes MAX", true));
     }
     
     public String getMetricDescription(String metricName) {
