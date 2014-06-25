@@ -151,14 +151,14 @@ public class AWRTimeSeriesChart extends ApplicationFrame {
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
         TimeSeries s1 = new TimeSeries("Instance " + racInstance);
 
-        for (int i = 0; i < awrData.size(); i++) {
-            AWRRecord awrRec = awrData.get(i);
+        for (int i = 0; i < awrData.getAWRDataRecordCount(); i++) {
+            AWRRecord awrRec = awrData.getAWRRecord(i);
             String metricValS = awrRec.getVal(awrMetric.toUpperCase());
-            String inst = awrData.get(i).getVal("INST");
+            String inst = awrData.getAWRRecord(i).getVal("INST");
             int instI = Integer.parseInt(inst);
             double metricValD = Double.parseDouble(metricValS);
 
-            Date date = awrData.get(i).getSnapShotDateTime();
+            Date date = awrData.getAWRRecord(i).getSnapShotDateTime();
             try {
                 if (instI == racInstance) {
                     if (SessionMetaData.getInstance().debugOn()) {

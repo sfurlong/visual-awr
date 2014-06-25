@@ -70,7 +70,7 @@ public class ReadAWRMinerFile {
 
                     if (recCount == 1) {
                         //Parse the headers
-                        parseHeaders(rec);
+                        _awrData.parseHeaders(rec);
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
@@ -79,8 +79,7 @@ public class ReadAWRMinerFile {
                             endMainMetricsFound = true;
                         } else {
                             //Parse the data rows
-                            AWRRecord dataRec = parseDataRecord(rec);
-                            _awrData.add(dataRec);
+                            _awrData.parseDataRecord(rec);
                         }
                     }
 
@@ -105,7 +104,9 @@ public class ReadAWRMinerFile {
 
 
     public void dumpData() {
-
+        
+        _awrData.dumpData();
+/*        
         for (int i = 0; i < _awrData.getHeaderCount(); i++) {
             System.out.print(_awrData.getHeaderName(i) + ", ");
         }
@@ -118,41 +119,7 @@ public class ReadAWRMinerFile {
             }
             System.out.println();
         }
-
+ */
     }
 
-    private void parseHeaders(String rec) {
-        if (rec.length() > 0) {
-
-            StringTokenizer st = new StringTokenizer(rec);
-            while (st.hasMoreTokens()) {
-                String token = st.nextToken();
-                _awrData.addHeaderName(token.toUpperCase());
-
-                //Check to see if this is the header.  If so, add another header field for time.
-                if (token.equals("end") || token.equals("END")) {
-                    _awrData.addHeaderName("TIME");
-                }
-            }
-        }
-    }
-
-    private AWRRecord parseDataRecord(String rec) {
-        ArrayList<String> dataRecord = new ArrayList<String>();
-        AWRRecord awrRec = new AWRRecord();
-
-        int tokenCnt = 0;
-        if (rec.length() > 0) {
-
-            StringTokenizer st = new StringTokenizer(rec);
-            while (st.hasMoreTokens()) {
-                String tok = st.nextToken();
-                String headerName = (String)_awrData.getHeaderName(tokenCnt);
-                awrRec.putVal(headerName.toUpperCase(), tok);
-                //dataRecord.add(tok);
-                tokenCnt++;
-            }
-        }
-        return awrRec;
-    }
 }

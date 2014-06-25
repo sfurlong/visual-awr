@@ -4,7 +4,6 @@
 <project name="AWRParser" default="all">
   <property file="build.properties"/>
   <property name="build.root.dir" value="."/>
-  <property name="version.number" value=".01"/>
   <path id="library.Jcommon-1.0.22.jar">
     <pathelement location="lib/jcommon-1.0.22/jcommon-1.0.22/jcommon-1.0.22.jar"/>
   </path>
@@ -37,7 +36,7 @@
     </delete>
   </target>
   
-  <target name="NewVersion" description="Replaces the version# in code and readme">
+  <target name="version" description="Replaces the version# in code and readme">
     <replace dir="${build.root.dir}/src" value="${visual-awr.version.num}">
       <include name="**/*.java"/>
       <replacetoken>@VERSION-NUM@</replacetoken>
@@ -45,7 +44,7 @@
     <replace file="${build.root.dir}/vawr-readme.html" token="@VERSION-NUM@" value="${visual-awr.version.num}"/>
   </target>
   
-  <target name="build" description="Compile Java source files">
+  <target name="build" description="Compile Java source files" depends="version">
     <mkdir dir="${build.root.dir}/classes"/>
     <javac srcdir="${build.root.dir}/src" destdir="${build.root.dir}/classes"
            classpath="${classpath}" includes="*/**/*.java" deprecation="on"
@@ -61,15 +60,21 @@
   <target name="dist" description="create the distribution" depends="jar">
     <delete includeemptydirs="true" dir="${build.root.dir}/dist"/>
     <mkdir dir="${build.root.dir}/dist"/>
+    <mkdir dir="${build.root.dir}/dist/lib"/>
+    
+    <!-- Obfiscate
+    <antcall target="yguard"/>
+    -->
     <copy todir="${build.root.dir}/dist/lib">
       <fileset dir="${build.root.dir}/lib">
         <include name="jfreechart*.jar"/>
         <include name="jcommon*.jar"/>
         <include name="ojdbc*.jar"/>
-        <include name="vawr*.jar"/>
+        <include name="vawr.jar"/>
         <include name="*.gif"/>
       </fileset>
     </copy>
+    
     <copy todir="${build.root.dir}/dist">
       <fileset dir="${build.root.dir}">
         <include name="vawr-readme.html"/>
@@ -77,14 +82,14 @@
         <include name="properties.ser"/>
       </fileset>
     </copy>
+    
     <copy todir="${build.root.dir}/dist/testing">
       <fileset dir="${build.root.dir}/testing">
         <include name="*EDWPRD*.out"/>
       </fileset>
     </copy>
 
-    <delete file="${build.root.dir}/visual-awr-${version.number}.zip"/>
-    <zip destfile="${build.root.dir}/dist/visual-awr${version.number}.zip"
+    <zip destfile="${build.root.dir}/dist/visual-awr${visual-awr.version.num}.zip"
          basedir="${build.root.dir}/dist/" excludes="jdk/**, *.zip"/>
 
   </target>
@@ -95,8 +100,9 @@
              classpath="yguard.jar"/>
     <!-- the following can be adjusted to your needs -->
     <yguard>
-      <inoutpair in="./lib/vawr.jar" out="./lib/vawr-o.jar"/>
-      <shrink logfile="${shrinklog}"></shrink>
+      <inoutpair in="${build.root.dir}/lib/vawr.jar" out="${build.root.dir}/dist/lib/vawr.jar"/>
+      <shrink logfile="${shrinklog}">
+      </shrink>
     </yguard>
   </target>
 

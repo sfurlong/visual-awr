@@ -177,7 +177,7 @@
       <hash n="runConfigurationDefinitions">
          <hash n="Default">
             <value n="custom" v="false"/>
-            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser"/>
+            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser -DDEBUG"/>
             <value n="name" v="Default"/>
             <url n="runDirectoryURL" path="."/>
             <value n="targetURL"/>
@@ -227,6 +227,10 @@
          </hash>
          <hash>
             <value n="id" v="Jfreechart-1.0.17.jar1"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Yguard.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
@@ -284,6 +288,15 @@
                <value n="deployedByDefault" v="true"/>
                <value n="description" v="Jfreechart-1.0.17.jar1"/>
                <value n="id" v="Jfreechart-1.0.17.jar1"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/yguard.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Yguard.jar"/>
+               <value n="id" v="Yguard.jar"/>
                <value n="locked" v="true"/>
             </hash>
          </list>
@@ -379,6 +392,10 @@
          </hash>
          <hash>
             <value n="id" v="Jfreechart-1.0.17.jar1"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Yguard.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>

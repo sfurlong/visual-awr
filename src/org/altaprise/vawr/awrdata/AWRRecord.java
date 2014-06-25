@@ -54,9 +54,4 @@ public class AWRRecord {
     public AWRRecord() {
         super();
     }
-    
-    public class AWRRec {
-        
-    }
-    
 }

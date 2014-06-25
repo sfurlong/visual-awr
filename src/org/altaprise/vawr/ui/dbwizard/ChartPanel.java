@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
-import org.altaprise.vawr.awrdata.ParseAWRData;
+import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.ui.RootFrame;
 
@@ -89,20 +89,19 @@ public class ChartPanel extends WizardContentBasePanel {
     }
 
     private void jButton_chartMetric_actionPerformed(ActionEvent e) {
-        ParseAWRData parseAWRData = new ParseAWRData();
+        AWRData awrData = new AWRData();
 
         for (int i = 0; i < _awrStringRecs.size(); i++) {
             if (i == 0) {
-                parseAWRData.parseHeaders(_awrStringRecs.get(i));
+                awrData.parseHeaders(_awrStringRecs.get(i));
             } else {
-                parseAWRData.parseDataRecord(_awrStringRecs.get(i));
+                awrData.parseDataRecord(_awrStringRecs.get(i));
             }
         }
 
-        AWRData awrData = parseAWRData.getAWRData();
         String metricName = (String)jComboBox_metrics.getSelectedItem();
 
-        if (awrData == null || awrData.size() <= 0) {
+        if (awrData == null || awrData.getAWRDataRecordCount() <= 0) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                           "No AWR Data Found.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
