@@ -29,6 +29,14 @@ public class AWRMetrics {
         }
         return ret;
     }
+
+    public static ArrayList<AWRMetric> getMetricDetails() {
+        ArrayList<AWRMetric> ret = new ArrayList<AWRMetric>();
+        for (Object key : _awrMetrics.keySet()) {
+            ret.add((AWRMetric)_awrMetrics.get(key));
+        }
+        return ret;
+    }
     
     /*
     Metric Description	AWR Field
@@ -161,5 +169,45 @@ public class AWRMetrics {
         String metricChartRangeDescription;
         String metricChartTitle;
         boolean isChartable = false;
+
+        public void setMetricName(String metricName) {
+            this.metricName = metricName;
+        }
+
+        public String getMetricName() {
+            return metricName;
+        }
+
+        public void setMetricDescription(String metricDescription) {
+            this.metricDescription = metricDescription;
+        }
+
+        public String getMetricDescription() {
+            return metricDescription;
+        }
+
+        public void setMetricChartRangeDescription(String metricChartRangeDescription) {
+            this.metricChartRangeDescription = metricChartRangeDescription;
+        }
+
+        public String getMetricChartRangeDescription() {
+            return metricChartRangeDescription;
+        }
+
+        public void setMetricChartTitle(String metricChartTitle) {
+            this.metricChartTitle = metricChartTitle;
+        }
+
+        public String getMetricChartTitle() {
+            return metricChartTitle;
+        }
+
+        public void setIsChartable(boolean isChartable) {
+            this.isChartable = isChartable;
+        }
+
+        public boolean isIsChartable() {
+            return isChartable;
+        }
     }
 }

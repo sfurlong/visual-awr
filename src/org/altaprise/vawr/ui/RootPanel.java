@@ -40,6 +40,7 @@ public class RootPanel extends JPanel {
     ChartFilePanel _fileTabPanel = new ChartFilePanel();
     WizardRootPanel _dbChartTab = new WizardRootPanel();
     AppAboutPanel _aboutPanel = new AppAboutPanel();
+    MetricsDescriptionPanel _metricDescPanel = new MetricsDescriptionPanel();
 
     public RootPanel() {
         super(new GridLayout(1, 1));
@@ -51,9 +52,6 @@ public class RootPanel extends JPanel {
     }
 
     public void jbInit() throws Exception {
-        //this.setLayout(null);
-        //this.setSize(new Dimension(706, 300));
-        JComponent panel1 = makeTextPanel("Panel #1");
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>About</body></html>",
                           _aboutPanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -62,7 +60,6 @@ public class RootPanel extends JPanel {
                           this._fileTabPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        JComponent panel3 = makeTextPanel("Panel #3");
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart DB Data</body></html>",
                           this._dbChartTab);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
@@ -70,6 +67,10 @@ public class RootPanel extends JPanel {
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>DB Connections</body></html>",
                           _dbConnPanel);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>About AWR Metrics</body></html>",
+                          _metricDescPanel);
+        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
         //Add the tabbed pane to this panel.
         add(tabbedPane);
