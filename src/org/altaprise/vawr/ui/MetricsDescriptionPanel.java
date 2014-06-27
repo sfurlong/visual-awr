@@ -56,7 +56,7 @@ public class MetricsDescriptionPanel extends JPanel {
         htmlString += "<style type=\'text/css\'> td{font-family:Arial; color:blue; font-size:11pt;} th{font-family:Arial; color:black; font-size:12pt;} </style> ";
         htmlString += "<table border=\"1\" font size=\"1\">\n";
         htmlString += "<tr>";
-        htmlString += "<th>AWRMiner Metric Name</th><th>Oracle AWR Metric ID</th><th>Oracle AWR Metric Name</th><th>AWR Metric Unit</th><th>ChartTitle</th>";
+        htmlString += "<th>AWRMiner Metric Name</th><th>Oracle AWR Metric ID*</th><th>Oracle AWR Metric Name*</th><th>AWR Metric Unit*</th><th>ChartTitle</th>";
         htmlString += "</tr>";
         
         for (int i=0; i<metricDetails.size(); i++) {
@@ -79,6 +79,10 @@ public class MetricsDescriptionPanel extends JPanel {
             htmlString += "</tr>\n";
         }
         htmlString += "</table>\n";
+        //htmlString += "<style type=\'text/css\'> font-family:Arial; color:black; font-size:11pt; </style> ";
+        htmlString += "<br>";
+        htmlString += "*These metric attributes are defined in Oracle system view V$METRICNAME<br>";
+        htmlString += "For more info, see http://docs.oracle.com/cd/E16655_01/server.121/e17615/refrn30336.htm#REFRN30336";
         
         _metricDescGrid.setContentType("text/html");
         _metricDescGrid.setText(htmlString);

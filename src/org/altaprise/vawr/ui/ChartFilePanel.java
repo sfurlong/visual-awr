@@ -50,24 +50,24 @@ public class ChartFilePanel extends JPanel {
         this.add(jTextField_fileName, null);
 
 
-        jTextField_fileName.setBounds(new Rectangle(40, 40, 545, 20));
+        jTextField_fileName.setBounds(new Rectangle(40, 40, 480, 20));
         String appHome = SessionMetaData.getInstance().getDaiHome();
         //        jTextField_fileName.setText(appHome + "\\testing\\awr-hist-389926331-U-775-985.out");
         jButton_selectFile.setText("Select File");
-        jButton_selectFile.setBounds(new Rectangle(590, 40, 85, 20));
+        jButton_selectFile.setBounds(new Rectangle(525, 40, 85, 20));
         jButton_selectFile.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_selectFile_actionPerformed(e);
                 }
             });
         jButton_chart.setText("Chart Metric");
-        jButton_chart.setBounds(new Rectangle(285, 90, 95, 20));
+        jButton_chart.setBounds(new Rectangle(345, 90, 95, 20));
         jButton_chart.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_chart_actionPerformed(e);
                 }
             });
-        jComboBox_metricName.setBounds(new Rectangle(40, 90, 240, 20));
+        jComboBox_metricName.setBounds(new Rectangle(40, 90, 300, 20));
 
         setComboBoxOptions();
     }
@@ -108,7 +108,9 @@ public class ChartFilePanel extends JPanel {
 
             //Chart the data
             AWRData awrData = _awrParser.getAWRData();
-            String metricName = (String)jComboBox_metricName.getSelectedItem();
+            String oracleMetricName = (String)jComboBox_metricName.getSelectedItem();
+            //Convert to AWRMiner metric name
+            String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
             if (awrData.awrMetricExists(metricName)) {
                 AWRTimeSeriesChart cpuChart =
@@ -135,8 +137,7 @@ public class ChartFilePanel extends JPanel {
     }
 
     private void setComboBoxOptions() {
-        ArrayList<String> metricNames =
-            AWRMetrics.getInstance().getMetricNames();
+        ArrayList<String> metricNames = AWRMetrics.getInstance().getOracleMetricNames();
         for (int i = 0; i < metricNames.size(); i++) {
             jComboBox_metricName.addItem(metricNames.get(i));
         }

@@ -7,6 +7,10 @@ public class AWRMetric {
         awrMinerMetricName = awrMinerName;
         awrOracleMetricName = awrOracleName;
         awrOracleMetricUnit = metricUnit;
+        awrUniqueOracleMetricName = awrOracleMetricName;
+        if (awrMinerMetricModifier != null && awrMinerMetricModifier.length() > 0) {
+            awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
+        }
         metricChartTitle = chartTitle;
         isChartable = chartable;
     }
@@ -19,6 +23,10 @@ public class AWRMetric {
         awrOracleMetricUnit = metricUnit;
         awrOracleMetricId = metricId;
         awrMinerMetricModifier = metricModifier;
+        awrUniqueOracleMetricName = awrOracleMetricName;
+        if (awrMinerMetricModifier != null && awrMinerMetricModifier.length() > 0) {
+            awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
+        }
         metricChartTitle = chartTitle;
         isChartable = chartable;
     }
@@ -30,6 +38,10 @@ public class AWRMetric {
         awrOracleMetricUnit = metricUnit;
         awrOracleMetricId = metricId;
         awrMinerMetricModifier = metricModifier;
+        awrUniqueOracleMetricName = awrOracleMetricName;
+        if (awrMinerMetricModifier != null && awrMinerMetricModifier.length() > 0) {
+            awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
+        }
         metricChartTitle = awrOracleName + " " + metricModifier;
         isChartable = true;
     }
@@ -41,6 +53,10 @@ public class AWRMetric {
         awrOracleMetricUnit = metricUnit;
         awrOracleMetricId = metricId;
         awrMinerMetricModifier = "";
+        awrUniqueOracleMetricName = awrOracleMetricName;
+        if (awrMinerMetricModifier != null && awrMinerMetricModifier.length() > 0) {
+            awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
+        }
         metricChartTitle = awrOracleName;
         isChartable = true;
     }
@@ -50,6 +66,7 @@ public class AWRMetric {
     private String awrOracleMetricUnit;
     private String awrOracleMetricId;
     private String awrMinerMetricModifier;
+    private String awrUniqueOracleMetricName;
     private String metricChartTitle;
     private boolean isChartable = false;
 
@@ -107,5 +124,13 @@ public class AWRMetric {
 
     public String getAwrMinerMetricModifier() {
         return awrMinerMetricModifier;
+    }
+
+    public void setAwrUniqueOracleMetricName(String awrUniqueOracleMetricName) {
+        this.awrUniqueOracleMetricName = awrUniqueOracleMetricName;
+    }
+
+    public String getAwrUniqueOracleMetricName() {
+        return awrUniqueOracleMetricName;
     }
 }

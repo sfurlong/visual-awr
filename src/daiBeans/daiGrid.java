@@ -27,8 +27,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import org.altaprise.vawr.utils.plaf.ThemeUtilities;
-
 //import org.altaprise.vawr.utils.plaf.ThemeUtilities;
 
 public class daiGrid extends JPanel {
@@ -379,7 +377,7 @@ public class daiGrid extends JPanel {
                 if (!table.isRowSelected(row)) {
                     c.setBackground(Color.WHITE);
                 } else {
-                    c.setBackground(ThemeUtilities.getGridCellHighlightBackgroundColor());
+                    //c.setBackground(ThemeUtilities.getGridCellHighlightBackgroundColor());
                 }
             }
             return c;

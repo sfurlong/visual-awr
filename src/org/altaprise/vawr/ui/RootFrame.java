@@ -16,7 +16,7 @@ public class RootFrame extends JFrame {
     private String aboutMessage =
         "Visual AWR" + "\n" +
         "Stephen Furlong 2014" + "\n" +
-        "Version " + "0.01.a ";
+        "Version " + "0.01b";
     private String aboutTitle = "About";
     private RootPanel _rootTabbedPanel = new RootPanel();
     private static JFrame _frameRef = null;

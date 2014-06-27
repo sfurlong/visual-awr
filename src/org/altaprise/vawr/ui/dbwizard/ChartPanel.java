@@ -56,10 +56,10 @@ public class ChartPanel extends WizardContentBasePanel {
         this.setLayout(null);
         this.setSize(new Dimension(660, 520));
 
-        jComboBox_metrics.setBounds(new Rectangle(70, 65, 215, 20));
+        jComboBox_metrics.setBounds(new Rectangle(70, 65, 320, 20));
         jComboBox_metrics.setVisible(true);
         jComboBox_metrics.setEditable(false);
-        jButton_chartMetric.setBounds(new Rectangle(295, 65, 100, 20));
+        jButton_chartMetric.setBounds(new Rectangle(400, 65, 100, 20));
         jButton_chartMetric.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_chartMetric_actionPerformed(e);
@@ -78,11 +78,7 @@ public class ChartPanel extends WizardContentBasePanel {
     }
 
     private void setComboBoxOptions() {
-        //os_cpu os_cpu_max db_wait_ratio db_cpu_ratio        aas    aas_max sql_res_t_cs bkgd_t_per_s
-        //logons_s logons_total     exec_s   hard_p_s  l_reads_s  commits_s  read_mb_s read_mb_s_max
-        //read_iops read_iops_max write_mb_s write_mb_s_max write_iops write_iops_max  redo_mb_s
-        //db_block_gets_s db_block_changes_s
-        ArrayList<String> metricNames = AWRMetrics.getInstance().getMetricNames();
+        ArrayList<String> metricNames = AWRMetrics.getInstance().getOracleMetricNames();
         for (int i = 0; i < metricNames.size(); i++) {
             jComboBox_metrics.addItem(metricNames.get(i));
         }
@@ -99,20 +95,23 @@ public class ChartPanel extends WizardContentBasePanel {
             }
         }
 
-        String metricName = (String)jComboBox_metrics.getSelectedItem();
+        String oracleMetricName = (String)jComboBox_metrics.getSelectedItem();
+        //Convert to AWRMiner metric name
+        String awrMetricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
+
 
         if (awrData == null || awrData.getAWRDataRecordCount() <= 0) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                           "No AWR Data Found.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
 
-        } else if (!awrData.awrMetricExists(metricName)) {
+        } else if (!awrData.awrMetricExists(awrMetricName)) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
-                                          metricName + " Metric Does not exist in this query.",
+                                          awrMetricName + " Metric Does not exist in this query.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             AWRTimeSeriesChart cpuChart =
-                new AWRTimeSeriesChart(metricName, awrData);
+                new AWRTimeSeriesChart(awrMetricName, awrData);
 
         }
     }
