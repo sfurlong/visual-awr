@@ -2,16 +2,8 @@ package org.altaprise.vawr.ui;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import java.awt.event.ActionEvent;
-
-
 import javax.swing.*;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-
-import org.altaprise.vawr.utils.SessionMetaData;
 
 public class RootFrame extends JFrame {
     private GridLayout gridLayout = new GridLayout();
