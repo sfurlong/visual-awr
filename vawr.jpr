@@ -80,6 +80,15 @@
          <list n="constituent-sets">
             <hash>
                <list n="pattern-filters">
+                  <string v="-lib/yguard.jar"/>
+                  <string v="-lib/vawr-o.jar"/>
+                  <string v="-lib/vawr.jar"/>
+                  <string v="-lib/ojdbc5.jar"/>
+                  <string v="-lib/ObfuscationAnnotation.jar"/>
+                  <string v="-lib/jfreechart-1.0.17.jar"/>
+                  <string v="-lib/jcommon-1.0.22.jar"/>
+                  <string v="-lib/jfreechart-1.0.17/"/>
+                  <string v="-lib/jcommon-1.0.22/"/>
                   <string v="+*"/>
                </list>
                <list n="url-path">
@@ -92,6 +101,23 @@
                </list>
                <list n="url-path">
                   <url path="docs/"/>
+               </list>
+            </hash>
+            <hash>
+               <list n="pattern-filters">
+                  <string v="-yguard.jar"/>
+                  <string v="-vawr-o.jar"/>
+                  <string v="-vawr.jar"/>
+                  <string v="-ojdbc5.jar"/>
+                  <string v="-ObfuscationAnnotation.jar"/>
+                  <string v="-jfreechart-1.0.17.jar"/>
+                  <string v="-jcommon-1.0.22.jar"/>
+                  <string v="-jfreechart-1.0.17/"/>
+                  <string v="-jcommon-1.0.22/"/>
+                  <string v="+**"/>
+               </list>
+               <list n="url-path">
+                  <url path="lib/"/>
                </list>
             </hash>
          </list>
