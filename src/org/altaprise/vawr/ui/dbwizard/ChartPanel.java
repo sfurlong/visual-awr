@@ -1,6 +1,11 @@
 package org.altaprise.vawr.ui.dbwizard;
 
 
+import dai.server.dbService.SQLResolver;
+import dai.server.dbService.dbconnect;
+
+import dai.shared.businessObjs.DBRecSet;
+
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 
@@ -20,6 +25,8 @@ import javax.swing.JOptionPane;
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.AWRData;
+import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
+import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.ui.RootFrame;
 
@@ -73,10 +80,6 @@ public class ChartPanel extends WizardContentBasePanel {
         this.setComboBoxOptions();
     }
 
-    protected void doNextOperation() {
-        _awrStringRecs = AWRQueryPanel.getAWRData();
-    }
-
     private void setComboBoxOptions() {
         ArrayList<String> metricNames = AWRMetrics.getInstance().getOracleMetricNames();
         for (int i = 0; i < metricNames.size(); i++) {
@@ -85,34 +88,28 @@ public class ChartPanel extends WizardContentBasePanel {
     }
 
     private void jButton_chartMetric_actionPerformed(ActionEvent e) {
-        AWRData awrData = new AWRData();
-
-        for (int i = 0; i < _awrStringRecs.size(); i++) {
-            if (i == 0) {
-                awrData.parseHeaders(_awrStringRecs.get(i));
-            } else {
-                awrData.parseDataRecord(_awrStringRecs.get(i));
-            }
-        }
 
         String oracleMetricName = (String)jComboBox_metrics.getSelectedItem();
         //Convert to AWRMiner metric name
         String awrMetricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
 
-        if (awrData == null || awrData.getAWRDataRecordCount() <= 0) {
+        if (AWRData.getInstance().getAWRDataRecordCount() <= 0) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                           "No AWR Data Found.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
 
-        } else if (!awrData.awrMetricExists(awrMetricName)) {
+        } else if (!AWRData.getInstance().awrMetricExists(awrMetricName)) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                           awrMetricName + " Metric Does not exist in this query.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            AWRTimeSeriesChart cpuChart =
-                new AWRTimeSeriesChart(awrMetricName, awrData);
-
+            if (awrMetricName.equals("SGA_PGA_TOT")) {
+                //Get the memory Data
+                new AWRMemoryTimeSeriesChart(awrMetricName);
+            } else {
+                new AWRTimeSeriesChart(awrMetricName);
+            }
         }
     }
 }
