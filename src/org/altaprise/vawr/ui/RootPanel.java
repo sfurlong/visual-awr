@@ -52,19 +52,19 @@ public class RootPanel extends JPanel {
     }
 
     public void jbInit() throws Exception {
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>About</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>About Visual AWR</body></html>",
                           _aboutPanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart File Data</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart from AWRMiner File</body></html>",
                           this._fileTabPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart DB Data</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart direct from DB</body></html>",
                           this._dbChartTab);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>DB Connections</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
                           _dbConnPanel);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 

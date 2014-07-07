@@ -113,6 +113,10 @@ public class AWRQueryPanel extends WizardContentBasePanel {
     }
 
     private void doAWRQuery() {
+        
+        //SetCursor
+        RootFrame.startWaitCursor();
+        
         String textAreaStatus = "";
         //Update the Status in the Text Area
         textAreaStatus += "Running AWR Metrics Query....\n";
@@ -137,7 +141,8 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             //Update the Status in the Text Area
             textAreaStatus += "Parsing AWR Metrics....\n";
             this.textArea_awrData.setText(textAreaStatus);
-
+            this.textArea_awrData.repaint();
+            
             AWRData.getInstance().parseDataRecords(awrRecSetData);
 
             //Update the Status in the Text Area
@@ -163,6 +168,9 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             ex.printStackTrace();
         }
         this.textArea_awrData.setCaretPosition(0);
+
+        //SetCursor
+        RootFrame.stopWaitCursor();
     }
 
     private void jButton_doQuery_actionPerformed(ActionEvent e) {

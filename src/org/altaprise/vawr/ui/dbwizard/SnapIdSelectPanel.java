@@ -129,6 +129,10 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
     }
 
     private void showSnapShots() {
+
+        //SetCursor
+        RootFrame.startWaitCursor();
+
         this.refreshPanel();
         SQLResolver sqlResolver = new SQLResolver();
 
@@ -163,6 +167,9 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
                     ex.getLocalizedMessage());
             ex.printStackTrace();
         }
+
+        //SetCursor
+        RootFrame.stopWaitCursor();
     }
 
     private void jButton1_actionPerformed(ActionEvent e) {

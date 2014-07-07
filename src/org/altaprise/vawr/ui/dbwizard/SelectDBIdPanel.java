@@ -31,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
+import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.utils.DBConnectionProps;
 import org.altaprise.vawr.utils.PropertyFile;
 
@@ -94,6 +95,10 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
     }
     
     public void showDBIds() {
+        
+        //SetCursor
+        RootFrame.startWaitCursor();
+
         //Clear the listbox from any previous queries
         this.jList_connectionNames.removeAllItems();
         
@@ -113,6 +118,9 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
             daiBeans.daiDetailInfoDialog dialog = new daiBeans.daiDetailInfoDialog(null, "Error", true,
                     ex.getLocalizedMessage());
         }
+        //SetCursor
+        RootFrame.stopWaitCursor();
+
     }
 
     private void jButton1_actionPerformed(ActionEvent e) {

@@ -104,12 +104,17 @@ public class ChartPanel extends WizardContentBasePanel {
                                           awrMetricName + " Metric Does not exist in this query.",
                                           "Error", JOptionPane.ERROR_MESSAGE);
         } else {
+            //SetCursor
+            RootFrame.startWaitCursor();
+
             if (awrMetricName.equals("SGA_PGA_TOT")) {
                 //Get the memory Data
                 new AWRMemoryTimeSeriesChart(awrMetricName);
             } else {
                 new AWRTimeSeriesChart(awrMetricName);
             }
+            //SetCursor
+            RootFrame.stopWaitCursor();
         }
     }
 }
