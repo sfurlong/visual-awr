@@ -83,13 +83,13 @@ public class AWRCollectionSQL {
         return sql;
     }
     
-    public static String getMemoryUtilizationSQL(String dbId, String startSnapId, String endSnapId) {
+    public static String getMemoryUtilizationSQL(long dbId, long startSnapId, long endSnapId) {
         String memSQL =     " SELECT snap_id, " +
         " instance_number, " +
         " MAX (DECODE (stat_name, \'SGA\', stat_value, NULL)) \"SGA\", " +
         " MAX (DECODE (stat_name, \'PGA\', stat_value, NULL)) \"PGA\", " +
         " MAX (DECODE (stat_name, 'SGA', stat_value, NULL)) + MAX (DECODE (stat_name, 'PGA', stat_value, " +
-        " NULL)) \"TOTAL\" " +
+        " NULL)) \"SGA_PGA_TOT\" " +
         " FROM " +
         " (SELECT snap_id, " +
         "    instance_number, " +
