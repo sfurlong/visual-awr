@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
+import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.utils.SessionMetaData;
 
@@ -98,8 +99,10 @@ public class ChartFilePanel extends JPanel {
         try {
 
             if (!AWR_FILE_NAME.equals(selectedFile)) {
+                AWRData.getInstance().clearAWRData();
                 _awrParser = new ReadAWRMinerFile();
                 _awrParser.parse(selectedFile);
+                _awrParser.parseMemData(selectedFile);
                 AWR_FILE_NAME = selectedFile;
                 if (SessionMetaData.getInstance().debugOn()) {
                     _awrParser.dumpData();
@@ -107,14 +110,17 @@ public class ChartFilePanel extends JPanel {
             }
 
             //Chart the data
-            AWRData awrData = _awrParser.getAWRData();
             String oracleMetricName = (String)jComboBox_metricName.getSelectedItem();
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
-            if (awrData.awrMetricExists(metricName)) {
-                AWRTimeSeriesChart cpuChart =
-                    new AWRTimeSeriesChart(metricName, awrData);
+            if (AWRData.getInstance().awrMetricExists(metricName)) {
+                if (metricName.equals("SGA_PGA_TOT")) {
+                    //Get the memory Data
+                    new AWRMemoryTimeSeriesChart(metricName);
+                } else {
+                    new AWRTimeSeriesChart(metricName);
+                }
             } else {
                 JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                               metricName +
@@ -126,6 +132,8 @@ public class ChartFilePanel extends JPanel {
         } catch (Exception ex) {
             //SetCursor
             RootFrame.stopWaitCursor();
+            
+            ex.printStackTrace();
 
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                           ex.getLocalizedMessage(), "Error",
