@@ -29,6 +29,7 @@ import javax.swing.JTextArea;
 
 import javax.swing.JTextField;
 
+import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
 import org.altaprise.vawr.ui.RootFrame;
 
@@ -44,8 +45,6 @@ public class AWRQueryPanel extends WizardContentBasePanel {
     private JLabel jLabel_dbId = new JLabel("Databse ID:");
     private JLabel jLabel_startSnapId = new JLabel("Start Snapshot ID:");
     private JLabel jLabel_endSnapId = new JLabel("End Snapshot ID:");
-    private static DBRecSet _awrRecSetData = null;
-    private static ArrayList<String> _awrStringRecs = new ArrayList<String>();
 
     public AWRQueryPanel() {
         super();
@@ -106,10 +105,6 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.add(scrollPaneTextArea, null);
     }
 
-    public static ArrayList<String> getAWRData() {
-        return _awrStringRecs;
-    }
-
     protected void doNextOperation() {
         this.jTextField_dbId.setText(SelectDBIdPanel.getSelectedDBId());
         this.jTextField_startSnapId.setText(SnapIdSelectPanel.getStartSnapId());
@@ -118,8 +113,13 @@ public class AWRQueryPanel extends WizardContentBasePanel {
     }
 
     private void doAWRQuery() {
-        //Reset AWR Data
-        this._awrStringRecs.clear();
+        String textAreaStatus = "";
+        //Update the Status in the Text Area
+        textAreaStatus += "Running AWR Metrics Query....\n";
+        this.textArea_awrData.setText(textAreaStatus);
+
+        //First lets clear any previous AWRData
+        AWRData.getInstance().clearAWRData();
 
         SQLResolver sqlResolver = new SQLResolver();
         try {
@@ -130,44 +130,32 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                 Long.parseLong(this.jTextField_endSnapId.getText());
 
             this.textArea_awrData.setText("");
-            _awrRecSetData =
+            DBRecSet awrRecSetData =
                     sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getMainAWRMetricsSQL(dbId,
                                                                                         startSnapId,
                                                                                         endSnapId));
+            //Update the Status in the Text Area
+            textAreaStatus += "Parsing AWR Metrics....\n";
+            this.textArea_awrData.setText(textAreaStatus);
 
-            for (int i = 0; i < 1; i++) {
-                String rec = "";
-                DBRec dbRec = _awrRecSetData.getRec(i);
-                for (int j = 0; j < dbRec.size(); j++) {
-                    String val = dbRec.getAttrib(j).getName();
-                    if (j < dbRec.size()) {
-                        rec += val + " ";
-                    }
-                }
-                if (i == 0) {
-                    this.textArea_awrData.setText(this.textArea_awrData.getText() +
-                                                  rec);
-                } else {
-                    this.textArea_awrData.setText(this.textArea_awrData.getText() +
-                                                  "\n" +
-                            rec);
-                }
-                this._awrStringRecs.add(rec);
-            }
-            for (int i = 0; i < _awrRecSetData.getSize(); i++) {
-                String rec = "";
-                DBRec dbRec = _awrRecSetData.getRec(i);
-                for (int j = 0; j < dbRec.size(); j++) {
-                    String val = dbRec.getAttrib(j).getValue();
-                    if (j < dbRec.size()) {
-                        rec += val + " ";
-                    }
-                }
-                this.textArea_awrData.setText(this.textArea_awrData.getText() +
-                                              "\n" +
-                        rec);
-                this._awrStringRecs.add(rec);
-            }
+            AWRData.getInstance().parseDataRecords(awrRecSetData);
+
+            //Update the Status in the Text Area
+            textAreaStatus += "Running AWR Memory Metrics Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+
+            DBRecSet awrMemoryRecSetData =
+                    sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getMemoryUtilizationSQL(dbId, startSnapId, endSnapId));
+            //Update the Status in the Text Area
+            textAreaStatus += "Parsing AWR Memory Metrics Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+
+            AWRData.getInstance().parseMemoryDataRecords(awrMemoryRecSetData);
+
+            //Set the Text Area to the AWR Metrics
+            String awrDataTextString = AWRData.getInstance().getAWRDataTextString();
+            this.textArea_awrData.setText(AWRData.getInstance().getAWRDataTextString());
+
         } catch (Exception ex) {
             daiBeans.daiDetailInfoDialog dialog =
                 new daiBeans.daiDetailInfoDialog(null, "Error", true,
@@ -197,7 +185,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                                           "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        //Clear the previous AWRData
+
         this.doAWRQuery();
     }
 }
