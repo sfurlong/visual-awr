@@ -97,7 +97,7 @@ public class AWRMetrics {
         _awrMetrics.put("S_BLK_R_LAT", new AWRMetric("S_BLK_R_LAT", "Average Synchronous Single-Block Read Latency", "Milliseconds", "2144"));
         _awrMetrics.put("CELL_IO_INT_MB", new AWRMetric("CELL_IO_INT_MB", "Cell Physical IO Interconnect Bytes", "Bytes", "2156"));
         _awrMetrics.put("CELL_IO_INT_MB_MAX", new AWRMetric("CELL_IO_INT_MB_MAX", "Cell Physical IO Interconnect Bytes", "Bytes", "2156", "MAX"));
-        _awrMetrics.put("SGA_PGA_TOT", new AWRMetric("SGA_PGA_TOT", "SGA+PGA", "GB", ""));
+        _awrMetrics.put("SGA_PGA_TOT", new AWRMetric("SGA_PGA_TOT", "Memory Utilization", "GB", ""));
         
         //Create the a map of AWRMiner Names to Oracle AWR Names
         for (Object key : _awrMetrics.keySet()) {
