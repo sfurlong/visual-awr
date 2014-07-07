@@ -39,9 +39,9 @@
   <target name="version" description="Replaces the version# in code and readme">
     <replace dir="${build.root.dir}/src" value="${visual-awr.version.num}">
       <include name="**/*.java"/>
-      <replacetoken>@VERSION-NUM@</replacetoken>
+      <replacetoken>${visual-awr.version.old}</replacetoken>
     </replace>
-    <replace file="${build.root.dir}/vawr-readme.html" token="@VERSION-NUM@" value="${visual-awr.version.num}"/>
+    <replace file="${build.root.dir}/vawr-readme.html" token="${visual-awr.version.old}" value="${visual-awr.version.num}"/>
   </target>
   
   <target name="build" description="Compile Java source files" depends="version">
