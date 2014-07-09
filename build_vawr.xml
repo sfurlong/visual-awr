@@ -23,24 +23,16 @@
     <path refid="library.Ojdbc5.jar"/>
   </path>
   
-  <!-- TARGET INIT -->
-  <target name="init">
-    <tstamp/>
-    <mkdir dir="${output.dir}"/>
-  </target>
-  
+   
   <!-- TARGET CLEAN -->
   <target name="clean" description="Clean the project">
     <delete includeemptydirs="true" quiet="true">
-      <fileset dir="${output.dir}" includes="**/*"/>
+      <fileset dir="${build.root.dir}/classes" includes="**/*"/>
     </delete>
   </target>
   
   <target name="version" description="Replaces the version# in code and readme">
-    <replace dir="${build.root.dir}/src" value="${visual-awr.version.num}">
-      <include name="**/*.java"/>
-      <replacetoken>${visual-awr.version.old}</replacetoken>
-    </replace>
+    <replace file="${build.root.dir}/src/org/altaprise/vawr/ui/RootFrame.java" token="${visual-awr.version.old}" value="${visual-awr.version.num}"/>
     <replace file="${build.root.dir}/vawr-readme.html" token="${visual-awr.version.old}" value="${visual-awr.version.num}"/>
   </target>
   
@@ -54,7 +46,7 @@
   <target name="jar" description="Build the Jar file(s)">
    <delete file="${build.root.dir}/vawr.jar"/>
     <jar jarfile="${build.root.dir}/lib/vawr.jar"
-         basedir="${build.root.dir}/classes"/>
+         basedir="${build.root.dir}/classes" />
   </target>
   
   <target name="dist" description="create the distribution" depends="jar">
@@ -62,9 +54,6 @@
     <mkdir dir="${build.root.dir}/dist"/>
     <mkdir dir="${build.root.dir}/dist/lib"/>
     
-    <!-- Obfiscate
-    <antcall target="yguard"/>
-    -->
     <copy todir="${build.root.dir}/dist/lib">
       <fileset dir="${build.root.dir}/lib">
         <include name="jfreechart*.jar"/>
@@ -74,6 +63,10 @@
         <include name="*.gif"/>
       </fileset>
     </copy>
+
+    <!-- Obfiscate -->
+    <antcall target="obfuscate"/>
+    <delete file="${build.root.dir}/dist/lib/vawr.jar"/>
     
     <copy todir="${build.root.dir}/dist">
       <fileset dir="${build.root.dir}">
@@ -94,16 +87,65 @@
 
   </target>
   
-  <!-- TARGET YGUARD -->
-  <target name="yguard" description="Obfiscates the files">
-    <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask"
-             classpath="yguard.jar"/>
-    <!-- the following can be adjusted to your needs -->
-    <yguard>
-      <inoutpair in="${build.root.dir}/lib/vawr.jar" out="${build.root.dir}/dist/lib/vawr.jar"/>
-      <shrink logfile="${shrinklog}">
-      </shrink>
-    </yguard>
-  </target>
+  <!-- TARGET OBFUSCATE -->
+  <target name="obfuscate" description="Obfuscate the code">
+  <taskdef resource="proguard/ant/task.properties"
+           classpath="${build.root.dir}/lib/proguard.jar" />
+  
+  <proguard>
+
+    <!-- Specify the input jars, output jars, and library jars. -->
+
+    -injars '${build.root.dir}/dist/lib/vawr.jar'
+    -outjars '${build.root.dir}/dist/lib/vawr-o.jar'
+    
+    -libraryjars 'D:\oracle\Java\jre7\lib\rt.jar'
+    -libraryjars '${build.root.dir}\dist\lib\jcommon-1.0.22.jar'
+    -libraryjars '${build.root.dir}\dist\lib\jfreechart-1.0.17.jar'
+    -libraryjars '${build.root.dir}\dist\lib\ojdbc5.jar'
+    
+    -dontshrink
+
+
+    <!-- Keep - Applications. Keep all application classes, along with their 'main' -->
+    <!-- methods.                                                                   -->
+    -keepclasseswithmembers public class * {
+        public static void main(java.lang.String[]);
+    }
+    
+    -keepclassmembers class * implements java.io.Serializable {
+            static final long serialVersionUID;
+            static final java.io.ObjectStreamField[] serialPersistentFields;
+            private void writeObject(java.io.ObjectOutputStream);
+            private void readObject(java.io.ObjectInputStream);
+            java.lang.Object writeReplace();
+            java.lang.Object readResolve();
+    }
+    
+    <!-- Also keep - Enumerations. Keep the special static methods that are required in -->
+    <!-- enumeration classes.                                                           -->
+    -keepclassmembers enum  * {
+        public static **[] values();
+        public static ** valueOf(java.lang.String);
+    }
+    
+    <!-- Also keep - Database drivers. Keep all implementations of java.sql.Driver. -->
+    -keep class * extends java.sql.Driver
+    
+    <!-- Also keep - Swing UI L&F. Keep all extensions of javax.swing.plaf.ComponentUI, -->
+    <!-- along with the special 'createUI' method.                                      -->
+    -keep class * extends javax.swing.plaf.ComponentUI {
+        public static javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent);
+    }
+    
+    <!-- Keep names - Native method names. Keep all native class/method names.  
+    -keepclasseswithmembers,allowshrinking class * {
+        native <methods>;
+    }
+    -->
+    
+  </proguard>
+  
+</target>
 
 </project>
