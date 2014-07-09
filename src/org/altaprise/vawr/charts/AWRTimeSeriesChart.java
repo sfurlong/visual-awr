@@ -138,12 +138,16 @@ public class AWRTimeSeriesChart extends ApplicationFrame {
             Date date = awrRec.getSnapShotDateTime();
             try {
                 if (instI == racInstance) {
-                    if (SessionMetaData.getInstance().debugOn()) {
-                        //System.out.println("insert# " + i + ", inst: " + instI +
-                        //                   " " + date.toString());
-                    }
                     s1.add(new Minute(date), metricValD);
                 }
+            } catch (org.jfree.data.general.SeriesException se) {
+                System.out.println("Error plotting SnapShot: " + awrRec.getVal("SNAP") + ", Inst: " + instI +
+                                   " " + date.toString());
+                System.out.println(se.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    se.printStackTrace();
+                }
+
             } catch (Exception e) {
                 System.out.println("insert# " + i + ", inst: " + instI +
                                    " " + date.toString());
