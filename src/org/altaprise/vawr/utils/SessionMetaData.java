@@ -200,31 +200,8 @@ public class SessionMetaData {
     private SessionMetaData() {
         _serverLogin = "system";
         _serverPasswd = "oracle";
-        loadVersionInfo();
     }
 
-    private void loadVersionInfo() {
-        try {
-            String filePath = System.getProperty("APP_HOME") + "/version.txt";
-            Properties prop = new Properties();
-            prop.load(new FileInputStream(filePath));
-            _build = prop.getProperty("buildDate");
-            _version = prop.getProperty("versionNumber");
-            _patchNum = prop.getProperty("patchNumber");
-        } catch (Exception e) {
-            Logger.getInstance().logError("Could not find client version file.");
-        } finally {
-            if (_build == null) {
-                _build = "??";
-            }
-            if (_version == null) {
-                _version = "??";
-            }
-            if (_patchNum == null) {
-                _patchNum = "??";
-            }
-        }
-    }
 
     //Declaration of the Private Static metaData.
     //Since it's static, only one copy will exist of the instance data

@@ -16,6 +16,8 @@ set CLASSPATH=
 set CLASSPATH=%APP_HOME%\lib\jcommon-1.0.22.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\jfreechart-1.0.17.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\vawr.jar;%CLASSPATH%
+set CLASSPATH=%APP_HOME%\lib\vawr-o.jar;%CLASSPATH%
+set CLASSPATH=%APP_HOME%\lib\vawr-utils.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\ojdbc5.jar;%CLASSPATH%
 
 set path=%JAVA_HOME%\bin;%path%

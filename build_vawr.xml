@@ -44,9 +44,16 @@
   </target>
   
   <target name="jar" description="Build the Jar file(s)">
-   <delete file="${build.root.dir}/vawr.jar"/>
+   <delete file="${build.root.dir}/lib/vawr.jar"/>
+   <delete file="${build.root.dir}/lib/vawr-utils.jar"/>
     <jar jarfile="${build.root.dir}/lib/vawr.jar"
-         basedir="${build.root.dir}/classes" />
+         basedir="${build.root.dir}/classes" 
+         excludes="/org/altaprise/vawr/utils/**/*" 
+    />
+    <jar jarfile="${build.root.dir}/lib/vawr-utils.jar"
+         basedir="${build.root.dir}/classes"
+         includes="/org/altaprise/vawr/utils/**/*"
+    />
   </target>
   
   <target name="dist" description="create the distribution" depends="jar">
@@ -60,6 +67,7 @@
         <include name="jcommon*.jar"/>
         <include name="ojdbc*.jar"/>
         <include name="vawr.jar"/>
+        <include name="vawr-utils.jar"/>
         <include name="*.gif"/>
       </fileset>
     </copy>
@@ -103,6 +111,7 @@
     -libraryjars '${build.root.dir}\dist\lib\jcommon-1.0.22.jar'
     -libraryjars '${build.root.dir}\dist\lib\jfreechart-1.0.17.jar'
     -libraryjars '${build.root.dir}\dist\lib\ojdbc5.jar'
+    -libraryjars '${build.root.dir}\dist\lib\vawr-utils.jar'
     
     -dontshrink
 
