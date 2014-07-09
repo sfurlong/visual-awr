@@ -82,6 +82,11 @@ public class SQLResolver {
 
     public DBRecSet executeDynamicSQL(dbconnect dbConn,
                                       String sqlStmt) throws Exception {
+    
+        if (SessionMetaData.getInstance().debugOn()) {
+            _logger.trace(1, null, null, sqlStmt);
+        }
+    
         //Execute the SQL
         ResultSet rs = dbConn.executeSQL(sqlStmt);
         int i = 0;
