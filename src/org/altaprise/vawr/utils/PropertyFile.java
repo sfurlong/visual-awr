@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 
@@ -31,6 +30,10 @@ public class PropertyFile implements Serializable {
             _theInstance.deSerializeIt();
         }
         return _theInstance;
+    }
+    
+    public void du () {
+        
     }
 
     public void serializeIt() {
@@ -57,24 +60,18 @@ public class PropertyFile implements Serializable {
 
             System.out.println(_theInstance._propertyData);
         } catch (FileNotFoundException fnfe) {
-            System.out.println("file not found.");
+            System.out.println("proerty file not found.");
             fnfe.printStackTrace();
         } catch (InvalidClassException ice) {
-            System.out.println("property file class version mismatch.");
-            ice.printStackTrace();
+            System.out.println("property file class version mismatch. You must recreate Application Settings");
+            if (SessionMetaData.getInstance().debugOn()) {
+                ice.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             this.serializeIt();
         }
     }
-    /*
-    Iterator it = mp.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry)it.next();
-            System.out.println(pairs.getKey() + " = " + pairs.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
-*/
 
     public ArrayList<DBConnectionProps> getDBConnectionProps() {
         ArrayList<DBConnectionProps> ret = new ArrayList<DBConnectionProps>();
