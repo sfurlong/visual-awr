@@ -111,7 +111,6 @@ public class dbconnect {
             throw new Exception(msg);
         }
         try {
-            _logger.trace(1, null, null, SQLStmt);
 
             //Perform auditing on update and insert statements.
             String sqlCmd = SQLStmt.trim().substring(0, 6);
