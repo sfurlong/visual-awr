@@ -75,7 +75,6 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
 
     private void jbInit() throws Exception {
         this.setLayout(null);
-        this.setSize(new Dimension(693, 422));
 
         scrollPane_startSnapId.setBounds(new Rectangle(55, 70, 200, 280));
         scrollPane_endSnapId.setBounds(new Rectangle(345, 70, 200, 280));
