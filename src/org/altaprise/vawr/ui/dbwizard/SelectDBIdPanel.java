@@ -65,7 +65,6 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
 
     private void jbInit() throws Exception {
         this.setLayout(null);
-        this.setSize(new Dimension(693, 362));
 
         scrollPane_connNames.setBounds(new Rectangle(125, 60, 250, 255));
         scrollPane_connNames.setSize(new Dimension(250, 256));
