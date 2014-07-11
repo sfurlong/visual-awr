@@ -6,6 +6,7 @@ import dai.shared.businessObjs.DBRecSet;
 
 import daiBeans.daiComboBox;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 
@@ -60,8 +61,7 @@ public class DBConnectPanel extends WizardContentBasePanel {
 
     private void jbInit() throws Exception {
         this.setLayout(null);
-        this.setSize(new Dimension(660, 520));
-
+     
         jComboBox_dbConnect.setBounds(new Rectangle(105, 65, 250, 20));
         jButton_connectDB.setBounds(new Rectangle(365, 65, 75, 21));
         jButton_connectDB.addActionListener(new ActionListener() {
@@ -71,8 +71,8 @@ public class DBConnectPanel extends WizardContentBasePanel {
             });
         this.scrollPaneTextArea.setBounds(new Rectangle(45, 100, 505, 135));
         jLabel1.setBounds(new Rectangle(105, 50, 155, 15));
-        this.add(this.scrollPaneTextArea, null);
 
+        this.add(this.scrollPaneTextArea, null);
         this.add(jLabel1, null);
         this.add(jButton_connectDB, null);
         this.add(jComboBox_dbConnect, null);
