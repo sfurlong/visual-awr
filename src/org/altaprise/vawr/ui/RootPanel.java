@@ -78,7 +78,7 @@ public class RootPanel extends JPanel {
         //The following line enables to use scrolling tabs.
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setTabPlacement(JTabbedPane.LEFT);
-        tabbedPane.setPreferredSize(new Dimension(760, 455));
+        //tabbedPane.setPreferredSize(new Dimension(760, 455));
     }
 
     protected JComponent makeTextPanel(String text) {
