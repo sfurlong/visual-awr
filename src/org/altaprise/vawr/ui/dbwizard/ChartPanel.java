@@ -61,7 +61,7 @@ public class ChartPanel extends WizardContentBasePanel {
 
     private void jbInit() throws Exception {
         this.setLayout(null);
-        this.setSize(new Dimension(660, 520));
+        //this.setSize(new Dimension(660, 520));
 
         jComboBox_metrics.setBounds(new Rectangle(70, 65, 320, 20));
         jComboBox_metrics.setVisible(true);
