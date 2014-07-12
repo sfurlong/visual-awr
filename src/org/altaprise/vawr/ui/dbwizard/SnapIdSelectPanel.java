@@ -97,7 +97,9 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
         this.add(jButton1, null);
         this.add(scrollPane_startSnapId, null);
         this.add(scrollPane_endSnapId, null);
-
+        
+        //Set the Wizard Label
+        this.setPanelLabel("3. Select the Begining and Ending Snapshot Ids for reporting.");
 
     }
 

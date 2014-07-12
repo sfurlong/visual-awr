@@ -78,6 +78,9 @@ public class ChartPanel extends WizardContentBasePanel {
         this.add(jButton_chartMetric, null);
         this.add(jComboBox_metrics, null);
         this.setComboBoxOptions();
+        
+        //Set the Wizard Label
+        this.setPanelLabel("5. Select a metric and chart it.");
     }
 
     private void setComboBoxOptions() {

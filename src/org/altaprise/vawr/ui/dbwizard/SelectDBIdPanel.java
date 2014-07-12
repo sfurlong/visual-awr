@@ -80,6 +80,9 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
         this.add(jLabel1, null);
         this.add(jButton1, null);
         this.add(scrollPane_connNames, null);
+        
+        //Set the Wizard Label
+        this.setPanelLabel("2. Select the Database ID to collect metrics from.");
     }
 
     public static String getSelectedDBId() {

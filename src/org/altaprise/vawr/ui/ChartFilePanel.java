@@ -13,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import javax.swing.border.EtchedBorder;
+
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
@@ -25,6 +27,9 @@ public class ChartFilePanel extends JPanel {
     private JButton jButton_selectFile = new JButton();
     private JButton jButton_chart = new JButton();
     private JComboBox jComboBox_metricName = new JComboBox();
+    private JPanel  jPanel_panelTitle = new JPanel();
+    private JPanel jPanel_contentPanel = new JPanel();
+    private JLabel jLabel_panelTitle = new JLabel();
 
     private static String AWR_FILE_NAME = "INITIALIZED";
     private ReadAWRMinerFile _awrParser = null;
@@ -43,32 +48,48 @@ public class ChartFilePanel extends JPanel {
     /**the JbInit method
      */
     public void jbInit() throws Exception {
-        this.setLayout(null);
-        this.setSize(new Dimension(706, 300));
-        this.add(jComboBox_metricName, null);
-        this.add(jButton_chart, null);
-        this.add(jButton_selectFile, null);
-        this.add(jTextField_fileName, null);
+        BorderLayout borderLayout = new BorderLayout();
+        this.setLayout(borderLayout);
 
+        jLabel_panelTitle.setText("Select an AWRMiner file, then chart an AWR metric.");
+        jLabel_panelTitle.setBounds(new Rectangle(20, 5, 400, 30));
+        jLabel_panelTitle.setFont(new Font("Arial", 1, 16));
 
-        jTextField_fileName.setBounds(new Rectangle(40, 40, 480, 20));
+        jPanel_panelTitle.setLayout(null);
+        jPanel_panelTitle.setBackground(new Color(247, 247, 247));
+        jPanel_panelTitle.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        jPanel_panelTitle.setMinimumSize(new Dimension(48, 50));
+        jPanel_panelTitle.setPreferredSize(new Dimension(48, 50));
+        jPanel_panelTitle.add(jLabel_panelTitle, null);
+        
+        jPanel_contentPanel.setLayout(null);
+        //jPanel_contentPanel.setSize(new Dimension(706, 300));
+        jPanel_contentPanel.add(jComboBox_metricName, null);
+        jPanel_contentPanel.add(jButton_chart, null);
+
+        jPanel_contentPanel.add(jButton_selectFile, null);
+        jPanel_contentPanel.add(jTextField_fileName, null);
+        this.add(jPanel_panelTitle, BorderLayout.NORTH);
+
+        this.add(jPanel_contentPanel, BorderLayout.CENTER);
+        jTextField_fileName.setBounds(new Rectangle(40, 60, 480, 20));
         String appHome = SessionMetaData.getInstance().getDaiHome();
         //        jTextField_fileName.setText(appHome + "\\testing\\awr-hist-389926331-U-775-985.out");
         jButton_selectFile.setText("Select File");
-        jButton_selectFile.setBounds(new Rectangle(525, 40, 85, 20));
+        jButton_selectFile.setBounds(new Rectangle(525, 60, 85, 20));
         jButton_selectFile.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_selectFile_actionPerformed(e);
                 }
             });
         jButton_chart.setText("Chart Metric");
-        jButton_chart.setBounds(new Rectangle(345, 90, 95, 20));
+        jButton_chart.setBounds(new Rectangle(345, 110, 95, 20));
         jButton_chart.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_chart_actionPerformed(e);
                 }
             });
-        jComboBox_metricName.setBounds(new Rectangle(40, 90, 300, 20));
+        jComboBox_metricName.setBounds(new Rectangle(40, 110, 300, 20));
 
         setComboBoxOptions();
     }

@@ -1,28 +1,36 @@
 package org.altaprise.vawr.ui.dbwizard;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.LayoutManager;
 
 import java.awt.Rectangle;
 
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
 
 public class WizardRootPanel extends JPanel {
 
-    //DBConnectPanel dbChartTab = new DBConnectPanel();
     private JButton jButton_previous = new JButton("Previous");
     private JButton jButton_next = new JButton("Next");
 
-    ArrayList<WizardContentBasePanel> WIZARD_PANEL_DECK =
-        new ArrayList<WizardContentBasePanel>();
+    ArrayList<WizardContentBasePanel> WIZARD_PANEL_DECK = new ArrayList<WizardContentBasePanel>();
     int CURRENT_PANEL_NUM = 0;
+    private JPanel jPanel_panelTitle = new JPanel();
+    private JPanel jPanel_panelContent = new JPanel();
+    private JLabel jLabel_panelTitle = new JLabel();
+    private JPanel jPanel_panelNavigation = new JPanel();
 
     public WizardRootPanel() {
         super();
@@ -44,118 +52,84 @@ public class WizardRootPanel extends JPanel {
     public WizardRootPanel(LayoutManager layoutManager, boolean b) {
         super(layoutManager, b);
     }
-
+        
     private void jbInit() throws Exception {
-        this.setLayout(null);
-        this.setSize(new Dimension(760, 550));
+        BorderLayout borderLayout = new BorderLayout();
+        this.setLayout(borderLayout);
+        //this.setSize(new Dimension(760, 550));
+        this.setSize(new Dimension(400, 300));
         jButton_previous.setText("Previous");
-        jButton_previous.setBounds(new Rectangle(375, 410, 75, 21));
         jButton_previous.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    jButton_previous_actionPerformed(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                jButton_previous_actionPerformed(e);
+            }
+        });
         jButton_next.setText("Next");
-        jButton_next.setBounds(new Rectangle(470, 410, 75, 21));
         jButton_next.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    jButton_next_actionPerformed(e);
-                }
-            });
-        //this.add(dbChartTab, null);
+            public void actionPerformed(ActionEvent e) {
+                jButton_next_actionPerformed(e);
+            }
+        });
 
-        this.add(jButton_previous, null);
-        this.add(jButton_next, null);
+        jPanel_panelTitle.setBackground(new Color(247, 247, 247));
+        jPanel_panelTitle.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        jPanel_panelTitle.setMinimumSize(new Dimension(48, 50));
+        jPanel_panelTitle.setPreferredSize(new Dimension(48, 50));
+        jPanel_panelTitle.setLayout(null);
+        jLabel_panelTitle.setText("jLabel1");
+        jLabel_panelTitle.setBounds(new Rectangle(15, 10, 530, 30));
+        jLabel_panelTitle.setFont(new Font("Arial", 1, 16));
+        jPanel_panelNavigation.setBounds(new Rectangle(0, 500, 760, 50));
+        jPanel_panelNavigation.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        jPanel_panelNavigation.add(jButton_previous, null);
+        jPanel_panelNavigation.add(jButton_next, null);
         WIZARD_PANEL_DECK.add(new DBConnectPanel());
         WIZARD_PANEL_DECK.add(new SelectDBIdPanel());
         WIZARD_PANEL_DECK.add(new SnapIdSelectPanel());
         WIZARD_PANEL_DECK.add(new AWRQueryPanel());
         WIZARD_PANEL_DECK.add(new ChartPanel());
-        this.addWizardPanelToUI(WIZARD_PANEL_DECK.get(0), true);
-        this.addWizardPanelToUI(WIZARD_PANEL_DECK.get(1), false);
-        this.addWizardPanelToUI(WIZARD_PANEL_DECK.get(2), false);
-        this.addWizardPanelToUI(WIZARD_PANEL_DECK.get(3), false);
-        this.addWizardPanelToUI(WIZARD_PANEL_DECK.get(4), false);
-
+        jPanel_panelContent.setBackground(new Color(247, 200, 147));
+        jPanel_panelContent = WIZARD_PANEL_DECK.get(0);
+        this.add(this.jPanel_panelContent, BorderLayout.CENTER);
+        jPanel_panelTitle.add(jLabel_panelTitle, null);
+        this.add(jPanel_panelTitle, BorderLayout.NORTH);
+        this.add(jPanel_panelNavigation, BorderLayout.SOUTH);
+        jLabel_panelTitle.setText(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM).getPanelLabel());
+        jButton_previous.setEnabled(false);
     }
 
-    private void addWizardPanelToUI(JPanel panel, boolean isVisible) {
-        panel.setBounds(new Rectangle(5, 35, 585, 350));
-        this.add(panel);
-        if (isVisible) {
-            panel.setVisible(true);
-        } else {
-            panel.setVisible(false);
-        }
-    }
-
+    
     private void jButton_next_actionPerformed(ActionEvent e) {
 
-        if (CURRENT_PANEL_NUM == 0) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(true);
-            WIZARD_PANEL_DECK.get(1).doNextOperation();
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            WIZARD_PANEL_DECK.get(4).setVisible(false);
-            CURRENT_PANEL_NUM = 1;
-        } else if (CURRENT_PANEL_NUM == 1) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(true);
-            WIZARD_PANEL_DECK.get(2).doNextOperation();
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            WIZARD_PANEL_DECK.get(4).setVisible(false);
-            CURRENT_PANEL_NUM = 2;
-        } else if (CURRENT_PANEL_NUM == 2) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(true);
-            WIZARD_PANEL_DECK.get(3).doNextOperation();
-            WIZARD_PANEL_DECK.get(4).setVisible(false);
-            CURRENT_PANEL_NUM = 3;
-        } else if (CURRENT_PANEL_NUM == 3) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            WIZARD_PANEL_DECK.get(4).setVisible(true);
-            WIZARD_PANEL_DECK.get(4).doNextOperation();
-            CURRENT_PANEL_NUM = 4;
+        if (CURRENT_PANEL_NUM < WIZARD_PANEL_DECK.size()-1) {
+            jButton_next.setEnabled(true);
+            jButton_previous.setEnabled(true);
+            this.remove(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM));
+            CURRENT_PANEL_NUM++;
+            this.add(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM), BorderLayout.CENTER);
+            jLabel_panelTitle.setText(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM).getPanelLabel());
+            this.revalidate();
+            this.repaint();
+            WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM).doNextOperation();
+        } else {
+            jButton_next.setEnabled(false);
         }
     }
 
     private void jButton_previous_actionPerformed(ActionEvent e) {
-        if (CURRENT_PANEL_NUM == 0) {
-            //do nothing
-        } else if (CURRENT_PANEL_NUM == 1) {
-            WIZARD_PANEL_DECK.get(0).setVisible(true);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            CURRENT_PANEL_NUM = 0;
 
-        } else if (CURRENT_PANEL_NUM == 2) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(true);
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            CURRENT_PANEL_NUM = 1;
-
-        } else if (CURRENT_PANEL_NUM == 3) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(true);
-            WIZARD_PANEL_DECK.get(3).setVisible(false);
-            CURRENT_PANEL_NUM = 2;
-        } else if (CURRENT_PANEL_NUM == 4) {
-            WIZARD_PANEL_DECK.get(0).setVisible(false);
-            WIZARD_PANEL_DECK.get(1).setVisible(false);
-            WIZARD_PANEL_DECK.get(2).setVisible(false);
-            WIZARD_PANEL_DECK.get(3).setVisible(true);
-            WIZARD_PANEL_DECK.get(4).setVisible(false);
-            CURRENT_PANEL_NUM = 3;
+        if (CURRENT_PANEL_NUM > 0) {
+            jButton_previous.setEnabled(true);
+            jButton_next.setEnabled(true);
+            this.remove(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM));
+            CURRENT_PANEL_NUM--;
+            this.add(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM), BorderLayout.CENTER);
+            jLabel_panelTitle.setText(WIZARD_PANEL_DECK.get(CURRENT_PANEL_NUM).getPanelLabel());
+            this.revalidate();
+            this.repaint();
+        } else {
+            jButton_previous.setEnabled(false);
         }
+
     }
 }

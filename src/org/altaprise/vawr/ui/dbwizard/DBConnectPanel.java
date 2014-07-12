@@ -78,6 +78,9 @@ public class DBConnectPanel extends WizardContentBasePanel {
         this.add(jComboBox_dbConnect, null);
         
         setDBConnections();
+        
+        //Set the Wizard Label
+        this.setPanelLabel("1. Select the DB Connection for collection AWR data.");
     }
 
     public static String getDBConnectName() {

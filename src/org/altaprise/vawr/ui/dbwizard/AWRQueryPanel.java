@@ -103,6 +103,9 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.add(jTextField_dbId, null);
         this.add(jButton_doQuery, null);
         this.add(scrollPaneTextArea, null);
+        
+        //Set the Wizard Label
+        this.setPanelLabel("4. Query the database for AWR data.");
     }
 
     protected void doNextOperation() {
