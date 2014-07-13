@@ -68,7 +68,7 @@ public class AWRMetrics {
         _awrMetrics.put("LOGONS_S", new AWRMetric("LOGONS_S", "Logons Per Sec", "Logons Per Second", "2018"));
         _awrMetrics.put("LOGONS_TOTAL", new AWRMetric("LOGONS_TOTAL", "Current Logons Count", "Logons", "2103"));
         _awrMetrics.put("EXEC_S", new AWRMetric("EXEC_S", "Executions Per Sec", "Executes Per Second", "2121"));
-        _awrMetrics.put("HARD_P_S", new AWRMetric("HARD_P_S", "Hard Parse Count Per Sec\n", "Parses Per Second", "2046"));
+        _awrMetrics.put("HARD_P_S", new AWRMetric("HARD_P_S", "Hard Parse Count Per Sec", "Parses Per Second", "2046"));
         _awrMetrics.put("L_READS_S", new AWRMetric("L_READS_S", "Logical Reads Per Sec", "Reads Per Second", "2030"));
         _awrMetrics.put("COMMITS_S", new AWRMetric("COMMITS_S", "User Commits Per Sec", "Commits Per Second", "2022"));
         _awrMetrics.put("READ_MB_S", new AWRMetric("READ_MB_S", "Physical Read Total Bytes Per Sec", "Bytes Per Second", "2093"));
