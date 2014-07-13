@@ -2,6 +2,7 @@ package org.altaprise.vawr.charts;
 
 import java.awt.BasicStroke;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
@@ -42,20 +44,24 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
 
-public class AWRMemoryTimeSeriesChart extends ApplicationFrame {
+public class AWRMemoryTimeSeriesChart extends JFrame {
 
     JPanel _outerP = new JPanel();
     JScrollPane _thePanel = new JScrollPane(_outerP);
+    BorderLayout borderLayout = new BorderLayout();
 
     public AWRMemoryTimeSeriesChart(String metricName) {
-        super("Oracle DB Performance Analytics");
+        super("Visual AWR Charting");
+
+        this.setLayout(borderLayout);
+        this.setSize(new java.awt.Dimension(800, 800));
 
         _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
 
         for (int i = 0; i < AWRData.getInstance().getNumRACInstances(); i++) {
-            
-            int racInstNum = i+1;
+
+            int racInstNum = i + 1;
 
             TimeSeriesCollection xyDataset = createDataset(racInstNum, metricName);
 
@@ -63,15 +69,12 @@ public class AWRMemoryTimeSeriesChart extends ApplicationFrame {
 
             ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
 
-            chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+            chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
 
             _outerP.add(chartPanel);
         }
 
-        this.setContentPane(_thePanel);
-
-        this.pack();
-        RefineryUtilities.centerFrameOnScreen(this);
+        this.add(_thePanel, BorderLayout.CENTER);
         this.setVisible(true);
     }
 
@@ -137,24 +140,27 @@ public class AWRMemoryTimeSeriesChart extends ApplicationFrame {
             String sga_pga_totValS = awrRec.getVal("SGA_PGA_TOT");
             String inst = awrRec.getVal("INST");
             int instI = Integer.parseInt(inst);
-            double sgaValD = Double.parseDouble(sgaValS);
-            double pgaValD = Double.parseDouble(pgaValS);
-            double sga_pga_totValD = Double.parseDouble(sga_pga_totValS);
-
-            Date date = awrRec.getSnapShotDateTime();
+            Date snapShotDate = null;
             try {
+                double sgaValD = Double.parseDouble(sgaValS);
+                double pgaValD = Double.parseDouble(pgaValS);
+                double sga_pga_totValD = Double.parseDouble(sga_pga_totValS);
+
+                snapShotDate = awrRec.getSnapShotDateTime();
                 if (instI == racInstance) {
                     if (SessionMetaData.getInstance().debugOn()) {
-                        //System.out.println("insert# " + i + ", inst: " + instI +
-                        //                   " " + date.toString());
+                        System.out.println("snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
                     }
-                    s1.add(new Minute(date), sgaValD);
-                    s2.add(new Minute(date), pgaValD);
-                    s3.add(new Minute(date), sga_pga_totValD);
+                    s1.add(new Minute(snapShotDate), sgaValD);
+                    s2.add(new Minute(snapShotDate), pgaValD);
+                    s3.add(new Minute(snapShotDate), sga_pga_totValD);
                 }
             } catch (Exception e) {
-                System.out.println("insert# " + i + ", inst: " + instI + " " + date.toString());
-                e.printStackTrace();
+                System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
+                System.out.println(e.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()){
+                    e.printStackTrace();
+                }
             }
         }
 

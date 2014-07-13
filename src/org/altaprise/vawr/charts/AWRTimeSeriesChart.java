@@ -2,6 +2,7 @@ package org.altaprise.vawr.charts;
 
 import java.awt.BasicStroke;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 
 import java.awt.event.WindowEvent;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
@@ -41,33 +43,39 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
 
-public class AWRTimeSeriesChart extends ApplicationFrame {
+public class AWRTimeSeriesChart extends JFrame {
     
     JPanel _outerP = new JPanel();
     JScrollPane _thePanel = new JScrollPane(_outerP);
+    BorderLayout borderLayout = new BorderLayout();
+    
+    public AWRTimeSeriesChart() {
+        
+    }
     
     public AWRTimeSeriesChart(String metricName) {
-        super("Oracle DB Performance Analytics");
+        super("Visual AWR Charting");
         
+        this.setLayout(borderLayout);
+        this.setSize(new java.awt.Dimension(800, 800));
         _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
         
         for (int i=0;i<AWRData.getInstance().getNumRACInstances(); i++) {
+            
+            int racInstNum = i+1;
+            
             TimeSeriesCollection xyDataset = createDataset(i+1, metricName);
             
-            JFreeChart chart = createChart(xyDataset, metricName);
+            JFreeChart chart = createChart(xyDataset, metricName, racInstNum);
 
             ChartPanel chartPanel = (ChartPanel)createChartPanel(chart);
-            
-            chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
             
             _outerP.add(chartPanel);
         }
         
-        this.setContentPane(_thePanel);
+        add(_thePanel, BorderLayout.CENTER);
         
-        this.pack();
-        RefineryUtilities.centerFrameOnScreen(this);
         this.setVisible(true);
     }
 
@@ -124,8 +132,9 @@ public class AWRTimeSeriesChart extends ApplicationFrame {
      */
     private TimeSeriesCollection createDataset(int racInstance, String awrMetric) {
 
+        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
-        TimeSeries s1 = new TimeSeries("Instance " + racInstance);
+        TimeSeries s1 = new TimeSeries(metricLabel);
 
         ArrayList<AWRRecord> awrRecords = AWRData.getInstance().getAWRRecordArray();
         for (int i = 0; i < awrRecords.size(); i++) {
@@ -171,15 +180,15 @@ public class AWRTimeSeriesChart extends ApplicationFrame {
      *
      * @return A chart.
      */
-    private static JFreeChart createChart(XYDataset dataset, String metricName) {
+    private static JFreeChart createChart(XYDataset dataset, String metricName, int racInstNum) {
 
-        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName);
-        String chartYAxisLabel = AWRMetrics.getInstance().getMetricRangeDescription(metricName);
+        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName) + " Instance-" + racInstNum;;
+        String metricRangeName = AWRMetrics.getInstance().getMetricRangeDescription(metricName);
         JFreeChart chart =
             ChartFactory.createTimeSeriesChart(chartTitle,
                 // title
                 "Date", // x-axis label
-                chartYAxisLabel, // y-axis label
+                metricRangeName, // y-axis label
                 dataset, // data
                 true, // create legend?
                 true, // generate tooltips?
