@@ -6,6 +6,7 @@ import dai.shared.businessObjs.DBRecSet;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -89,6 +90,23 @@ public class AWRData {
         }
     }
 
+    public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
+        AWRRecord awrRec = _dataRecords.get(snapId+"-"+racInstNum);
+        return awrRec;    
+    }
+    
+    public LinkedHashSet<String> getUniqueSnapshotIds() {
+        LinkedHashSet<String> snapIdSet = new LinkedHashSet<String>();
+        
+        for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
+            AWRRecord awrRec = entry.getValue();
+            String snapId = awrRec.getSnapId();
+            snapIdSet.add(snapId);
+        }
+        
+        return snapIdSet;
+    }
+    
     public void parseMemoryDataRecords(DBRecSet recSet) {
 /*
         snap_id, " +
