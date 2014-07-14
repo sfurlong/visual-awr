@@ -9,10 +9,10 @@ import java.awt.event.WindowEvent;
 
 import java.text.SimpleDateFormat;
 
-import java.util.ArrayList;
-
 import java.util.Date;
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -44,38 +44,42 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
 
 public class AWRTimeSeriesChart extends JFrame {
-    
+
     JPanel _outerP = new JPanel();
     JScrollPane _thePanel = new JScrollPane(_outerP);
     BorderLayout borderLayout = new BorderLayout();
-    
+    int _totalNumRacInstances = 0;
+
     public AWRTimeSeriesChart() {
-        
+
     }
-    
+
     public AWRTimeSeriesChart(String metricName) {
         super("Visual AWR Charting");
-        
+
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
         _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
-        
-        for (int i=0;i<AWRData.getInstance().getNumRACInstances(); i++) {
-            
-            int racInstNum = i+1;
-            
-            TimeSeriesCollection xyDataset = createDataset(i+1, metricName);
-            
+        _totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
+
+        for (int i = 0; i < _totalNumRacInstances; i++) {
+
+            int racInstNum = i + 1;
+
+            String racInstNumS = Integer.toString(racInstNum);
+
+            TimeSeriesCollection xyDataset = createDataset(racInstNumS, metricName);
+
             JFreeChart chart = createChart(xyDataset, metricName, racInstNum);
 
-            ChartPanel chartPanel = (ChartPanel)createChartPanel(chart);
-            
+            ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
+
             _outerP.add(chartPanel);
         }
-        
+
         add(_thePanel, BorderLayout.CENTER);
-        
+
         this.setVisible(true);
     }
 
@@ -85,11 +89,8 @@ public class AWRTimeSeriesChart extends JFrame {
     {
         // set a theme using the new shadow generator feature available in
         // 1.0.14 - for backwards compatibility it is not enabled by default
-        ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow",
-                                                          true));
+        ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
     }
-
-
 
 
     /**
@@ -98,19 +99,17 @@ public class AWRTimeSeriesChart extends JFrame {
      * @return A panel.
      */
     public static JPanel createChartPanel(JFreeChart chart) {
-        
+
 
         ChartPanel panel = new ChartPanel(chart);
-        
+
         int numSeries = panel.getChart().getXYPlot().getSeriesCount();
 
         for (int i = 0; i < numSeries; i++) {
             //panel.getChart().getXYPlot().getRenderer().setSeriesPaint(1, legend.getColor());
-            panel.getChart().getXYPlot().getRenderer().setSeriesStroke(i,
-                                                                       new BasicStroke(1.0f));
+            panel.getChart().getXYPlot().getRenderer().setSeriesStroke(i, new BasicStroke(1.0f));
             //panel.getChart().getXYPlot().getRenderer().setseriess.setSeriesShapesVisible(1, false);
-            XYLineAndShapeRenderer r =
-                (XYLineAndShapeRenderer)panel.getChart().getXYPlot().getRenderer();
+            XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) panel.getChart().getXYPlot().getRenderer();
             r.setSeriesShapesVisible(i, false);
         }
 
@@ -120,58 +119,72 @@ public class AWRTimeSeriesChart extends JFrame {
     }
 
     public void windowClosing(final WindowEvent event) {
-            if (event.getWindow() == this) {
-                dispose();
-            }
+        if (event.getWindow() == this) {
+            dispose();
         }
+    }
 
-    /**
-     * Creates a dataset, consisting of two series of monthly data.
-     *
-     * @return The dataset.
-     */
-    private TimeSeriesCollection createDataset(int racInstance, String awrMetric) {
+
+    private TimeSeriesCollection createDataset(String racInst, String awrMetric) {
 
         String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
         TimeSeries s1 = new TimeSeries(metricLabel);
 
-        ArrayList<AWRRecord> awrRecords = AWRData.getInstance().getAWRRecordArray();
-        for (int i = 0; i < awrRecords.size(); i++) {
-            AWRRecord awrRec = awrRecords.get(i);
-            String metricValS = awrRec.getVal(awrMetric.toUpperCase());
-            String inst = awrRec.getVal("INST");
-            int instI = Integer.parseInt(inst);
-            double metricValD = Double.parseDouble(metricValS);
+        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
+        Iterator iter = snapshotIds.iterator();
+        while (iter.hasNext()) {
+            String snapshotId = (String) iter.next();
+            String metricValS = "0.0";
+            Date snapshotDate = null;
 
-            Date date = awrRec.getSnapShotDateTime();
             try {
-                if (instI == racInstance) {
-                    s1.add(new Minute(date), metricValD);
+                AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapshotId, racInst);
+
+                if (awrRec != null) {
+                    metricValS = awrRec.getVal(awrMetric.toUpperCase());
+                    snapshotDate = awrRec.getSnapShotDateTime();
+                } else {
+                    //How do we get the snapshot Id?
+                    snapshotDate = this.getMissingSnapshotDate(snapshotId);
+                    if (snapshotDate == null) {
+                        throw new Exception("Could not find the snapshot date to plot.");
+                    }
                 }
+
+                if (SessionMetaData.getInstance().debugOn()) {
+                    System.out.println("TRACE: Adding date/SnapId/InstId/val: " + snapshotDate.toString() + "/" +
+                                       snapshotId + "/" + racInst + "/" + metricValS + "/" + awrRec);
+                }
+
+                double metricValD = Double.parseDouble(metricValS);
+                s1.add(new Minute(snapshotDate), metricValD);
+
             } catch (org.jfree.data.general.SeriesException se) {
-                System.out.println("Error plotting SnapShot: " + awrRec.getVal("SNAP") + ", Inst: " + instI +
-                                   " " + date.toString());
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
+                                   snapshotDate.toString());
                 System.out.println(se.getLocalizedMessage());
                 if (SessionMetaData.getInstance().debugOn()) {
-                    se.printStackTrace();
+                    //se.printStackTrace();
                 }
 
             } catch (Exception e) {
-                System.out.println("insert# " + i + ", inst: " + instI +
-                                   " " + date.toString());
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
+                                   snapshotDate.toString());
                 e.printStackTrace();
             }
         }
 
         xyDataset.addSeries(s1);
 
-        final TimeSeries mav = MovingAverage.createMovingAverage(
-                    s1, "Moving Average", s1.getItemCount(), s1.getItemCount());
+        final TimeSeries mav =
+            MovingAverage.createMovingAverage(s1, "Moving Average", s1.getItemCount(), s1.getItemCount());
+
         xyDataset.addSeries(mav);
-        
+
         return xyDataset;
     }
+
 
     /**
      * Creates a chart.
@@ -182,21 +195,20 @@ public class AWRTimeSeriesChart extends JFrame {
      */
     private static JFreeChart createChart(XYDataset dataset, String metricName, int racInstNum) {
 
-        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName) + " Instance-" + racInstNum;;
+        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName) + " Instance-" + racInstNum;
         String metricRangeName = AWRMetrics.getInstance().getMetricRangeDescription(metricName);
-        JFreeChart chart =
-            ChartFactory.createTimeSeriesChart(chartTitle,
-                // title
-                "Date", // x-axis label
-                metricRangeName, // y-axis label
-                dataset, // data
-                true, // create legend?
-                true, // generate tooltips?
-                false); // generate URLs?
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle,
+                                                              // title
+                                                              "Date", // x-axis label
+                                                              metricRangeName, // y-axis label
+                                                              dataset, // data
+                                                              true, // create legend?
+                                                              true, // generate tooltips?
+                                                              false); // generate URLs?
 
         chart.setBackgroundPaint(Color.white);
 
-        XYPlot plot = (XYPlot)chart.getPlot();
+        XYPlot plot = (XYPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.lightGray);
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
@@ -206,17 +218,33 @@ public class AWRTimeSeriesChart extends JFrame {
 
         XYItemRenderer r = plot.getRenderer();
         if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)r;
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
             renderer.setBaseShapesVisible(true);
             renderer.setBaseShapesFilled(true);
             renderer.setDrawSeriesLineAsPath(true);
         }
 
-        DateAxis axis = (DateAxis)plot.getDomainAxis();
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("dd-MMM-yyyy"));
 
         return chart;
 
+    }
+
+    private Date getMissingSnapshotDate(String snapId) {
+        boolean found = false;
+        int idx = 0;
+        Date snapDate = null;
+        while (!found && idx <= _totalNumRacInstances) {
+            idx++;
+            String instNumS = Integer.toString(idx);
+            AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapId, instNumS);
+            if (awrRec != null) {
+                snapDate = awrRec.getSnapShotDateTime();
+                found = true;
+            }
+        }
+        return snapDate;
     }
 
 }
