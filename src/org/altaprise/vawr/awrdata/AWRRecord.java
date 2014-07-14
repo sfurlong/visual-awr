@@ -20,9 +20,9 @@ public class AWRRecord {
         return _metricKeyVal.size();
     }
     
-    public int getSnapId() {
+    public String getSnapId() {
         String snapIdKeyName = "SNAP";
-        return Integer.parseInt((String)_metricKeyVal.get(snapIdKeyName.toUpperCase()));    
+        return (String)_metricKeyVal.get(snapIdKeyName.toUpperCase());    
     }
 
 
