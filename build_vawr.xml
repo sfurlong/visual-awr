@@ -80,6 +80,7 @@
       <fileset dir="${build.root.dir}">
         <include name="vawr-readme.html"/>
         <include name="run.bat"/>
+        <include name="run.sh"/>
         <include name="properties.ser"/>
       </fileset>
     </copy>
@@ -90,7 +91,7 @@
       </fileset>
     </copy>
 
-    <zip destfile="${build.root.dir}/dist/visual-awr${visual-awr.version.num}.zip"
+    <zip destfile="${build.root.dir}/dist/visual-awr-${visual-awr.version.num}.zip"
          basedir="${build.root.dir}/dist/" excludes="jdk/**, *.zip"/>
 
   </target>
