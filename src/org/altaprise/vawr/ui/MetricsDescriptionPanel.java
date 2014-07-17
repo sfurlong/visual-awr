@@ -56,14 +56,11 @@ public class MetricsDescriptionPanel extends JPanel {
         htmlString += "<style type=\'text/css\'> td{font-family:Arial; color:blue; font-size:11pt;} th{font-family:Arial; color:black; font-size:12pt;} </style> ";
         htmlString += "<table border=\"1\" font size=\"1\">\n";
         htmlString += "<tr>";
-        htmlString += "<th>AWRMiner Metric Name</th><th>Oracle AWR Metric ID*</th><th>Oracle AWR Metric Name*</th><th>AWR Metric Unit*</th><th>ChartTitle</th>";
+        htmlString += "<th>Oracle AWR Metric ID*</th><th>Oracle AWR Metric Name*</th><th>AWR Metric Unit*</th><th>AWRMiner Metric Name</th><th>ChartTitle</th>";
         htmlString += "</tr>";
         
         for (int i=0; i<metricDetails.size(); i++) {
             htmlString += "<tr>\n";
-            htmlString += "<td>\n";
-            htmlString += metricDetails.get(i).getAWRMinerMetricName();
-            htmlString += "</td>\n";
             htmlString += "<td>\n";
             htmlString += metricDetails.get(i).getAwrOracleMetricId();
             htmlString += "</td>\n";
@@ -72,6 +69,9 @@ public class MetricsDescriptionPanel extends JPanel {
             htmlString += "</td>\n";
             htmlString += "<td>\n";
             htmlString += metricDetails.get(i).getAWROracleMetricUnit();
+            htmlString += "</td>\n";
+            htmlString += "<td>\n";
+            htmlString += metricDetails.get(i).getAWRMinerMetricName();
             htmlString += "</td>\n";
             htmlString += "<td>\n";
             htmlString += metricDetails.get(i).getMetricChartTitle();
