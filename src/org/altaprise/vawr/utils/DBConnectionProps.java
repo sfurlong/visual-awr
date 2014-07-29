@@ -16,6 +16,15 @@ public class DBConnectionProps implements Serializable {
     boolean useSID = true;
     String uId = null;
     String pwd = null;
+    String userRole = null;
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
+    public String getUserRole() {
+        return userRole;
+    }
 
     public void setConnectionName(String connectionName) {
         this.connectionName = connectionName;
