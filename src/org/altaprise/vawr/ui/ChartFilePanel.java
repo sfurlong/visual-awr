@@ -20,6 +20,7 @@ import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
+import org.altaprise.vawr.charts.AvgActiveSessionChart;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 public class ChartFilePanel extends JPanel {
@@ -126,7 +127,7 @@ public class ChartFilePanel extends JPanel {
                 _awrParser.parseMemData(selectedFile);
                 AWR_FILE_NAME = selectedFile;
                 if (SessionMetaData.getInstance().debugOn()) {
-                    _awrParser.dumpData();
+                    AWRData.getInstance().dumpData();
                 }
             }
 
@@ -135,6 +136,8 @@ public class ChartFilePanel extends JPanel {
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
+            new AvgActiveSessionChart("");
+            /*
             if (AWRData.getInstance().awrMetricExists(metricName)) {
                 if (metricName.equals("SGA_PGA_TOT")) {
                     //Get the memory Data
@@ -149,7 +152,7 @@ public class ChartFilePanel extends JPanel {
                                               "Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
-
+*/
         } catch (Exception ex) {
             //SetCursor
             RootFrame.stopWaitCursor();
