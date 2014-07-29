@@ -1,5 +1,6 @@
 package org.altaprise.vawr.awrdata;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +8,15 @@ import java.util.HashMap;
 public class AWRRecord {
     
     private HashMap _metricKeyVal = new HashMap();
+    private ArrayList<AvgActiveSessRecord> _avgActiveSess = new ArrayList<AvgActiveSessRecord>();
+    
+    public void addAvgAcviteSessData(AvgActiveSessRecord sessData) {
+        _avgActiveSess.add(sessData);
+    }
+    
+    public ArrayList<AvgActiveSessRecord> getAvgActiveSessData() {
+        return _avgActiveSess;
+    }
     
     public void putVal(String key, String val) {
         _metricKeyVal.put(key, val);
