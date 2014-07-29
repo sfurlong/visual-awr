@@ -145,44 +145,285 @@ public class AWRCollectionSQL {
         return allSnaps;
     }
     
+    public static String getStorageMetricsSQL() {
+        String sqlString = 
+        " DECLARE \n" +
+           " v_num_disks    NUMBER; \n" +
+           " v_group_number   NUMBER; \n" +
+           " v_max_total_mb   NUMBER; \n" +
+        "  \n" +
+           " v_required_free_mb   NUMBER; \n" +
+           " v_usable_mb      NUMBER; \n" +
+           " v_cell_usable_mb   NUMBER; \n" +
+           " v_one_cell_usable_mb   NUMBER; \n" +
+           " v_enuf_free      BOOLEAN := FALSE; \n" +
+           " v_enuf_free_cell   BOOLEAN := FALSE; \n" +
+        "  \n" +
+           " v_req_mirror_free_adj_factor   NUMBER := 1.10; \n" +
+           " v_req_mirror_free_adj         NUMBER := 0; \n" +
+           " v_one_cell_req_mir_free_mb     NUMBER  := 0; \n" +
+        "  \n" +
+           " v_disk_desc      VARCHAR(10) := 'SINGLE'; \n" +
+           " v_offset      NUMBER := 50; \n" +
+        "  \n" +
+           " v_db_version   VARCHAR2(8); \n" +
+           " v_inst_name    VARCHAR2(1); \n" +
+        "  \n" +
+           " v_cfc_fail_msg VARCHAR2(152); \n" +
+        "     \n" +
+           " dg_name VARCHAR(200) := ''; \n" +
+            " dg_num_disks VARCHAR(200) := ''; \n" +
+              " dg_max_tot_mb VARCHAR(200) := ''; \n" +
+              " dg_tot_mb VARCHAR(200) := ''; \n" +
+              " dg_tot_mb_used VARCHAR(200) := ''; \n" +
+              " dg_tot_mb_free VARCHAR(200) := ''; \n" +
+        "  \n" +
+        " BEGIN \n" +
+        "  \n" +
+           " SELECT substr(version,1,8), substr(instance_name,1,1)    INTO v_db_version, v_inst_name    FROM v$instance; \n" +
+        "  \n" +
+           " IF v_inst_name <> '+' THEN \n" +
+              " DBMS_OUTPUT.PUT_LINE('ERROR: THIS IS NOT AN ASM INSTANCE!  PLEASE LOG ON TO AN ASM INSTANCE AND RE-RUN THIS SCRIPT.'); \n" +
+              " GOTO the_end; \n" +
+           " END IF; \n" +
+        "  \n" +
+            " DBMS_OUTPUT.PUT_LINE('------ DISK and CELL Failure Diskgroup Space Reserve Requirements  ------'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' This procedure determines how much space you need to survive a DISK or CELL failure. It also shows the usable space '); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' available when reserving space for disk or cell failure.  '); \n" +
+           " DBMS_OUTPUT.PUT_LINE(' Please see MOS note 1551288.1 for more information.  '); \n" +
+           " DBMS_OUTPUT.PUT_LINE('.  .  .'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' Description of Derived Values:'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' One Cell Required Mirror Free MB : Required Mirror Free MB to permit successful rebalance after losing largest CELL regardless of redundancy type'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' Disk Required Mirror Free MB     : Space needed to rebalance after loss of single or double disk failure (for normal or high redundancy)'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' Disk Usable File MB              : Usable space available after reserving space for disk failure and accounting for mirroring'); \n" +
+            " DBMS_OUTPUT.PUT_LINE(' Cell Usable File MB              : Usable space available after reserving space for SINGLE cell failure and accounting for mirroring'); \n" +
+           " DBMS_OUTPUT.PUT_LINE('.  .  .'); \n" +
+        "  \n" +
+           " IF (v_db_version = '11.2.0.3') OR (v_db_version = '11.2.0.4') OR (v_db_version = '12.1.0.1')  THEN \n" +
+              " v_req_mirror_free_adj_factor := 1.10; \n" +
+              " DBMS_OUTPUT.PUT_LINE('ASM Version: '||v_db_version); \n" +
+           " ELSE \n" +
+              " v_req_mirror_free_adj_factor := 1.5; \n" +
+              " DBMS_OUTPUT.PUT_LINE('ASM Version: '||v_db_version||'  - WARNING DISK FAILURE COVERAGE ESTIMATES HAVE NOT BEEN VERIFIED ON THIS VERSION!'); \n" +
+           " END IF; \n" +
+        "  \n" +
+           " DBMS_OUTPUT.PUT_LINE('.  .  .'); \n" +
+        " -- Set up headings \n" +
+             " DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------------------------------------------------------------------------------------------'); \n" +
+              " DBMS_OUTPUT.PUT('|          '); \n" +
+              " DBMS_OUTPUT.PUT('|         '); \n" +
+              " DBMS_OUTPUT.PUT('|     '); \n" +
+              " DBMS_OUTPUT.PUT('|          '); \n" +
+              " DBMS_OUTPUT.PUT('|            '); \n" +
+              " DBMS_OUTPUT.PUT('|            '); \n" +
+              " DBMS_OUTPUT.PUT('|            '); \n" +
+              " DBMS_OUTPUT.PUT('|Cell Req''d  '); \n" +
+              " DBMS_OUTPUT.PUT('|Disk Req''d  '); \n" +
+              " DBMS_OUTPUT.PUT('|            '); \n" +
+              " DBMS_OUTPUT.PUT('|            '); \n" +
+              " DBMS_OUTPUT.PUT('|    '); \n" +
+              " DBMS_OUTPUT.PUT('|    '); \n" +
+              " DBMS_OUTPUT.PUT('|       '); \n" +
+              " DBMS_OUTPUT.PUT_Line('|'); \n" +
+              " DBMS_OUTPUT.PUT('|          '); \n" +
+              " DBMS_OUTPUT.PUT('|DG       '); \n" +
+              " DBMS_OUTPUT.PUT('|Num  '); \n" +
+              " DBMS_OUTPUT.PUT('|Disk Size '); \n" +
+              " DBMS_OUTPUT.PUT('|DG Total    '); \n" +
+              " DBMS_OUTPUT.PUT('|DG Used     '); \n" +
+              " DBMS_OUTPUT.PUT('|DG Free     '); \n" +
+              " DBMS_OUTPUT.PUT('|Mirror Free '); \n" +
+              " DBMS_OUTPUT.PUT('|Mirror Free '); \n" +
+              " DBMS_OUTPUT.PUT('|Disk Usable '); \n" +
+              " DBMS_OUTPUT.PUT('|Cell Usable '); \n" +
+              " DBMS_OUTPUT.PUT('|    '); \n" +
+              " DBMS_OUTPUT.PUT('|    '); \n" +
+              " DBMS_OUTPUT.PUT_LINE('|PCT    |'); \n" +
+              " DBMS_OUTPUT.PUT('|DG Name   '); \n" +
+              " DBMS_OUTPUT.PUT('|Type     '); \n" +
+              " DBMS_OUTPUT.PUT('|Disks'); \n" +
+              " DBMS_OUTPUT.PUT('|MB        '); \n" +
+              " DBMS_OUTPUT.PUT('|MB          '); \n" +
+              " DBMS_OUTPUT.PUT('|MB          '); \n" +
+              " DBMS_OUTPUT.PUT('|MB          '); \n" +
+              " DBMS_OUTPUT.PUT('|MB          '); \n" +
+              " DBMS_OUTPUT.PUT('|MB          '); \n" +
+              " DBMS_OUTPUT.PUT('|File MB     '); \n" +
+              " DBMS_OUTPUT.PUT('|File MB     '); \n" +
+              " DBMS_OUTPUT.PUT('|DFC '); \n" +
+              " DBMS_OUTPUT.PUT('|CFC '); \n" +
+              " DBMS_OUTPUT.PUT_LINE('|Util   |'); \n" +
+             " DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------------------------------------------------------------------------------------------'); \n" +
+        "  \n" +
+           " FOR dg IN (SELECT name, type, group_number, total_mb, free_mb, required_mirror_free_mb FROM v$asm_diskgroup ORDER BY name) LOOP \n" +
+        "  \n" +
+              " v_enuf_free := FALSE; \n" +
+        "  \n" +
+             " v_req_mirror_free_adj := dg.required_mirror_free_mb * v_req_mirror_free_adj_factor; \n" +
+        "  \n" +
+              " -- Find largest amount of space allocated to a cell \n" +
+              " SELECT sum(disk_cnt), max(max_total_mb), max(sum_total_mb)*v_req_mirror_free_adj_factor \n" +
+             " INTO v_num_disks, v_max_total_mb, v_one_cell_req_mir_free_mb \n" +
+              " FROM (SELECT count(1) disk_cnt, max(total_mb) max_total_mb, sum(total_mb) sum_total_mb \n" +
+              " FROM v$asm_disk \n" +
+             " WHERE group_number = dg.group_number \n" +
+             " GROUP BY failgroup); \n" +
+        "  \n" +
+              " -- Eighth Rack \n" +
+              " IF dg.type = 'NORMAL' THEN \n" +
+        "  \n" +
+                 " -- Eighth Rack \n" +
+                 " IF (v_num_disks < 36) THEN \n" +
+                    " -- Use eqn: y = 1.21344 x+ 17429.8 \n" +
+                    " v_required_free_mb :=  1.21344 * v_max_total_mb + 17429.8; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Quarter Rack \n" +
+                 " ELSIF (v_num_disks >= 36 AND v_num_disks < 84) THEN \n" +
+                    " -- Use eqn: y = 1.07687 x+ 19699.3 \n" +
+                                " -- Revised 2/21/14 for 11.2.0.4 to use eqn: y=0.803199x + 156867, more space but safer \n" +
+                    " v_required_free_mb := 0.803199 * v_max_total_mb + 156867; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Half Rack \n" +
+                 " ELSIF (v_num_disks >= 84 AND v_num_disks < 168) THEN \n" +
+                    " -- Use eqn: y = 1.02475 x+53731.3 \n" +
+                    " v_required_free_mb := 1.02475 * v_max_total_mb + 53731.3; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Full rack is most conservative, it will be default \n" +
+                 " ELSE \n" +
+                    " -- Use eqn: y = 1.33333 x+83220. \n" +
+                    " v_required_free_mb := 1.33333 * v_max_total_mb + 83220; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+        "  \n" +
+                 " END IF; \n" +
+        "  \n" +
+                 " -- DISK usable file MB \n" +
+                 " v_usable_mb := ROUND((dg.free_mb - v_required_free_mb)/2); \n" +
+                 " v_disk_desc := 'ONE disk'; \n" +
+        "  \n" +
+                 " -- CELL usable file MB \n" +
+                 " v_cell_usable_mb := ROUND( (dg.free_mb - v_one_cell_req_mir_free_mb)/2 ); \n" +
+                 " v_one_cell_usable_mb := v_cell_usable_mb; \n" +
+        "  \n" +
+              " ELSE \n" +
+                 " -- HIGH redundancy \n" +
+        "  \n" +
+                 " -- Eighth Rack \n" +
+                 " IF (v_num_disks <= 18) THEN \n" +
+                    " -- Use eqn: y = 4x + 0 \n" +
+                                " -- Updated for 11.2.0.4 to higher value:  y = 3.84213x + 84466.4 \n" +
+                    " v_required_free_mb :=  3.84213 * v_max_total_mb + 84466.4; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Quarter Rack \n" +
+                 " ELSIF (v_num_disks > 18 AND v_num_disks <= 36) THEN \n" +
+                    " -- Use eqn: y = 3.87356 x+417692. \n" +
+                    " v_required_free_mb := 3.87356 * v_max_total_mb + 417692; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Half Rack \n" +
+                 " ELSIF (v_num_disks > 36 AND v_num_disks <= 84) THEN \n" +
+                    " -- Use eqn: y = 2.02222 x+56441.6 \n" +
+                    " v_required_free_mb := 2.02222 * v_max_total_mb + 56441.6; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+                 " -- Full rack is most conservative, it will be default \n" +
+                 " ELSE \n" +
+                    " -- Use eqn: y = 2.14077 x+54276.4 \n" +
+                    " v_required_free_mb := 2.14077 * v_max_total_mb + 54276.4; \n" +
+                    " IF dg.free_mb > v_required_free_mb THEN v_enuf_free := TRUE; END IF; \n" +
+        "  \n" +
+                 " END IF; \n" +
+        "  \n" +
+                 " -- DISK usable file MB \n" +
+                 " v_usable_mb := ROUND((dg.free_mb - v_required_free_mb)/3); \n" +
+                 " v_disk_desc := 'TWO disks'; \n" +
+        "  \n" +
+                 " -- CELL usable file MB \n" +
+                 " v_one_cell_usable_mb := ROUND( (dg.free_mb - v_one_cell_req_mir_free_mb)/3 ); \n" +
+        "  \n" +
+              " END IF; \n" +
+              " DBMS_OUTPUT.PUT('|'||RPAD(dg.name,v_offset-40)); \n" +
+              " DBMS_OUTPUT.PUT('|'||RPAD(nvl(dg.type,'  '),v_offset-41)); \n" +
+              " DBMS_OUTPUT.PUT('|'||LPAD(TO_CHAR(v_num_disks),v_offset-45)); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(v_max_total_mb,'9,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(dg.total_mb,'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(dg.total_mb - dg.free_mb,'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(dg.free_mb,'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(ROUND(v_one_cell_req_mir_free_mb),'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(ROUND(v_required_free_mb),'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(ROUND(v_usable_mb),'999,999,999')); \n" +
+              " DBMS_OUTPUT.PUT('|'||TO_CHAR(ROUND(v_one_cell_usable_mb),'999,999,999'));  \n" +
+        "  \n" +
+              " dg_name  := dg_name || '~' || dg.name; \n" +
+              " dg_num_disks := dg_num_disks  || '~' || TO_CHAR(v_num_disks); \n" +
+              " dg_max_tot_mb  := dg_max_tot_mb  || '~' || TO_CHAR(v_num_disks); \n" +
+              " dg_tot_mb  := dg_tot_mb  || '~' || TO_CHAR(v_max_total_mb,'9,999,999'); \n" +
+              " dg_tot_mb_used  := dg_tot_mb_used  || '~' || TO_CHAR(dg.total_mb - dg.free_mb,'999,999,999'); \n" +
+              " dg_tot_mb_free  := dg_tot_mb_free  || '~' || TO_CHAR(dg.free_mb,'999,999,999'); \n" +
+        "  \n" +
+              " IF v_enuf_free THEN \n" +
+                 " DBMS_OUTPUT.PUT('|'||'PASS'); \n" +
+              " ELSE \n" +
+                 " DBMS_OUTPUT.PUT('|'||'FAIL'); \n" +
+              " END IF; \n" +
+        "  \n" +
+             " IF dg.type = 'NORMAL' THEN \n" +
+                " -- Calc Free Space for Rebalance Due to Cell Failure \n" +
+                " IF v_req_mirror_free_adj < dg.free_mb THEN \n" +
+                   " DBMS_OUTPUT.PUT('|'||'PASS'); \n" +
+                " ELSE \n" +
+                    " DBMS_OUTPUT.PUT('|'||'FAIL'); \n" +
+                    " v_cfc_fail_msg := 'Enough Free Space to Rebalance after loss of ONE cell: WARNING (However, cell failure is very rare)'; \n" +
+                " END IF; \n" +
+             " ELSE \n" +
+                " -- Calc Free Space for Rebalance Due to Single Cell Failure \n" +
+                " IF v_one_cell_req_mir_free_mb < dg.free_mb THEN \n" +
+                   " DBMS_OUTPUT.PUT('|'||'PASS'); \n" +
+                " ELSE \n" +
+                   " DBMS_OUTPUT.PUT('|'||'FAIL'); \n" +
+                   " v_cfc_fail_msg := 'Enough Free Space to Rebalance after loss of ONE cell: WARNING (However, cell failure is very rare and high redundancy offers ample protection already)'; \n" +
+                " END IF; \n" +
+        "  \n" +
+             " END IF; \n" +
+        "  \n" +
+             " -- Calc Disk Utilization Percentage \n" +
+                " IF dg.total_mb > 0 THEN \n" +
+                   " DBMS_OUTPUT.PUT_LINE('|'||TO_CHAR((((dg.total_mb - dg.free_mb)/dg.total_mb)*100),'999.9')||CHR(37)||'|'); \n" +
+                " ELSE \n" +
+                   " DBMS_OUTPUT.PUT_LINE('|       |'); \n" +
+                " END IF; \n" +
+        "  \n" +
+           " END LOOP; \n" +
+        "  \n" +
+             " DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------------------------------------------------------------------------------------------'); \n" +
+           " <<the_end>> \n" +
+        "  \n" +
+           " IF v_cfc_fail_msg is not null THEN \n" +
+              " DBMS_OUTPUT.PUT_LINE('Cell Failure Coverage Freespace Failures Detected. Warning Message Follows.'); \n" +
+              " DBMS_OUTPUT.PUT_LINE(v_cfc_fail_msg); \n" +
+           " END IF; \n" +
+        "  \n" +
+           " DBMS_OUTPUT.PUT_LINE('.  .  .'); \n" +
+           " DBMS_OUTPUT.PUT_LINE('Script completed.'); \n" +
+        "  \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_name: ' || dg_name); \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_num_disks: ' || dg_num_disks); \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_max_tot_mb: '  || dg_max_tot_mb); \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_tot_mb: '  || dg_tot_mb); \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_tot_mb_used: '  || dg_tot_mb_used); \n" +
+            " DBMS_OUTPUT.PUT_LINE('dg_tot_mb_free: '  || dg_tot_mb_free); \n" +
+        " ? := 'dg_name: ' || dg_name; \n" +
+        " ? := 'dg_num_disks: ' || dg_num_disks; \n" +
+        " ? := 'dg_max_tot_mb: ' || dg_max_tot_mb; \n" +
+        " ? := 'dg_tot_mb: ' || dg_tot_mb; \n" +
+        " ? := 'dg_tot_mb_used: ' || dg_tot_mb_used; \n" +
+        " ? := 'dg_tot_mb_free: ' || dg_tot_mb_free; \n" +
+        "  \n" +
+        "  \n" +
+        " END; ";
+
+
+        return sqlString;        
+    }
+    
     /*
-    REPHEADER PAGE LEFT '~~BEGIN-MEMORY~~'
-    REPFOOTER PAGE LEFT '~~END-MEMORY~~'
-
-    SELECT snap_id,
-        instance_number,
-        MAX (DECODE (stat_name, 'SGA', stat_value, NULL)) "SGA",
-        MAX (DECODE (stat_name, 'PGA', stat_value, NULL)) "PGA",
-        MAX (DECODE (stat_name, 'SGA', stat_value, NULL)) + MAX (DECODE (stat_name, 'PGA', stat_value,
-        NULL)) "TOTAL"
-       FROM
-        (SELECT snap_id,
-            instance_number,
-            ROUND (SUM (bytes) / 1024 / 1024 / 1024, 1) stat_value,
-            MAX ('SGA') stat_name
-           FROM dba_hist_sgastat
-          WHERE dbid = &DBID
-            AND snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX
-       GROUP BY snap_id,
-            instance_number
-      UNION ALL
-         SELECT snap_id,
-            instance_number,
-            ROUND (value / 1024 / 1024 / 1024, 1) stat_value,
-            'PGA' stat_name
-           FROM dba_hist_pgastat
-          WHERE dbid = &DBID
-            AND snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX
-            AND NAME = 'total PGA allocated'
-        )
-    GROUP BY snap_id,
-        instance_number
-    ORDER BY snap_id,
-        instance_number;
-
-    prompt 
-    prompt 
-
     -- ##############################################################################################
 
 
