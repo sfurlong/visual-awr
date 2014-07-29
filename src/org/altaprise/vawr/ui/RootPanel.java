@@ -30,15 +30,19 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
-import org.altaprise.vawr.ui.dbwizard.DBConnectPanel;
-import org.altaprise.vawr.ui.dbwizard.WizardRootPanel;
+import org.altaprise.vawr.ui.dbchartwizard.DBConnectPanel;
+import org.altaprise.vawr.ui.common.WizardRootPanel;
+import org.altaprise.vawr.ui.dbchartwizard.DBWizardRootPanel;
+import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
+import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 
 public class RootPanel extends JPanel {
 
     JTabbedPane tabbedPane = new JTabbedPane();
     DBConnectionsPanel _dbConnPanel = new DBConnectionsPanel();
     ChartFilePanel _fileTabPanel = new ChartFilePanel();
-    WizardRootPanel _dbChartTab = new WizardRootPanel();
+    DBWizardRootPanel _dbChartTab = new DBWizardRootPanel();
+    StorageWizardRootPanel _storageChartTab = new StorageWizardRootPanel();
     AppAboutPanel _aboutPanel = new AppAboutPanel();
     MetricsDescriptionPanel _metricDescPanel = new MetricsDescriptionPanel();
 
@@ -63,7 +67,11 @@ public class RootPanel extends JPanel {
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart direct from DB</body></html>",
                           this._dbChartTab);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-
+/*
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Storage Analysis</body></html>",
+                          this._storageChartTab);
+        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+*/
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
                           _dbConnPanel);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
