@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,7 +28,7 @@ import javax.swing.JTextField;
 
 import javax.swing.border.EtchedBorder;
 
-import org.altaprise.vawr.ui.dbwizard.DBConnectPanel;
+import org.altaprise.vawr.ui.dbchartwizard.DBConnectPanel;
 import org.altaprise.vawr.utils.DBConnectionProps;
 import org.altaprise.vawr.utils.PropertyFile;
 
@@ -58,6 +59,8 @@ public class DBConnectionsPanel extends JPanel {
     private ButtonGroup buttonGroup_SID = new ButtonGroup();
 
     PropertyFile _propFile = PropertyFile.getInstance();
+    private JComboBox jComboBox_roles = new JComboBox();
+    private JLabel jLabel_role = new JLabel("User Role");
 
 
     public DBConnectionsPanel() {
@@ -70,42 +73,42 @@ public class DBConnectionsPanel extends JPanel {
 
     private void jbInit() throws Exception {
         this.setLayout(null);
-        this.setSize(new Dimension(651, 419));
+        this.setSize(new Dimension(651, 440));
         jTextField_connName.setBounds(new Rectangle(300, 25, 320, 20));
         jTextField_uId.setBounds(new Rectangle(300, 55, 320, 20));
-        jTextField_hostName.setBounds(new Rectangle(300, 130, 320, 20));
-        jTextField_port.setBounds(new Rectangle(300, 160, 320, 20));
-        jTextField_SID.setBounds(new Rectangle(300, 200, 320, 20));
-        jTextField_serviceName.setBounds(new Rectangle(300, 230, 320, 20));
+        jTextField_hostName.setBounds(new Rectangle(300, 145, 320, 20));
+        jTextField_port.setBounds(new Rectangle(300, 175, 320, 20));
+        jTextField_SID.setBounds(new Rectangle(300, 215, 320, 20));
+        jTextField_serviceName.setBounds(new Rectangle(300, 245, 320, 20));
         jLabel_connName.setBounds(new Rectangle(195, 30, 90, 15));
         jLabel_uId.setBounds(new Rectangle(195, 60, 60, 15));
         jLabel_pwd.setBounds(new Rectangle(195, 85, 60, 15));
-        jLabel_hostName.setBounds(new Rectangle(195, 135, 80, 15));
-        jLabel_port.setBounds(new Rectangle(195, 165, 95, 15));
-        jRadioButton_SID.setBounds(new Rectangle(195, 200, 90, 20));
-        jRadioButton_serviceName.setBounds(new Rectangle(195, 230, 95, 20));
+        jLabel_hostName.setBounds(new Rectangle(195, 150, 80, 15));
+        jLabel_port.setBounds(new Rectangle(195, 180, 95, 15));
+        jRadioButton_SID.setBounds(new Rectangle(195, 215, 90, 20));
+        jRadioButton_serviceName.setBounds(new Rectangle(195, 245, 95, 20));
         jPasswordField_pwd.setBounds(new Rectangle(300, 85, 320, 20));
         jList_connectionNames.setBounds(new Rectangle(25, 25, 130, 320));
         jList_connectionNames.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        jButton_testConn.setBounds(new Rectangle(195, 270, 105, 20));
+        jButton_testConn.setBounds(new Rectangle(195, 280, 105, 20));
         jButton_testConn.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_testConn_actionPerformed(e);
                 }
             });
-        jButton_delete.setBounds(new Rectangle(330, 390, 75, 21));
+        jButton_delete.setBounds(new Rectangle(330, 400, 75, 21));
         jButton_delete.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_delete_actionPerformed(e);
                 }
             });
-        jButton_save.setBounds(new Rectangle(430, 390, 75, 21));
+        jButton_save.setBounds(new Rectangle(430, 400, 75, 21));
         jButton_save.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_save_actionPerformed(e);
                 }
             });
-        jButton_reset.setBounds(new Rectangle(545, 390, 75, 21));
+        jButton_reset.setBounds(new Rectangle(545, 400, 75, 21));
         jButton_reset.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_reset_actionPerformed(e);
@@ -113,7 +116,10 @@ public class DBConnectionsPanel extends JPanel {
             });
         jTextArea_dbTestResults.setBounds(new Rectangle(195, 295, 430, 85));
         jTextArea_dbTestResults.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        jScrollPane1.setBounds(new Rectangle(195, 295, 425, 85));
+        jTextArea_dbTestResults.setFont(jTextArea_dbTestResults.getFont().deriveFont(11f));
+        jScrollPane1.setBounds(new Rectangle(195, 305, 425, 85));
+        jComboBox_roles.setBounds(new Rectangle(300, 115, 115, 20));
+        jLabel_role.setBounds(new Rectangle(195, 120, 55, 15));
         buttonGroup_SID.add(jRadioButton_SID);
         buttonGroup_SID.add(jRadioButton_serviceName);
         jRadioButton_SID.setSelected(true);
@@ -123,6 +129,8 @@ public class DBConnectionsPanel extends JPanel {
                 }
 
             });
+        this.add(jLabel_role, null);
+        this.add(jComboBox_roles, null);
         this.add(jScrollPane1, null);
         this.add(jButton_reset, null);
         this.add(jButton_save, null);
@@ -150,6 +158,10 @@ public class DBConnectionsPanel extends JPanel {
         for (int i = 0; i < dbProps.size(); i++) {
             jList_connectionNames.addItem(dbProps.get(i).getConnectionName());
         }
+        
+        jComboBox_roles.addItem(" ");
+        jComboBox_roles.addItem("SYSDBA");
+        jComboBox_roles.addItem("SYSOPER");
     }
 
     private void doListBoxClickedEvent(daiBeans.daiGenericEvent e) {
@@ -163,6 +175,7 @@ public class DBConnectionsPanel extends JPanel {
         jTextField_serviceName.setText(dbProps.getServiceName());
         jTextField_uId.setText(dbProps.getUId());
         jPasswordField_pwd.setText(dbProps.getPwd());
+        jComboBox_roles.setSelectedItem(dbProps.getUserRole());
         if (dbProps.isUseSID()) {
             jRadioButton_SID.setSelected(true);
         } else {
@@ -182,6 +195,7 @@ public class DBConnectionsPanel extends JPanel {
         dbProps.setServiceName(jTextField_serviceName.getText());
         dbProps.setUId(jTextField_uId.getText());
         dbProps.setPwd(jPasswordField_pwd.getText());
+        dbProps.setUserRole((String)jComboBox_roles.getSelectedItem());
         if (jRadioButton_SID.isSelected()) {
             dbProps.setUseSID(true);
         } else {
@@ -230,13 +244,6 @@ public class DBConnectionsPanel extends JPanel {
         String uId = jTextField_uId.getText();
         String pwd = jPasswordField_pwd.getText();
 
-        System.out.println(hostName);
-        System.out.println(port);
-        System.out.println(SID);
-        System.out.println(serviceName);
-        System.out.println(uId);
-        System.out.println(pwd);
-
         dbconnect dbConn = dbconnect.getInstance();
 
         if (jRadioButton_SID.isSelected()) {
@@ -245,7 +252,18 @@ public class DBConnectionsPanel extends JPanel {
         } else {
             dbURL += "//" + hostName + ":" + port + "/" + serviceName;
         }
+        
+        String userRole = (String)jComboBox_roles.getSelectedItem();
+        if (userRole.trim().length() > 0) {
+            uId += " as " + userRole;
+        }
             
+        System.out.println(hostName);
+        System.out.println(port);
+        System.out.println(SID);
+        System.out.println(serviceName);
+        System.out.println(uId);
+//        System.out.println(pwd);
         System.out.println(dbURL);
         String dbConnectResult = null;
 
@@ -279,5 +297,6 @@ public class DBConnectionsPanel extends JPanel {
         jTextArea_dbTestResults.setText("");
         jTextArea_dbTestResults.setCaretPosition(0);
         jRadioButton_SID.setSelected(true);
+        jComboBox_roles.setSelectedIndex(0);
     }
 }
