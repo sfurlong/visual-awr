@@ -2,6 +2,15 @@ package org.altaprise.vawr.awrdata;
 
 public class AWRMetric {
 
+    private String awrMinerMetricName;
+    private String awrOracleMetricName;
+    private String awrOracleMetricUnit;
+    private String awrOracleMetricId;
+    private String awrMinerMetricModifier;
+    private String awrUniqueOracleMetricName;
+    private String metricChartTitle;
+    private boolean isChartable = false;
+
     public AWRMetric(String awrMinerName, String awrOracleName,
                      String metricUnit, String chartTitle, boolean chartable) {
         awrMinerMetricName = awrMinerName;
@@ -60,15 +69,6 @@ public class AWRMetric {
         metricChartTitle = awrOracleName;
         isChartable = true;
     }
-
-    private String awrMinerMetricName;
-    private String awrOracleMetricName;
-    private String awrOracleMetricUnit;
-    private String awrOracleMetricId;
-    private String awrMinerMetricModifier;
-    private String awrUniqueOracleMetricName;
-    private String metricChartTitle;
-    private boolean isChartable = false;
 
     public void setAWRMinerMetricName(String metricName) {
         this.awrMinerMetricName = metricName;
