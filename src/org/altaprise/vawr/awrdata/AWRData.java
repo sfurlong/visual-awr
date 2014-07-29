@@ -16,9 +16,10 @@ import org.altaprise.vawr.utils.PropertyFile;
 
 public class AWRData {
 
-    
+
     private List _headerTokens = new ArrayList();
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
+    private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
 
     private static AWRData _theInstance = null;
 
@@ -35,15 +36,19 @@ public class AWRData {
     public void clearAWRData() {
         _headerTokens.clear();
         _dataRecords.clear();
+        _activeSessionRecords.clear();
     }
-    
+
+
     public void dumpData() {
 
+        System.out.println("main metric headers");
         for (int i = 0; i < getHeaderCount(); i++) {
             System.out.print(getHeaderName(i) + ", ");
         }
         System.out.println();
 
+        System.out.println("main metrics");
         for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
             AWRRecord awrRec = entry.getValue();
             for (int j = 0; j < awrRec.getSize(); j++) {
@@ -53,10 +58,21 @@ public class AWRData {
             }
             System.out.println();
         }
+        System.out.println("Avg Active Session Data");
+        for (Map.Entry<String, AWRRecord> entry : _activeSessionRecords.entrySet()) {
+            AWRRecord awrRec = entry.getValue();
+            ArrayList<AvgActiveSessRecord> avgActiveSessData = awrRec.getAvgActiveSessData();
+            for (int j = 0; j < avgActiveSessData.size(); j++) {
+                String waitClass = avgActiveSessData.get(j).getWAIT_CLASS();
+                String avgSess = avgActiveSessData.get(j).getAVG_SESS();
+                System.out.println("snapId/waitClass/avgSess: " + awrRec.getSnapId() + "/" + waitClass + "/" + avgSess);
+            }
+        }
     }
-    
+
+
     public void parseDataRecords(DBRecSet recSet) {
-        
+
         for (int i = 0; i < recSet.getSize(); i++) {
             String rec = "";
             String racInstNum = "";
@@ -68,7 +84,7 @@ public class AWRData {
                 String dbFieldName = dbRec.getAttrib(j).getName();
 
                 this.addHeaderName(dbFieldName);
-                
+
                 //Check to see if this is the header.  If so, add another header field for time.
                 if (dbFieldName.toUpperCase().equals("END")) {
                     //The END field value has the format: "14/06/28 21:55"
@@ -81,34 +97,61 @@ public class AWRData {
                 } else {
                     awrRec.putVal(dbFieldName, dbFieldVal);
                 }
-                
-                //Build the Key field    
-                if (dbFieldName.equals("SNAP")) snapId = dbFieldVal;
-                if (dbFieldName.equals("INST")) racInstNum = dbFieldVal;
+
+                //Build the Key field
+                if (dbFieldName.equals("SNAP"))
+                    snapId = dbFieldVal;
+                if (dbFieldName.equals("INST"))
+                    racInstNum = dbFieldVal;
             }
-            _dataRecords.put(snapId+"-"+racInstNum, awrRec);
+            _dataRecords.put(snapId + "-" + racInstNum, awrRec);
+            _activeSessionRecords.put(snapId, awrRec);
         }
     }
 
     public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
-        AWRRecord awrRec = _dataRecords.get(snapId+"-"+racInstNum);
-        return awrRec;    
+        AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
+        return awrRec;
     }
-    
+
     public LinkedHashSet<String> getUniqueSnapshotIds() {
         LinkedHashSet<String> snapIdSet = new LinkedHashSet<String>();
-        
+
         for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
             AWRRecord awrRec = entry.getValue();
             String snapId = awrRec.getSnapId();
             snapIdSet.add(snapId);
         }
-        
+
         return snapIdSet;
     }
-    
+
+    public void parseAvgActiveSessionDataRecords(DBRecSet recSet) {
+        /*
+    SNAP_ID WAIT_CLASS             AVG_SESS
+    ---------- -------------------- ----------
+        777 Administrative                0
+        777 Application                   0
+        777 Cluster                       0
+        777 Commit                        0
+        777 Concurrency                   0
+        777 Configuration                 0
+        777 DB CPU                      .21
+    */
+        for (int i = 0; i < recSet.getSize(); i++) {
+
+            DBRec dbRec = recSet.getRec(i);
+            String snapId = dbRec.getAttribVal("SNAP_ID");
+            String waitClass = dbRec.getAttribVal("WAIT_CLASS");
+            String avgSess = dbRec.getAttribVal("AVG_SESS");
+
+            AWRRecord awrRec = _activeSessionRecords.get(snapId);
+            awrRec.addAvgAcviteSessData(new AvgActiveSessRecord(waitClass, avgSess));
+        }
+    }
+
     public void parseMemoryDataRecords(DBRecSet recSet) {
-/*
+        /*
         snap_id, " +
                 " instance_number, " +
                 " MAX (DECODE (stat_name, \'SGA\', stat_value, NULL)) \"SGA\", " +
@@ -124,8 +167,8 @@ public class AWRData {
             String sga = dbRec.getAttribVal("SGA");
             String pga = dbRec.getAttribVal("PGA");
             String memTot = dbRec.getAttribVal("SGA_PGA_TOT");
-            
-            AWRRecord awrRec = _dataRecords.get(snapId+"-"+racInstNum);
+
+            AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
             this.addHeaderName("SGA");
             awrRec.putVal("SGA", sga);
             this.addHeaderName("PGA");
@@ -135,7 +178,7 @@ public class AWRData {
         }
     }
 
-    
+
     public String getAWRDataTextString() {
         String ret = "";
         for (int i = 0; i < getHeaderCount(); i++) {
@@ -154,7 +197,7 @@ public class AWRData {
         }
         return ret;
     }
-    
+
     public void parseHeaders(String rec) {
         if (rec.length() > 0) {
 
@@ -170,11 +213,15 @@ public class AWRData {
             }
         }
     }
-    
+
     public ArrayList<AWRRecord> getAWRRecordArray() {
         return new ArrayList<AWRRecord>(_dataRecords.values());
     }
-    
+
+    public ArrayList<AWRRecord> getAvgActiveSessRecordArray() {
+        return new ArrayList<AWRRecord>(_activeSessionRecords.values());
+    }
+
     public AWRRecord parseDataRecord(String rec) {
         AWRRecord awrRec = new AWRRecord();
         String racInstNum = "";
@@ -186,35 +233,38 @@ public class AWRData {
             StringTokenizer st = new StringTokenizer(rec);
             while (st.hasMoreTokens()) {
                 String tok = st.nextToken();
-                String headerName = (String)getHeaderName(tokenCnt);
+                String headerName = (String) getHeaderName(tokenCnt);
                 awrRec.putVal(headerName.toUpperCase(), tok);
-                if (headerName.equals("SNAP")) snapId = tok;
-                if (headerName.equals("INST")) racInstNum = tok;
+                if (headerName.equals("SNAP"))
+                    snapId = tok;
+                if (headerName.equals("INST"))
+                    racInstNum = tok;
                 tokenCnt++;
             }
         }
-        _dataRecords.put(snapId+"-"+racInstNum, awrRec);
-        
+        _dataRecords.put(snapId + "-" + racInstNum, awrRec);
+        _activeSessionRecords.put(snapId, awrRec);
+
         return awrRec;
     }
-    
+
     public long getAWRDataRecordCount() {
         return _dataRecords.size();
     }
-    
+
     private void addHeaderName(String name) {
-        _headerTokens.add(name.toUpperCase());    
+        _headerTokens.add(name.toUpperCase());
     }
 
     private int getHeaderCount() {
-        return _headerTokens.size();    
+        return _headerTokens.size();
     }
-    
+
     private String getHeaderName(int i) {
-        return (String)_headerTokens.get(i);
+        return (String) _headerTokens.get(i);
     }
-    
-  
+
+
     public boolean awrMetricExists(String metric) {
         return _headerTokens.contains(metric.toUpperCase());
     }
