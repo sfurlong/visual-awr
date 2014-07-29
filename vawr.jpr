@@ -65,6 +65,10 @@
       <string v="oracle.adfdtinternal.model.ide.settings.ADFMSettings/adfmContentSet"/>
       <string v="oracle.toplink.workbench.addin/toplinkContentSet"/>
       <string v="oracle.mds.internal.dt.ide.MDSADFLibVirtualNodeCSProvider/mdsLibVirtualNodeContentSet"/>
+      <string v="oracle.tip.tools.ide.fabric.addin.SCAContentSetProvider/sca-content"/>
+      <string v="oracle.tip.tools.ide.ess.addin.ESSContentSetProvider/ess-content"/>
+      <string v="oracle.sb.tooling.ide.core.projects.SbProjectSettings/sbContentSet"/>
+      <string v="oracle.jdeveloper.model.PathsConfiguration/cepContentSet"/>
    </list>
    <value n="defaultPackage" v="awrparser"/>
    <hash n="oracle.adfdtinternal.model.ide.settings.ADFMSettings">
@@ -132,6 +136,14 @@
                   <url path="lib/"/>
                </list>
             </hash>
+            <hash>
+               <list n="pattern-filters">
+                  <string v="+untitled1.jsp"/>
+               </list>
+               <list n="url-path">
+                  <url path="src/org/altaprise/vawr/ui/"/>
+               </list>
+            </hash>
          </list>
          <list n="url-path"/>
       </hash>
@@ -140,6 +152,7 @@
       <list n="technologyScope">
          <string v="HTML"/>
          <string v="JAVASCRIPT"/>
+         <string v="JSP"/>
          <string v="Java"/>
          <string v="JClient"/>
          <string v="Ant"/>
@@ -230,15 +243,23 @@
    </hash>
    <hash n="oracle.jdeveloper.runner.RunConfigurations">
       <hash n="runConfigurationDefinitions">
-         <hash n="Default">
+         <hash n="Debug">
             <value n="custom" v="false"/>
             <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser -DDEBUG"/>
+            <value n="name" v="Debug"/>
+            <url n="runDirectoryURL" path="."/>
+            <value n="targetURL"/>
+         </hash>
+         <hash n="Default">
+            <value n="custom" v="false"/>
+            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser"/>
             <value n="name" v="Default"/>
             <url n="runDirectoryURL" path="."/>
             <value n="targetURL"/>
          </hash>
       </hash>
       <list n="runConfigurationList">
+         <string v="Debug"/>
          <string v="Default"/>
       </list>
    </hash>
@@ -278,6 +299,10 @@
          </hash>
          <hash>
             <value n="id" v="Ojdbc5.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="JSP Runtime"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
@@ -417,6 +442,10 @@
          </hash>
          <hash>
             <value n="id" v="Ojdbc5.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="JSP Runtime"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
