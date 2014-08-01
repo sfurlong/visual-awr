@@ -9,10 +9,10 @@ public class AWRMetric {
     private String awrMinerMetricModifier;
     private String awrUniqueOracleMetricName;
     private String metricChartTitle;
-    private boolean isChartable = false;
+    private boolean _isKeyMetric = false;
 
     public AWRMetric(String awrMinerName, String awrOracleName,
-                     String metricUnit, String chartTitle, boolean chartable) {
+                     String metricUnit, String chartTitle, boolean isKeyMetric) {
         awrMinerMetricName = awrMinerName;
         awrOracleMetricName = awrOracleName;
         awrOracleMetricUnit = metricUnit;
@@ -21,12 +21,12 @@ public class AWRMetric {
             awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
         }
         metricChartTitle = chartTitle;
-        isChartable = chartable;
+        _isKeyMetric = isKeyMetric;
     }
 
     public AWRMetric(String awrMinerName, String awrOracleName,
                      String metricUnit, String metricId, String metricModifier,
-                     String chartTitle, boolean chartable) {
+                     String chartTitle, boolean isKeyMetric) {
         awrMinerMetricName = awrMinerName;
         awrOracleMetricName = awrOracleName;
         awrOracleMetricUnit = metricUnit;
@@ -37,7 +37,7 @@ public class AWRMetric {
             awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
         }
         metricChartTitle = chartTitle;
-        isChartable = chartable;
+        _isKeyMetric = isKeyMetric;
     }
 
     public AWRMetric(String awrMinerName, String awrOracleName,
@@ -52,7 +52,6 @@ public class AWRMetric {
             awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
         }
         metricChartTitle = awrOracleName + " " + metricModifier;
-        isChartable = true;
     }
 
     public AWRMetric(String awrMinerName, String awrOracleName,
@@ -67,7 +66,6 @@ public class AWRMetric {
             awrUniqueOracleMetricName = awrOracleMetricName + "-" + awrMinerMetricModifier;
         }
         metricChartTitle = awrOracleName;
-        isChartable = true;
     }
 
     public void setAWRMinerMetricName(String metricName) {
@@ -102,12 +100,12 @@ public class AWRMetric {
         return metricChartTitle;
     }
 
-    public void setIsChartable(boolean isChartable) {
-        this.isChartable = isChartable;
+    public void setIsKeyMetric(boolean isKey) {
+        this._isKeyMetric = isKey;
     }
 
-    public boolean isIsChartable() {
-        return isChartable;
+    public boolean isKeyMetric() {
+        return _isKeyMetric;
     }
 
     public void setAwrOracleMetricId(String awrOracleMetricId) {
