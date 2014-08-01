@@ -60,6 +60,7 @@ public class MetricsDescriptionPanel extends JPanel {
         htmlString += "</tr>";
         
         for (int i=0; i<metricDetails.size(); i++) {
+//            htmlString += "<tr bgcolor=\"#99FF99\">\n";
             htmlString += "<tr>\n";
             htmlString += "<td>\n";
             htmlString += metricDetails.get(i).getAwrOracleMetricId();
