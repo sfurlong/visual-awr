@@ -49,6 +49,35 @@ public class AWRMetrics {
         return (String)_awrOracleNamesToAWRMinerNamesMap.get(oracleMetricName);
     }
 
+
+    public static boolean awrMetricExists(String metricName) {
+        boolean ret = false;
+        ret = _awrMetrics.containsKey(metricName);
+        return ret;
+    }
+
+    public String getMetricDescription(String metricName) {
+        return ((AWRMetric)_awrMetrics.get(metricName)).getAWROracleMetricName();
+    }
+    
+    public String getMetricRangeDescription(String metricName) {
+        return ((AWRMetric)_awrMetrics.get(metricName)).getAWROracleMetricUnit();
+    }
+
+    public String getMetricChartTitle(String metricName) {
+        return ((AWRMetric)_awrMetrics.get(metricName)).getMetricChartTitle();
+    }
+    
+    public void setMetricIsKey(String metricName) {
+        AWRMetric metric = (AWRMetric)_awrMetrics.get(metricName);
+        metric.setIsKeyMetric(true);
+    }
+
+    public boolean getMetricIsKey(String metricName) {
+        AWRMetric metric = (AWRMetric)_awrMetrics.get(metricName);
+        return metric.isKeyMetric();
+    }
+    
     private void init() {
         //Metric Name, Metric Desc, Chart Raange Desc, Chart Title, Is Chartable
         _awrMetrics.put("OS_CPU", new AWRMetric("OS_CPU", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057"));
@@ -98,6 +127,7 @@ public class AWRMetrics {
         _awrMetrics.put("CELL_IO_INT_MB", new AWRMetric("CELL_IO_INT_MB", "Cell Physical IO Interconnect Bytes", "Bytes", "2156"));
         _awrMetrics.put("CELL_IO_INT_MB_MAX", new AWRMetric("CELL_IO_INT_MB_MAX", "Cell Physical IO Interconnect Bytes", "Bytes", "2156", "MAX"));
         _awrMetrics.put("SGA_PGA_TOT", new AWRMetric("SGA_PGA_TOT", "Memory Utilization", "GB", ""));
+        _awrMetrics.put("AVG_ACTIVE_SESS_WAITS", new AWRMetric("AVG_ACTIVE_SESS_WAITS", "Avg Active Session By Wait Types", "Seconds", ""));
         
         //Create the a map of AWRMiner Names to Oracle AWR Names
         for (Object key : _awrMetrics.keySet()) {
@@ -107,16 +137,4 @@ public class AWRMetrics {
         
     }
     
-    public String getMetricDescription(String metricName) {
-        return ((AWRMetric)_awrMetrics.get(metricName)).getAWROracleMetricName();
-    }
-    
-    public String getMetricRangeDescription(String metricName) {
-        return ((AWRMetric)_awrMetrics.get(metricName)).getAWROracleMetricUnit();
-    }
-
-    public String getMetricChartTitle(String metricName) {
-        return ((AWRMetric)_awrMetrics.get(metricName)).getMetricChartTitle();
-    }
-  
 }
