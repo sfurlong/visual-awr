@@ -136,12 +136,12 @@ public class ChartFilePanel extends JPanel {
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
-            new AvgActiveSessionChart("");
-            /*
-            if (AWRData.getInstance().awrMetricExists(metricName)) {
+            if (AWRData.getInstance().awrMetricExists(metricName) || metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
                 if (metricName.equals("SGA_PGA_TOT")) {
                     //Get the memory Data
                     new AWRMemoryTimeSeriesChart(metricName);
+                } else if (metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
+                    new AvgActiveSessionChart(metricName);
                 } else {
                     new AWRTimeSeriesChart(metricName);
                 }
@@ -152,7 +152,7 @@ public class ChartFilePanel extends JPanel {
                                               "Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
-*/
+
         } catch (Exception ex) {
             //SetCursor
             RootFrame.stopWaitCursor();
