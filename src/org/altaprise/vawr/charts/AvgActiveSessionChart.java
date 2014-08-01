@@ -206,9 +206,8 @@ public class AvgActiveSessionChart extends JFrame {
      */
     private static JFreeChart createChart(XYDataset dataset, String metricName, int racInstNum) {
 
-        String chartTitle =
-            "Average ActiveSessions"; //AWRMetrics.getInstance().getMetricChartTitle(metricName) + " Instance-" + racInstNum;
-        String chartYAxisLabel = "Sess"; //AWRMetrics.getInstance().getMetricRangeDescription(metricName);
+        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName);
+        String chartYAxisLabel = AWRMetrics.getInstance().getMetricRangeDescription(metricName);
         JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle,
                                                               // title
                                                               "Date", // x-axis label
