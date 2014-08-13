@@ -232,6 +232,10 @@ public class dbconnect {
             throw new Exception(msg);
         }
     }
+    
+    public Connection getDBConnection() {
+        return this._conn;
+    }
 
     public static void main(String[] args) {
         dbconnect dbconn = new dbconnect();
