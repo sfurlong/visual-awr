@@ -4,11 +4,6 @@ import java.util.ArrayList;
 
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 import org.altaprise.vawr.ui.common.WizardRootPanel;
-import org.altaprise.vawr.ui.dbchartwizard.AWRQueryPanel;
-import org.altaprise.vawr.ui.dbchartwizard.ChartPanel;
-import org.altaprise.vawr.ui.storagechartwizard.DBConnectPanel;
-import org.altaprise.vawr.ui.dbchartwizard.SelectDBIdPanel;
-import org.altaprise.vawr.ui.dbchartwizard.SnapIdSelectPanel;
 
 public class StorageWizardRootPanel extends WizardRootPanel {
 
@@ -18,6 +13,7 @@ public class StorageWizardRootPanel extends WizardRootPanel {
 
         ArrayList<WizardContentBasePanel> wizardPanels = new ArrayList<WizardContentBasePanel>();
         wizardPanels.add(new DBConnectPanel());
+        wizardPanels.add(new StorageQueryPanel());
         wizardPanels.add(new ChartStoragePanel());
 
         setWizardPanels(wizardPanels);
