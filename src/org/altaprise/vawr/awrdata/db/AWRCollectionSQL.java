@@ -145,6 +145,68 @@ public class AWRCollectionSQL {
         return allSnaps;
     }
     
+    public static String getAvgActiveSessionsSQL(long dbId, long startSnapId, long endSnapId) {
+        
+        String sql = 
+        " SELECT snap_id, \n" +
+        "    wait_class, \n" +
+        "    ROUND (SUM (pSec), 2) avg_sess \n" +
+        "   FROM \n" +
+        "    (SELECT snap_id, \n" +
+        "        wait_class, \n" +
+        "        p_tmfg / 1000000 / ela pSec \n" +
+        "       FROM \n" +
+        "        (SELECT (CAST (s.end_interval_time AS DATE) - CAST (s.begin_interval_time AS DATE)) * 24 * \n" +
+        "            3600 ela, \n" +
+        "            s.snap_id, \n" +
+        "            wait_class, \n" +
+        "            e.event_name, \n" +
+        "            CASE WHEN s.begin_interval_time = s.startup_time \n" +
+        "                       -- compare to e.time_waited_micro_fg for 10.2? \n" +
+        "                THEN e.TIME_WAITED_MICRO_FG \n" +
+        "                ELSE e.TIME_WAITED_MICRO_FG - lag (e.TIME_WAITED_MICRO_FG) over (partition BY \n" +
+        "                    event_id, e.dbid, e.instance_number, s.startup_time order by e.snap_id) \n" +
+        "            END p_tmfg \n" +
+        "           FROM dba_hist_snapshot s, \n" +
+        "            dba_hist_system_event e \n" +
+        "          WHERE s.dbid = e.dbid \n" +
+        "            AND s.dbid = to_number(" + dbId + ") \n" +
+        "            AND e.dbid = to_number(" + dbId + ") \n" +
+        "            AND s.instance_number = e.instance_number \n" +
+        "            AND s.snap_id = e.snap_id \n" +
+        "            AND s.snap_id BETWEEN to_number("+startSnapId+") and to_number("+endSnapId+") \n" +
+        "            AND e.snap_id BETWEEN to_number("+startSnapId+") and to_number("+endSnapId+") \n" +
+        "            AND e.wait_class != 'Idle' \n" +
+        "      UNION ALL \n" +
+        "         SELECT (CAST (s.end_interval_time AS DATE) - CAST (s.begin_interval_time AS DATE)) * 24 * \n" +
+        "            3600 ela, \n" +
+        "            s.snap_id, \n" +
+        "            t.stat_name wait_class, \n" +
+        "            t.stat_name event_name, \n" +
+        "            CASE WHEN s.begin_interval_time = s.startup_time \n" +
+        "                THEN t.value \n" +
+        "                ELSE t.value - lag (value) over (partition BY stat_id, t.dbid, t.instance_number, \n" +
+        "                    s.startup_time order by t.snap_id) \n" +
+        "            END p_tmfg \n" +
+        "           FROM dba_hist_snapshot s, \n" +
+        "            dba_hist_sys_time_model t \n" +
+        "          WHERE s.dbid = t.dbid \n" +
+        "            AND s.dbid = to_number(" + dbId + ") \n" +
+        "            AND s.instance_number = t.instance_number \n" +
+        "            AND s.snap_id = t.snap_id \n" +
+        "            AND s.snap_id BETWEEN to_number("+startSnapId+") and to_number("+endSnapId+") \n" +
+        "                       AND t.snap_id BETWEEN to_number("+startSnapId+") and to_number("+endSnapId+") \n" +
+        "            AND t.stat_name = 'DB CPU' \n" +
+        "        ) \n" +
+        "               where p_tmfg is not null \n" +
+        "    ) \n" +
+        "GROUP BY snap_id, \n" +
+        "    wait_class \n" +
+        "ORDER BY snap_id, \n" +
+        "    wait_class  \n";
+        return sql;
+    }
+    
     public static String getStorageMetricsSQL() {
         String sqlString = 
         " DECLARE \n" +
@@ -177,6 +239,7 @@ public class AWRCollectionSQL {
               " dg_tot_mb VARCHAR(200) := ''; \n" +
               " dg_tot_mb_used VARCHAR(200) := ''; \n" +
               " dg_tot_mb_free VARCHAR(200) := ''; \n" +
+        " dg_tot_pct_free VARCHAR(200) := ''; \n" +
         "  \n" +
         " BEGIN \n" +
         "  \n" +
@@ -353,10 +416,11 @@ public class AWRCollectionSQL {
         "  \n" +
               " dg_name  := dg_name || '~' || dg.name; \n" +
               " dg_num_disks := dg_num_disks  || '~' || TO_CHAR(v_num_disks); \n" +
-              " dg_max_tot_mb  := dg_max_tot_mb  || '~' || TO_CHAR(v_num_disks); \n" +
-              " dg_tot_mb  := dg_tot_mb  || '~' || TO_CHAR(v_max_total_mb,'9,999,999'); \n" +
+              " dg_max_tot_mb  := dg_max_tot_mb  || '~' || TO_CHAR(v_max_total_mb); \n" +
+              " dg_tot_mb  := dg_tot_mb  || '~' || TO_CHAR(dg.total_mb,'9,999,999'); \n" +
               " dg_tot_mb_used  := dg_tot_mb_used  || '~' || TO_CHAR(dg.total_mb - dg.free_mb,'999,999,999'); \n" +
               " dg_tot_mb_free  := dg_tot_mb_free  || '~' || TO_CHAR(dg.free_mb,'999,999,999'); \n" +
+        " dg_tot_pct_free  := dg_tot_pct_free  || '~' || TO_CHAR((((dg.total_mb - dg.free_mb)/dg.total_mb)*100),'999.9')||CHR(37); \n" + 
         "  \n" +
               " IF v_enuf_free THEN \n" +
                  " DBMS_OUTPUT.PUT('|'||'PASS'); \n" +
@@ -415,6 +479,7 @@ public class AWRCollectionSQL {
         " ? := 'dg_tot_mb: ' || dg_tot_mb; \n" +
         " ? := 'dg_tot_mb_used: ' || dg_tot_mb_used; \n" +
         " ? := 'dg_tot_mb_free: ' || dg_tot_mb_free; \n" +
+        " ? := 'dg_tot_pct_free: ' || dg_tot_pct_free; \n" +
         "  \n" +
         "  \n" +
         " END; ";
@@ -423,6 +488,7 @@ public class AWRCollectionSQL {
         return sqlString;        
     }
     
+
     /*
     -- ##############################################################################################
 
