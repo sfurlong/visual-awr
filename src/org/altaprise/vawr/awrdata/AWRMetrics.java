@@ -127,7 +127,7 @@ public class AWRMetrics {
         _awrMetrics.put("CELL_IO_INT_MB", new AWRMetric("CELL_IO_INT_MB", "Cell Physical IO Interconnect Bytes", "Bytes", "2156"));
         _awrMetrics.put("CELL_IO_INT_MB_MAX", new AWRMetric("CELL_IO_INT_MB_MAX", "Cell Physical IO Interconnect Bytes", "Bytes", "2156", "MAX"));
         _awrMetrics.put("SGA_PGA_TOT", new AWRMetric("SGA_PGA_TOT", "Memory Utilization", "GB", ""));
-        _awrMetrics.put("AVG_ACTIVE_SESS_WAITS", new AWRMetric("AVG_ACTIVE_SESS_WAITS", "Avg Active Session By Wait Types", "Seconds", ""));
+        _awrMetrics.put("AVG_ACTIVE_SESS_WAITS", new AWRMetric("AVG_ACTIVE_SESS_WAITS", "Avg Active Session By Wait Type", "", ""));
         
         //Create the a map of AWRMiner Names to Oracle AWR Names
         for (Object key : _awrMetrics.keySet()) {
