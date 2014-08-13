@@ -57,9 +57,16 @@ public class DBAttributes implements Serializable
           m_attribValue = value;
    }
 
+    public DBAttributes(String name, Object value)
+    {
+           m_attribName  = name;
+           m_attribObjValue = value;
+    }
+
    //Sets
    public void setName(String name) {m_attribName = name;}
    public void setValue(String value) {m_attribValue = value;}
+    public void setObjValue(Object val) {m_attribObjValue = val;}
    public void setType(String type) {m_attribType = type;}
    public void setAttribLength(int len) {m_attribLength = len;}
    public void setNeedsQuotes(boolean nq) {m_needsQuotes = nq;}
@@ -68,12 +75,14 @@ public class DBAttributes implements Serializable
    //Gets
    public String getName() {return m_attribName;}
    public String getValue() {return m_attribValue;}
+   public Object getObjValue() {return m_attribObjValue;}
    public String getType() {return m_attribType;}
    public int getAttribLength() {return m_attribLength;}
    public boolean getNeedsQuotes() {return m_needsQuotes;}
    public String getLabel() {return m_attribLabel;}
 
    //Private
+   private Object m_attribObjValue = null;
    private String m_attribName = null;
    private String m_attribValue = null;
    private String m_attribType = null;
