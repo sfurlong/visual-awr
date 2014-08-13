@@ -136,7 +136,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                 Long.parseLong(this.jTextField_startSnapId.getText());
             long endSnapId =
                 Long.parseLong(this.jTextField_endSnapId.getText());
-
+            
             this.textArea_awrData.setText("");
             DBRecSet awrRecSetData =
                     sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getMainAWRMetricsSQL(dbId,
@@ -158,23 +158,31 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             //Update the Status in the Text Area
             textAreaStatus += "Parsing AWR Memory Metrics Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
-
             AWRData.getInstance().parseMemoryDataRecords(awrMemoryRecSetData);
+
+            //Query AverageActive Sessions
+            DBRecSet avgActiveSessionRecSetData =
+                    sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getAvgActiveSessionsSQL(dbId, startSnapId, endSnapId));
+            //Update the Status in the Text Area
+            AWRData.getInstance().parseAvgActiveSessionDataRecords(avgActiveSessionRecSetData);
+            textAreaStatus += "Parsing Average Active Session Metrics Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
 
             //Set the Text Area to the AWR Metrics
             String awrDataTextString = AWRData.getInstance().getAWRDataTextString();
-            this.textArea_awrData.setText(AWRData.getInstance().getAWRDataTextString());
+            this.textArea_awrData.setText(awrDataTextString);
 
         } catch (Exception ex) {
             daiBeans.daiDetailInfoDialog dialog =
                 new daiBeans.daiDetailInfoDialog(null, "Error", true,
                                                  ex.getLocalizedMessage());
             ex.printStackTrace();
-        }
-        this.textArea_awrData.setCaretPosition(0);
+        } finally {
+            this.textArea_awrData.setCaretPosition(0);
 
-        //SetCursor
-        RootFrame.stopWaitCursor();
+            //SetCursor
+            RootFrame.stopWaitCursor();
+        }
     }
 
     private void jButton_doQuery_actionPerformed(ActionEvent e) {
@@ -197,7 +205,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                                           "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        
         this.doAWRQuery();
     }
 }
