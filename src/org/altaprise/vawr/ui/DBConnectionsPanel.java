@@ -254,7 +254,7 @@ public class DBConnectionsPanel extends JPanel {
         }
         
         String userRole = (String)jComboBox_roles.getSelectedItem();
-        if (userRole.trim().length() > 0) {
+        if (userRole != null && userRole.trim().length() > 0) {
             uId += " as " + userRole;
         }
             
