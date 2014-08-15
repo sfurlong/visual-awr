@@ -21,6 +21,7 @@ import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
+import org.altaprise.vawr.charts.TopWaitEventsBarChart;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 public class ChartFilePanel extends JPanel {
@@ -136,12 +137,13 @@ public class ChartFilePanel extends JPanel {
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
-            if (AWRData.getInstance().awrMetricExists(metricName) || metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
+            if (AWRData.getInstance().awrMetricExists(metricName)) {
                 if (metricName.equals("SGA_PGA_TOT")) {
-                    //Get the memory Data
                     new AWRMemoryTimeSeriesChart(metricName);
                 } else if (metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
                     new AvgActiveSessionChart(metricName);
+                } else if (metricName.equals("TOP_N_TIMED_EVENTS")) {
+                        new TopWaitEventsBarChart(metricName);
                 } else {
                     new AWRTimeSeriesChart(metricName);
                 }
