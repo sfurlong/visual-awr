@@ -29,6 +29,7 @@ import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
+import org.altaprise.vawr.charts.TopWaitEventsBarChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 
@@ -97,12 +98,11 @@ public class ChartPanel extends WizardContentBasePanel {
         //Convert to AWRMiner metric name
         String awrMetricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
-
         if (AWRData.getInstance().getAWRDataRecordCount() <= 0) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "No AWR Data Found.", "Error",
                                           JOptionPane.ERROR_MESSAGE);
 
-        } else if (AWRData.getInstance().awrMetricExists(awrMetricName) || awrMetricName.equals("AVG_ACTIVE_SESS_WAITS")) {
+        } else if (AWRData.getInstance().awrMetricExists(awrMetricName)) {
             //SetCursor
             RootFrame.startWaitCursor();
 
@@ -111,6 +111,8 @@ public class ChartPanel extends WizardContentBasePanel {
                 new AWRMemoryTimeSeriesChart(awrMetricName);
             } else if (awrMetricName.equals("AVG_ACTIVE_SESS_WAITS")) {
                 new AvgActiveSessionChart(awrMetricName);
+            } else if (awrMetricName.equals("TOP_N_TIMED_EVENTS")) {
+                new TopWaitEventsBarChart(awrMetricName);
             } else {
                 new AWRTimeSeriesChart(awrMetricName);
             }    
