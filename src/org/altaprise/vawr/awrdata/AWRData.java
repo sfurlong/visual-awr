@@ -5,6 +5,7 @@ import dai.shared.businessObjs.DBRecSet;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ public class AWRData {
     private List _headerTokens = new ArrayList();
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
+    private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
 
     private static AWRData _theInstance = null;
 
@@ -37,6 +39,7 @@ public class AWRData {
         _headerTokens.clear();
         _dataRecords.clear();
         _activeSessionRecords.clear();
+        _topWaitEventsMap.clear();
     }
 
 
@@ -68,8 +71,18 @@ public class AWRData {
                 System.out.println("snapId/waitClass/avgSess: " + awrRec.getSnapId() + "/" + waitClass + "/" + avgSess);
             }
         }
+        System.out.println("Top Wait Events");
+        System.out.println("WAIT_CLASS, EVENT_NAME, CUMM_EVENT_WAIT_TIME, CUMM_TOT_ALL_ENVENT_WAIT_TIMES, pct");
+        for (Map.Entry<String, TopWaitEventsRecord> entry : _topWaitEventsMap.entrySet()) {
+            TopWaitEventsRecord awrRec = entry.getValue();
+            System.out.print(awrRec.getWaitClass() + ", ");
+            System.out.print(awrRec.getEventName() + ", ");
+            System.out.print(awrRec.getCummulativeWaitTime() + ", ");
+            System.out.print(awrRec.getCummTotalAllWaitEventsTimeSec() + ", ");
+            System.out.print(awrRec.getCummDBWaitTimePct());
+            System.out.println();
+        }
     }
-
 
     public void parseDataRecords(DBRecSet recSet) {
 
@@ -109,6 +122,50 @@ public class AWRData {
         }
     }
 
+    /*
+    TOP N WAIT EVENTS
+    SNAP_ID WAIT_CLASS           EVENT_NAME                                                       PCTDBT TOTAL_TIME_S
+    ---------- -------------------- ------------------------------------------------------------ ---------- ------------
+       6673 DB CPU               DB CPU                                                            79.37   1162077955
+       6673 User I/O             cell multiblock physical read                                      3.83     56095200
+    */
+    public void parseTopWaitEventsRecords(DBRecSet recSet) {
+        for (int i = 0; i < recSet.getSize(); i++) {
+            String waitClass = recSet.getRec(i).getAttribVal("WAIT_CLASS");
+            String eventName = recSet.getRec(i).getAttribVal("EVENT_NAME");
+            String totalTimeS = recSet.getRec(i).getAttribVal("TOTAL_TIME_S");
+            double totalTimeD = Double.parseDouble(totalTimeS);
+
+            TopWaitEventsRecord topWaitEventsRec = _topWaitEventsMap.get(eventName);
+            if (topWaitEventsRec == null) {
+                topWaitEventsRec = new TopWaitEventsRecord();
+                topWaitEventsRec.setWaitClass(waitClass);
+                topWaitEventsRec.setEventName(eventName);
+                topWaitEventsRec.setCummulativeWaitTime(totalTimeD);
+                double cummTotalAllWaitEventsTimeSec = topWaitEventsRec.getCummTotalAllWaitEventsTimeSec();
+                cummTotalAllWaitEventsTimeSec += totalTimeD;
+                topWaitEventsRec.setCummTotalAllWaitEventsTimeSec(cummTotalAllWaitEventsTimeSec);
+                _topWaitEventsMap.put(eventName, topWaitEventsRec);
+            } else {
+                double cummWaitTime = topWaitEventsRec.getCummulativeWaitTime();
+                double cummTotalAllWaitEventsTimeSec = topWaitEventsRec.getCummTotalAllWaitEventsTimeSec();
+                cummTotalAllWaitEventsTimeSec += totalTimeD;
+                cummWaitTime = cummWaitTime + totalTimeD;
+                topWaitEventsRec.setCummulativeWaitTime(cummWaitTime);
+                topWaitEventsRec.setCummTotalAllWaitEventsTimeSec(cummTotalAllWaitEventsTimeSec);
+            }
+            //Calculate the percentages
+            for (Map.Entry<String, TopWaitEventsRecord> entry : _topWaitEventsMap.entrySet()) {
+                TopWaitEventsRecord waitEventRec = entry.getValue();
+                double cummEventWaitTime = waitEventRec.getCummulativeWaitTime();
+                double cummTotalAllWaitTime = waitEventRec.getCummTotalAllWaitEventsTimeSec();
+                double pct = (cummEventWaitTime / cummTotalAllWaitTime) * 100;
+                waitEventRec.setCummDBWaitTimePct(pct);
+            }
+
+        }
+    }
+
     public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
         AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
         return awrRec;
@@ -132,11 +189,6 @@ public class AWRData {
     ---------- -------------------- ----------
         777 Administrative                0
         777 Application                   0
-        777 Cluster                       0
-        777 Commit                        0
-        777 Concurrency                   0
-        777 Configuration                 0
-        777 DB CPU                      .21
     */
         for (int i = 0; i < recSet.getSize(); i++) {
 
@@ -222,6 +274,10 @@ public class AWRData {
         return new ArrayList<AWRRecord>(_activeSessionRecords.values());
     }
 
+    public ArrayList<TopWaitEventsRecord> getTopWaitEventsRecordArray() {
+        return new ArrayList<TopWaitEventsRecord>(this._topWaitEventsMap.values());
+    }
+
     public AWRRecord parseDataRecord(String rec) {
         AWRRecord awrRec = new AWRRecord();
         String racInstNum = "";
@@ -266,7 +322,16 @@ public class AWRData {
 
 
     public boolean awrMetricExists(String metric) {
-        return _headerTokens.contains(metric.toUpperCase());
+        boolean ret = false;
+
+        if (metric.equals("AVG_ACTIVE_SESS_WAITS") && this._activeSessionRecords.size() > 0) {
+            ret = true;
+        } else if (metric.equals("TOP_N_TIMED_EVENTS") && this._topWaitEventsMap.size() > 0) {
+            ret = true;
+        } else if (_headerTokens.contains(metric.toUpperCase())) {
+            ret = true;
+        } 
+        return ret;
     }
 
     public int getNumRACInstances() {
