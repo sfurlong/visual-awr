@@ -67,11 +67,10 @@ public class AvgActiveSessionChart extends JFrame {
     BorderLayout borderLayout = new BorderLayout();
 
     public AvgActiveSessionChart(String metricName) {
-        super("Visual AWR Charting");
+        super("VisualAWR Charting");
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
-
         _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
 
@@ -161,18 +160,21 @@ public class AvgActiveSessionChart extends JFrame {
                 snapId = avgActiveSessRecs.get(i).getSnapId();
 
                 Date snapShotDate = avgActiveSessRecs.get(i).getSnapShotDateTime();
-                s1.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(0).getAVG_SESS()));
-                s2.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(1).getAVG_SESS()));
-                s3.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(2).getAVG_SESS()));
-                s4.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(3).getAVG_SESS()));
-                s5.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(4).getAVG_SESS()));
-                s6.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(5).getAVG_SESS()));
-                s7.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(6).getAVG_SESS()));
-                s8.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(7).getAVG_SESS()));
-                s9.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(8).getAVG_SESS()));
-                s10.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(9).getAVG_SESS()));
-                s11.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(10).getAVG_SESS()));
-
+                if (avgActiveSessRec.size() > 0) {
+                    s1.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(0).getAVG_SESS()));
+                    s2.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(1).getAVG_SESS()));
+                    s3.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(2).getAVG_SESS()));
+                    s4.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(3).getAVG_SESS()));
+                    s5.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(4).getAVG_SESS()));
+                    s6.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(5).getAVG_SESS()));
+                    s7.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(6).getAVG_SESS()));
+                    s8.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(7).getAVG_SESS()));
+                    s9.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(8).getAVG_SESS()));
+                    s10.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(9).getAVG_SESS()));
+                    s11.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(10).getAVG_SESS()));
+                } else {
+                    System.out.println("No Avg Active Session Data in file for SnapId: " + snapId);
+                }
             } catch (Exception e) {
                 System.out.println("Error at snapid: " + snapId);
                 System.out.println(e.getLocalizedMessage());
