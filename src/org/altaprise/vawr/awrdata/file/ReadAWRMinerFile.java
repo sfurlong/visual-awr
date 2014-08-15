@@ -12,7 +12,6 @@ import java.io.FileReader;
 import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.AWRData;
-import org.altaprise.vawr.awrdata.AWRRecord;
 
 
 public class ReadAWRMinerFile {
@@ -30,6 +29,7 @@ public class ReadAWRMinerFile {
             readMainMetrics();
             readAverageActiveSessions();
             readIOWaitMetrics();
+            readTopTimedEvents();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
@@ -89,6 +89,7 @@ public class ReadAWRMinerFile {
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
                     } else {
                         if (rec.equals("~~END-MAIN-METRICS~~")) {
@@ -152,6 +153,7 @@ public class ReadAWRMinerFile {
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
                     } else {
                         if (rec.equals("~~END-AVERAGE-ACTIVE-SESSIONS~~")) {
@@ -217,6 +219,7 @@ public class ReadAWRMinerFile {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
 
+
                     } else {
                         if (rec.equals("~~END-IO-WAIT-HISTOGRAM~~")) {
                             sectionEndFound = true;
@@ -234,6 +237,70 @@ public class ReadAWRMinerFile {
 
         } catch (Exception e) {
             System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /*
+    TOP N WAIT EVENTS
+    SNAP_ID WAIT_CLASS           EVENT_NAME                                                       PCTDBT TOTAL_TIME_S
+    ---------- -------------------- ------------------------------------------------------------ ---------- ------------
+       6673 DB CPU               DB CPU                                                            79.37   1162077955
+       6673 User I/O             cell multiblock physical read                                      3.83     56095200
+    */
+    private void readTopTimedEvents() throws Exception {
+        String rec = "";
+        try {
+            //Priming read
+            rec = _fileReader.readLine();
+            int recCount = 0;
+            boolean sectionStartFound = false;
+            DBRecSet topTimedEventsRecSet = new DBRecSet();
+
+            while (rec != null && !sectionStartFound) {
+                if (rec.equals("~~BEGIN-TOP-N-TIMED-EVENTS~~")) {
+                    sectionStartFound = true;
+                    //Read the following blank line
+                    rec = _fileReader.readLine();
+                } else
+                    //Read the next record
+                    rec = _fileReader.readLine();
+            }
+            boolean sectionEndFound = false;
+            while (rec != null && sectionStartFound && !sectionEndFound) {
+
+                //Skip comment lines.
+                if (rec.trim().length() > 0) {
+                    recCount++;
+                    //System.out.println(rec);
+
+                    if (recCount == 1) {
+                        //Parse the headers
+                        AWRData.getInstance().parseHeaders(rec);
+                    } else if (recCount == 2) {
+                        //Skip the row in the file that contains the dashes.
+                        //Do nothing
+
+
+                    } else {
+                        if (rec.equals("~~END-TOP-N-TIMED-EVENTS~~")) {
+                            sectionEndFound = true;
+                        } else {
+                            //Parse the data rows
+                            DBRec topTimedEventsDBRec = this.createTopTimedEventsDBRec(rec);
+                            topTimedEventsRecSet.addRec(topTimedEventsDBRec);
+                        }
+                    }
+                }
+                //Read the next record
+                rec = _fileReader.readLine();
+            }
+
+            AWRData.getInstance().parseTopWaitEventsRecords(topTimedEventsRecSet);
+
+        } catch (Exception e) {
+            System.out.println("readTopTimedEvents\n" + e.getLocalizedMessage());
             e.printStackTrace();
             throw e;
         }
@@ -284,9 +351,11 @@ public class ReadAWRMinerFile {
                     if (recCount == 1) {
                         //Skip the headers
 
+
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
                     } else {
                         if (rec.equals("~~END-OS-INFORMATION~~")) {
@@ -318,11 +387,7 @@ public class ReadAWRMinerFile {
     ---------- --------------- ---------- ---------- ----------
            776               1        201        1.4      202.4
            776               2        201        1.6      202.6
-           776               3      201.1        3.1      204.2
-           776               4      200.9        2.2      203.1
-           776               5        201        1.3      202.3
-           776               6      201.5        1.3      202.8
-    */
+   */
     private void readMemoryData() throws Exception {
         String rec = "";
         DBRecSet memRecSet = new DBRecSet();
@@ -355,9 +420,11 @@ public class ReadAWRMinerFile {
                         //Skip the headers
                         //Do Nothing
 
+
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
                     } else {
                         if (rec.equals("~~END-MEMORY~~")) {
@@ -492,5 +559,43 @@ public class ReadAWRMinerFile {
         return machineInfoDBRec;
     }
 
+    /*
+    SNAP_ID WAIT_CLASS           EVENT_NAME                                                       PCTDBT TOTAL_TIME_S
+    ---------- -------------------- ------------------------------------------------------------ ---------- ------------
+       6673 DB CPU               DB CPU                                                            79.37   1162077955
+       6673 User I/O             cell multiblock physical read                                      3.83     56095200
+    */
+    private DBRec createTopTimedEventsDBRec(String rec) {
+
+        DBRec dbRec = new DBRec();
+        DBAttributes attribs = null;
+        String subString = null;
+
+
+        if (rec.length() > 0) {
+
+            subString = rec.substring(0, 10).trim();
+            attribs = new DBAttributes("SNAP_ID", subString);
+            dbRec.addAttrib(attribs);
+
+            subString = rec.substring(11, 31).trim();
+            attribs = new DBAttributes("WAIT_CLASS", subString);
+            dbRec.addAttrib(attribs);
+
+            subString = rec.substring(32, 92).trim();
+            attribs = new DBAttributes("EVENT_NAME", subString);
+            dbRec.addAttrib(attribs);
+
+            subString = rec.substring(93, 103).trim();
+            attribs = new DBAttributes("PCTDBT", subString);
+            dbRec.addAttrib(attribs);
+
+            subString = rec.substring(104, 116).trim();
+            attribs = new DBAttributes("TOTAL_TIME_S", subString);
+            dbRec.addAttrib(attribs);
+
+        }
+        return dbRec;
+    }
 
 }
