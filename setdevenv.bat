@@ -17,10 +17,9 @@ set CLASSPATH=%APP_HOME%\lib\dai.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\daiBeans.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\jcommon-1.0.22.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\jfreechart-1.0.17.jar;%CLASSPATH%
-set CLASSPATH=%APP_HOME%\lib\odpi.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\ojdbc5.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\ObfuscationAnnotation.jar;%CLASSPATH%
-set CLASSPATH=%APP_HOME%\lib\yguard.jar;%CLASSPATH%
+set CLASSPATH=%APP_HOME%\lib\commons-compress-1.8.1.jar;%CLASSPATH%
 
 set path=%JAVA_HOME%\bin;%APP_HOME%\lib;%path%
 
