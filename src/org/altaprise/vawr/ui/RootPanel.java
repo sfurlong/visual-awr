@@ -33,6 +33,7 @@ import java.awt.event.KeyEvent;
 import org.altaprise.vawr.ui.dbchartwizard.DBConnectPanel;
 import org.altaprise.vawr.ui.common.WizardRootPanel;
 import org.altaprise.vawr.ui.dbchartwizard.DBWizardRootPanel;
+import org.altaprise.vawr.ui.oswchartwizard.OSWWizardRootPanel;
 import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 
@@ -45,6 +46,7 @@ public class RootPanel extends JPanel {
     StorageWizardRootPanel _storageChartTab = new StorageWizardRootPanel();
     AppAboutPanel _aboutPanel = new AppAboutPanel();
     MetricsDescriptionPanel _metricDescPanel = new MetricsDescriptionPanel();
+    OSWWizardRootPanel _OSWRootPanel = new OSWWizardRootPanel();
 
     public RootPanel() {
         super(new GridLayout(1, 1));
@@ -71,6 +73,10 @@ public class RootPanel extends JPanel {
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Storage Analysis</body></html>",
                           this._storageChartTab);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>OSWatcher Analysis</body></html>",
+                          this._OSWRootPanel);
+        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 */
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
                           _dbConnPanel);
