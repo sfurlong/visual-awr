@@ -168,6 +168,15 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             textAreaStatus += "Parsing Average Active Session Metrics Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
+            //Query Top Wait Events
+            DBRecSet topWaitEventsRecSet =
+                    sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getTopWaitEventsSQL(dbId, startSnapId, endSnapId));
+            //Update the Status in the Text Area
+            AWRData.getInstance().parseTopWaitEventsRecords(topWaitEventsRecSet);
+            textAreaStatus += "Parsing Top Wait Events Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+
+
             //Set the Text Area to the AWR Metrics
             String awrDataTextString = AWRData.getInstance().getAWRDataTextString();
             this.textArea_awrData.setText(awrDataTextString);
