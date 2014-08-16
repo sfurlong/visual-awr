@@ -488,7 +488,107 @@ public class AWRCollectionSQL {
         return sqlString;        
     }
     
-
+    public static String getTopWaitEventsSQL(long dbId, long startSnapId, long endSnapId) {
+        String sqlString = 
+        " SELECT snap_id, " +
+        "   wait_class, " +
+        "   event_name, " +
+        "   pctdbt, " +
+        "   total_time_s " +
+        " FROM " +
+        "   (SELECT a.snap_id, " +
+        "     wait_class, " +
+        "     event_name, " +
+        "     b.dbt, " +
+        "     ROUND(SUM(a.ttm) /b.dbt*100,2) pctdbt, " +
+        "     SUM(a.ttm) total_time_s, " +
+        "     dense_rank() over (partition BY a.snap_id order by SUM(a.ttm)/b.dbt*100 DESC nulls last) rnk " +
+        "   FROM " +
+        "     (SELECT snap_id, " +
+        "       wait_class, " +
+        "       event_name, " +
+        "       ttm " +
+        "     FROM " +
+        "       (SELECT " +
+        "         /*+ qb_name(systemevents) */ " +
+        "         (CAST (s.end_interval_time AS DATE) - CAST (s.begin_interval_time AS DATE)) * 24 * 3600 ela, " +
+        "         s.snap_id, " +
+        "         wait_class, " +
+        "         e.event_name, " +
+        "         CASE " +
+        "           WHEN s.begin_interval_time = s.startup_time " +
+        "           THEN e.time_waited_micro " +
+        "           ELSE e.time_waited_micro - lag (e.time_waited_micro ) over (partition BY e.instance_number,e.event_name order by e.snap_id) " +
+        "         END ttm " +
+        "       FROM dba_hist_snapshot s, " +
+        "         dba_hist_system_event e " +
+        "       WHERE s.dbid          = e.dbid " +
+        "       AND s.dbid            = " + dbId  +
+        "       AND s.instance_number = e.instance_number " +
+        "       AND s.snap_id         = e.snap_id " +
+        "       AND s.snap_id BETWEEN " + startSnapId + " and " + endSnapId +
+        "       AND e.wait_class != 'Idle' " +
+        "       UNION ALL " +
+        "       SELECT " +
+        "         /*+ qb_name(dbcpu) */ " +
+        "         (CAST (s.end_interval_time AS DATE) - CAST (s.begin_interval_time AS DATE)) * 24 * 3600 ela, " +
+        "         s.snap_id, " +
+        "         t.stat_name wait_class, " +
+        "         t.stat_name event_name, " +
+        "         CASE " +
+        "           WHEN s.begin_interval_time = s.startup_time " +
+        "           THEN t.value " +
+        "           ELSE t.value - lag (t.value ) over (partition BY s.instance_number order by s.snap_id) " +
+        "         END ttm " +
+        "       FROM dba_hist_snapshot s, " +
+        "         dba_hist_sys_time_model t " +
+        "       WHERE s.dbid          = t.dbid " +
+        "       AND s.dbid            = " + dbId +
+        "       AND s.instance_number = t.instance_number " +
+        "       AND s.snap_id         = t.snap_id " +
+        "       AND s.snap_id BETWEEN " + startSnapId + " and " + endSnapId +
+        "       AND t.stat_name = 'DB CPU' " +
+        "       ) " +
+        "     ) a, " +
+        "     (SELECT snap_id, " +
+        "       SUM(dbt) dbt " +
+        "     FROM " +
+        "       (SELECT " +
+        "         /*+ qb_name(dbtime) */ " +
+        "         s.snap_id, " +
+        "         t.instance_number, " +
+        "         t.stat_name nm, " +
+        "         CASE " +
+        "           WHEN s.begin_interval_time = s.startup_time " +
+        "           THEN t.value " +
+        "           ELSE t.value - lag (t.value ) over (partition BY s.instance_number order by s.snap_id) " +
+        "         END dbt " +
+        "       FROM dba_hist_snapshot s, " +
+        "         dba_hist_sys_time_model t " +
+        "       WHERE s.dbid          = t.dbid " +
+        "       AND s.dbid            = " + dbId +
+        "       AND s.instance_number = t.instance_number " +
+        "       AND s.snap_id         = t.snap_id " +
+        "       AND s.snap_id BETWEEN " + startSnapId + " and " + endSnapId +
+        "       AND t.stat_name = 'DB time' " +
+        "       ORDER BY s.snap_id, " +
+        "         s.instance_number " +
+        "       ) " +
+        "     GROUP BY snap_id " +
+        "     HAVING SUM(dbt) > 0 " +
+        "     ) b " +
+        "   WHERE a.snap_id = b.snap_id " +
+        "   GROUP BY a.snap_id, " +
+        "     a.wait_class, " +
+        "     a.event_name, " +
+        "     b.dbt " +
+        "   ) " +
+        " WHERE pctdbt > 0 " +
+        " AND rnk     <= 5 " +
+        " ORDER BY snap_id, " +
+        "   pctdbt DESC  ";
+        return sqlString;
+    }
     /*
     -- ##############################################################################################
 
