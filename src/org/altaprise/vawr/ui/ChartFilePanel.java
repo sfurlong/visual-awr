@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import javax.swing.border.EtchedBorder;
@@ -32,9 +34,13 @@ public class ChartFilePanel extends JPanel {
     private JPanel  jPanel_panelTitle = new JPanel();
     private JPanel jPanel_contentPanel = new JPanel();
     private JLabel jLabel_panelTitle = new JLabel();
+    private JTextArea jTextArea_osInfo = new JTextArea();
+    private JScrollPane jScrollPane_osInfo = new JScrollPane(jTextArea_osInfo);
 
     private static String AWR_FILE_NAME = "INITIALIZED";
     private ReadAWRMinerFile _awrParser = null;
+    private JLabel jLabel1 = new JLabel("Platform Details:");
+    private JSeparator jSeparator1 = new JSeparator();
 
     /**The default constructor for form
      */
@@ -53,10 +59,13 @@ public class ChartFilePanel extends JPanel {
         BorderLayout borderLayout = new BorderLayout();
         this.setLayout(borderLayout);
 
+        this.setSize(new Dimension(603, 503));
+
         jLabel_panelTitle.setText("Select an AWRMiner file, then chart an AWR metric.");
         jLabel_panelTitle.setBounds(new Rectangle(20, 5, 400, 30));
         jLabel_panelTitle.setFont(new Font("Arial", 1, 16));
 
+        jScrollPane_osInfo.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
         jPanel_panelTitle.setLayout(null);
         jPanel_panelTitle.setBackground(new Color(247, 247, 247));
         jPanel_panelTitle.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -65,12 +74,28 @@ public class ChartFilePanel extends JPanel {
         jPanel_panelTitle.add(jLabel_panelTitle, null);
         
         jPanel_contentPanel.setLayout(null);
+
         //jPanel_contentPanel.setSize(new Dimension(706, 300));
+        jScrollPane_osInfo.setBounds(new Rectangle(35, 200, 535, 220));
+        jScrollPane_osInfo.setMinimumSize(new Dimension(48, 200));
+        jScrollPane_osInfo.setPreferredSize(new Dimension(48, 200));
+
+        jLabel1.setBounds(new Rectangle(35, 185, 125, 15));
+
+        jLabel1.setText("Platform Details Output:");
+        jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));
+        jPanel_contentPanel.setBounds(new Rectangle(20, 5, 400, 30));
+        jPanel_contentPanel.setMinimumSize(new Dimension(48, 200));
+        jPanel_contentPanel.add(jSeparator1, null);
+        jPanel_contentPanel.add(jLabel1, null);
         jPanel_contentPanel.add(jComboBox_metricName, null);
         jPanel_contentPanel.add(jButton_chart, null);
 
         jPanel_contentPanel.add(jButton_selectFile, null);
         jPanel_contentPanel.add(jTextField_fileName, null);
+
+        //jPanel_contentPanel.add(jScrollPane_osInfo, null);
+        jPanel_contentPanel.add(jScrollPane_osInfo, null);
         this.add(jPanel_panelTitle, BorderLayout.NORTH);
 
         this.add(jPanel_contentPanel, BorderLayout.CENTER);
@@ -92,6 +117,9 @@ public class ChartFilePanel extends JPanel {
                 }
             });
         jComboBox_metricName.setBounds(new Rectangle(40, 110, 300, 20));
+
+        jTextArea_osInfo.setBackground(Color.lightGray);
+        jTextArea_osInfo.setEditable(false);
 
         setComboBoxOptions();
     }
@@ -136,6 +164,9 @@ public class ChartFilePanel extends JPanel {
             String oracleMetricName = (String)jComboBox_metricName.getSelectedItem();
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
+
+            this.jTextArea_osInfo.setText(AWRData.getInstance().getPlatformInfoDisplayText());
+            this.jTextArea_osInfo.setCaretPosition(0);
 
             if (AWRData.getInstance().awrMetricExists(metricName)) {
                 if (metricName.equals("SGA_PGA_TOT")) {

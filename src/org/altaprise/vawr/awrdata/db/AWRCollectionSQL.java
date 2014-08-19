@@ -589,6 +589,117 @@ public class AWRCollectionSQL {
         "   pctdbt DESC  ";
         return sqlString;
     }
+    
+    public static String getOSStatistics(long dbId) {
+        
+        String sqlString = 
+            " DECLARE \n" +
+            "     l_pad_length number :=60; \n" +
+            "       l_hosts varchar2(4000); \n" +
+            "       l_dbid  number; \n" +
+            " BEGIN \n" +
+            "  \n" +
+            "  \n" +
+            "     dbms_output.put_line('~~BEGIN-OS-INFORMATION~~'); \n" +
+            "     dbms_output.put_line(rpad('STAT_NAME',l_pad_length)||' '||'STAT_VALUE'); \n" +
+            "     dbms_output.put_line(rpad('-',l_pad_length,'-')||' '||rpad('-',l_pad_length,'-')); \n" +
+                "  \n" +
+            "     FOR c1 IN ( \n" +
+            "                       with inst as ( \n" +
+            "               select min(instance_number) inst_num \n" +
+            "                 from dba_hist_snapshot \n" +
+            "                 where dbid = " + dbId + " \n" +
+            "                       and snap_id BETWEEN to_number(&SNAP_ID_MIN) and to_number(&SNAP_ID_MAX)) \n" +
+            "       SELECT  \n" +
+            "                       CASE WHEN stat_name = 'PHYSICAL_MEMORY_BYTES' THEN 'PHYSICAL_MEMORY_GB' ELSE stat_name END stat_name, \n" +
+            "                       CASE WHEN stat_name IN ('PHYSICAL_MEMORY_BYTES') THEN round(VALUE/1024/1024/1024,2) ELSE VALUE END stat_value \n" +
+            "                   FROM dba_hist_osstat  \n" +
+            "                  WHERE dbid = " + dbId + "  \n" +
+            "                    AND snap_id = (SELECT MAX(snap_id) FROM dba_hist_osstat WHERE dbid = " + dbId + " AND instance_number = (select inst_num from inst)) \n" +
+            "                                  AND instance_number = (select inst_num from inst) \n" +
+            "                    AND (stat_name LIKE 'NUM_CPU%' \n" +
+            "                    OR stat_name IN ('PHYSICAL_MEMORY_BYTES'))) \n" +
+            "     loop \n" +
+            "         dbms_output.put_line(rpad(c1.stat_name,l_pad_length)||' '||c1.stat_value); \n" +
+            "     end loop; --c1 \n" +
+                "  \n" +
+                    " for c1 in (SELECT CPU_COUNT,CPU_CORE_COUNT,CPU_SOCKET_COUNT \n" +
+            "                                FROM DBA_CPU_USAGE_STATISTICS  \n" +
+            "                               where dbid = " + dbId + " \n" +
+            "                                 and TIMESTAMP = (select max(TIMESTAMP) from DBA_CPU_USAGE_STATISTICS where dbid = " + dbId + " ) \n" +
+            "                                 AND ROWNUM = 1) \n" +
+            "       loop \n" +
+                            " dbms_output.put_line(rpad('!CPU_COUNT',l_pad_length)||' '||c1.CPU_COUNT); \n" +
+            "               dbms_output.put_line(rpad('!CPU_CORE_COUNT',l_pad_length)||' '||c1.CPU_CORE_COUNT); \n" +
+            "               dbms_output.put_line(rpad('!CPU_SOCKET_COUNT',l_pad_length)||' '||c1.CPU_SOCKET_COUNT); \n" +
+            "       end loop; \n" +
+                    "  \n" +
+            "       for c1 in (SELECT distinct platform_name FROM sys.GV_$DATABASE  \n" +
+            "                               where dbid = " + dbId + " \n" +
+            "                               and rownum = 1) \n" +
+            "       loop \n" +
+                            " dbms_output.put_line(rpad('!PLATFORM_NAME',l_pad_length)||' '||c1.platform_name); \n" +
+            "       end loop; \n" +
+            "  \n" +
+            "        \n" +
+                    "  \n" +
+            "       FOR c2 IN (SELECT  \n" +
+            "                                               $IF $$VER_GTE_11_2 $THEN \n" +
+            "                                                       REPLACE(platform_name,' ','_') platform_name, \n" +
+            "                                               $ELSE \n" +
+                                                                    " 'None' platform_name, \n" +
+            "                                               $END \n" +
+            "                                               VERSION,db_name,DBID FROM dba_hist_database_instance  \n" +
+            "                                               WHERE dbid = " + dbId + "   \n" +
+            "                                               and startup_time = (select max(startup_time) from dba_hist_database_instance WHERE dbid = " + dbId + " ) \n" +
+            "                                               AND ROWNUM = 1) \n" +
+            "     loop \n" +
+            "         dbms_output.put_line(rpad('PLATFORM_NAME',l_pad_length)||' '||c2.platform_name); \n" +
+            "         dbms_output.put_line(rpad('VERSION',l_pad_length)||' '||c2.VERSION); \n" +
+            "         dbms_output.put_line(rpad('DB_NAME',l_pad_length)||' '||c2.db_name); \n" +
+            "         dbms_output.put_line(rpad('DBID',l_pad_length)||' '||c2.DBID); \n" +
+            "     end loop; --c2 \n" +
+                "  \n" +
+            "     FOR c3 IN (SELECT count(distinct s.instance_number) instances \n" +
+            "                            FROM dba_hist_database_instance i,dba_hist_snapshot s \n" +
+            "                               WHERE i.dbid = s.dbid \n" +
+            "                                 and i.dbid = " + dbId + " \n" +
+            "                                 AND s.snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX) \n" +
+            "     loop \n" +
+            "         dbms_output.put_line(rpad('INSTANCES',l_pad_length)||' '||c3.instances); \n" +
+            "     end loop; --c3            \n" +
+                    "  \n" +
+                    "  \n" +
+            "       FOR c4 IN (SELECT distinct regexp_replace(host_name,'^([[:alnum:]]+)\\..*$','\1')  host_name  \n" +
+            "                            FROM dba_hist_database_instance i,dba_hist_snapshot s \n" +
+            "                               WHERE i.dbid = s.dbid \n" +
+            "                                 and i.dbid = " + dbId + " \n" +
+            "                   and s.startup_time = i.startup_time \n" +
+            "                                 AND s.snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX \n" +
+            "                           order by 1) \n" +
+            "     loop \n" +
+            "               if '&CAPTURE_HOST_NAMES' = 'YES' then \n" +
+            "                       l_hosts := l_hosts || c4.host_name ||',';        \n" +
+            "               end if; \n" +
+            "       end loop; --c4 \n" +
+            "       l_hosts := rtrim(l_hosts,','); \n" +
+            "       dbms_output.put_line(rpad('HOSTS',l_pad_length)||' '||l_hosts); \n" +
+                    "  \n" +
+            "       FOR c5 IN (SELECT sys_context('USERENV', 'MODULE') module FROM DUAL) \n" +
+            "     loop \n" +
+            "         dbms_output.put_line(rpad('MODULE',l_pad_length)||' '||c5.module); \n" +
+            "     end loop; --c5   \n" +
+                    "  \n" +
+                    "  \n" +
+                    "  \n" +
+            "       dbms_output.put_line(rpad('AWR_MINER_VER',l_pad_length)||' &AWR_MINER_VER'); \n" +
+            "       dbms_output.put_line('~~END-OS-INFORMATION~~'); \n" +
+            " END; \n";
+        
+        return sqlString;
+    }
+    
+    
     /*
     -- ##############################################################################################
 

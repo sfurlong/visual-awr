@@ -22,6 +22,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import javax.swing.JScrollPane;
+
+import javax.swing.JTextArea;
+
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.AWRData;
@@ -38,6 +42,8 @@ public class ChartPanel extends WizardContentBasePanel {
     private JButton jButton_chartMetric = new JButton("Chart Metric");
     private ArrayList<String> _awrStringRecs = null;
     private JLabel jLabel_selectMetrics = new JLabel("Select AWR Metric to Chart");
+    private JTextArea jTextArea_osInfo = new JTextArea();
+    private JScrollPane jScrollPane_osInfo = new JScrollPane(jTextArea_osInfo);
 
     public ChartPanel() {
         super();
@@ -65,6 +71,7 @@ public class ChartPanel extends WizardContentBasePanel {
         this.setLayout(null);
         //this.setSize(new Dimension(660, 520));
 
+        this.setSize(new Dimension(571, 342));
         jComboBox_metrics.setBounds(new Rectangle(70, 65, 320, 20));
         jComboBox_metrics.setVisible(true);
         jComboBox_metrics.setEditable(false);
@@ -76,6 +83,8 @@ public class ChartPanel extends WizardContentBasePanel {
         });
         jLabel_selectMetrics.setBounds(new Rectangle(70, 45, 150, 15));
 
+        //jScrollPane_osInfo.setBounds(new Rectangle(60, 160, 450, 160));
+        //this.add(jScrollPane_osInfo, null);
         this.add(jLabel_selectMetrics, null);
         this.add(jButton_chartMetric, null);
         this.add(jComboBox_metrics, null);
@@ -116,6 +125,7 @@ public class ChartPanel extends WizardContentBasePanel {
             } else {
                 new AWRTimeSeriesChart(awrMetricName);
             }    
+            
             //SetCursor
             RootFrame.stopWaitCursor();
         } else {

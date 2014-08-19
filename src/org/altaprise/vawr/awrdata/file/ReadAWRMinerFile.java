@@ -37,7 +37,9 @@ public class ReadAWRMinerFile {
             e.printStackTrace();
             throw e;
         } finally {
-            _fileReader.close();
+            if (_fileReader != null) {
+                _fileReader.close();
+            }
         }
     }
 
@@ -89,6 +91,7 @@ public class ReadAWRMinerFile {
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
 
                     } else {
@@ -153,6 +156,7 @@ public class ReadAWRMinerFile {
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
 
                     } else {
@@ -220,6 +224,7 @@ public class ReadAWRMinerFile {
                         //Do nothing
 
 
+
                     } else {
                         if (rec.equals("~~END-IO-WAIT-HISTOGRAM~~")) {
                             sectionEndFound = true;
@@ -283,6 +288,7 @@ public class ReadAWRMinerFile {
                         //Do nothing
 
 
+
                     } else {
                         if (rec.equals("~~END-TOP-N-TIMED-EVENTS~~")) {
                             sectionEndFound = true;
@@ -324,6 +330,8 @@ public class ReadAWRMinerFile {
     */
     private void readMachineInfo() throws Exception {
         String rec = "";
+        DBRecSet platformInfoRecSet = new DBRecSet();
+        
         try {
             //Priming read
             rec = _fileReader.readLine();
@@ -347,23 +355,20 @@ public class ReadAWRMinerFile {
                     recCount++;
                     //System.out.println(rec);
 
-
                     if (recCount == 1) {
                         //Skip the headers
-
 
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
-
 
                     } else {
                         if (rec.equals("~~END-OS-INFORMATION~~")) {
                             endOfSectionFound = true;
                         } else {
                             //Parse the data rows
-                            System.out.println(rec);
-                            createMachineInfoDBRec(rec);
+                            DBRec platformInfoRec = createPlatformInfoDBRec(rec);
+                            platformInfoRecSet.addRec(platformInfoRec);
                         }
                     }
 
@@ -372,8 +377,7 @@ public class ReadAWRMinerFile {
                 rec = _fileReader.readLine();
             }
 
-            //AWRData.getInstance().parseMemoryDataRecords(memRecSet);
-
+            AWRData.getInstance().parsePlatformInfoRecords(platformInfoRecSet);
 
         } catch (Exception e) {
             System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
@@ -421,9 +425,11 @@ public class ReadAWRMinerFile {
                         //Do Nothing
 
 
+
                     } else if (recCount == 2) {
                         //Skip the row in the file that contains the dashes.
                         //Do nothing
+
 
 
                     } else {
@@ -531,7 +537,7 @@ public class ReadAWRMinerFile {
         return avgActiveSessDBRec;
     }
 
-    private DBRec createMachineInfoDBRec(String rec) {
+    private DBRec createPlatformInfoDBRec(String rec) {
 
         int tokCnt = 0;
         DBRec machineInfoDBRec = new DBRec();

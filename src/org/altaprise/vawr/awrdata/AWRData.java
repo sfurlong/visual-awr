@@ -22,7 +22,8 @@ public class AWRData {
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
-
+    private DBRecSet _platformInfo = null;;
+    
     private static AWRData _theInstance = null;
 
     private AWRData() {
@@ -230,6 +231,25 @@ public class AWRData {
         }
     }
 
+    public void parsePlatformInfoRecords(DBRecSet recSet) {
+        _platformInfo = recSet;
+    }
+
+    public String getPlatformInfoDisplayText() {
+
+        String ret = "";
+        
+        for (int i = 0; i < _platformInfo.getSize(); i++) {
+
+            DBRec dbRec = _platformInfo.getRec(i);
+            String attribName = dbRec.getAttrib(0).getName();
+            //Right Padd the name            
+            attribName = String.format("%1$-" + 25 + "s", attribName);
+            ret += attribName + dbRec.getAttrib(0).getValue() + "\n";
+        }
+        
+        return ret;
+    }
 
     public String getAWRDataTextString() {
         String ret = "";

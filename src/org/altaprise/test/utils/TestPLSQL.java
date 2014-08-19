@@ -44,11 +44,8 @@ public class TestPLSQL {
 
         java.util.Date hireDate = Calendar.getInstance().getTime();
         java.sql.Date hireDateSQL = new java.sql.Date(hireDate.getTime());
-        String sqlStmt = " insert into SCOTT.EMP (empno, ename, job, mgr, " +
-            //" hiredate, " +
-            " sal, comm, DEPTNO) values " + " ( " + empNo + ", 'Emp Name', 'Tech', 2, " +
-            //"'" + hireDateSQL + "' , " +
-            " 1000, 100, 10)";
+
+        String sqlStmt = AWRCollectionSQL.getOSStatistics(1836093013);
         try {
 
             Statement dbStmt = c.createStatement();
