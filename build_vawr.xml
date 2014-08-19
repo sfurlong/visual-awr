@@ -93,7 +93,7 @@
     <copy todir="${build.root.dir}/dist/testing">
       <fileset dir="${build.root.dir}/testing">
         <include name="*EDWPRD*.out"/>
-        <include name="*TESTING*.out"/>
+        <include name="*XXXX*.out"/>
       </fileset>
     </copy>
 
