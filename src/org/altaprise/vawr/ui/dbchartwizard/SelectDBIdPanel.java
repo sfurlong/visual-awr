@@ -77,7 +77,7 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
                 }
             });
 
-        jLabel1.setBounds(new Rectangle(125, 40, 165, 15));
+        jLabel1.setBounds(new Rectangle(125, 40, 225, 15));
         this.add(jLabel1, null);
         this.add(jButton1, null);
         this.add(scrollPane_connNames, null);

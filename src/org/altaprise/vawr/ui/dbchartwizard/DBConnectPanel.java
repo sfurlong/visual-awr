@@ -63,15 +63,15 @@ public class DBConnectPanel extends WizardContentBasePanel {
     private void jbInit() throws Exception {
         this.setLayout(null);
      
-        jComboBox_dbConnect.setBounds(new Rectangle(105, 65, 250, 20));
-        jButton_connectDB.setBounds(new Rectangle(365, 65, 75, 21));
+        jComboBox_dbConnect.setBounds(new Rectangle(45, 65, 250, 20));
+        jButton_connectDB.setBounds(new Rectangle(315, 65, 75, 21));
         jButton_connectDB.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_connectDB_actionPerformed(e);
                 }
             });
         this.scrollPaneTextArea.setBounds(new Rectangle(45, 100, 505, 135));
-        jLabel1.setBounds(new Rectangle(105, 50, 155, 15));
+        jLabel1.setBounds(new Rectangle(45, 50, 215, 15));
 
         this.add(this.scrollPaneTextArea, null);
         this.add(jLabel1, null);

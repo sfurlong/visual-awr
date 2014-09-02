@@ -1,6 +1,7 @@
 #!/bin/bash
 APP_HOME=.; export APP_HOME
-JAVA_OPTS=-Xms64M -Xmx256M
+#JAVA_HOME=/root/jre1.7.0_67; export JAVA_HOME
+JAVA_OPTS="-Xms64M -Xmx256M"
 #JAVA_OPTS=$JAVA_OPTS -DDEBUG 
 export JAVA_OPTS
 
@@ -12,5 +13,7 @@ CLASSPATH=$APP_HOME/lib/vawr-o.jar:$CLASSPATH
 CLASSPATH=$APP_HOME/lib/vawr-utils.jar:$CLASSPATH
 CLASSPATH=$APP_HOME/lib/ojdbc5.jar:$CLASSPATH
 export CLASSPATH
+
+#PATH=$JAVA_HOME/bin:$PATH
 
 java $JAVA_OPTS -DAPP_HOME=$APP_HOME org.altaprise.vawr.ui.RootFrame

@@ -62,7 +62,7 @@ public class ChartFilePanel extends JPanel {
         this.setSize(new Dimension(603, 503));
 
         jLabel_panelTitle.setText("Select an AWRMiner file, then chart an AWR metric.");
-        jLabel_panelTitle.setBounds(new Rectangle(20, 5, 400, 30));
+        jLabel_panelTitle.setBounds(new Rectangle(20, 5, 500, 30));
         jLabel_panelTitle.setFont(new Font("Arial", 1, 16));
 
         jScrollPane_osInfo.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
@@ -80,7 +80,7 @@ public class ChartFilePanel extends JPanel {
         jScrollPane_osInfo.setMinimumSize(new Dimension(48, 200));
         jScrollPane_osInfo.setPreferredSize(new Dimension(48, 200));
 
-        jLabel1.setBounds(new Rectangle(35, 185, 125, 15));
+        jLabel1.setBounds(new Rectangle(35, 185, 190, 15));
 
         jLabel1.setText("Platform Details Output:");
         jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));

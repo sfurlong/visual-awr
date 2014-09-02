@@ -3,10 +3,13 @@ package org.altaprise.vawr.ui.storagechartwizard;
 import dai.server.dbService.SQLResolver;
 import dai.server.dbService.dbconnect;
 
+import dai.shared.businessObjs.DBAttributes;
 import dai.shared.businessObjs.DBRec;
 import dai.shared.businessObjs.DBRecSet;
 
 import daiBeans.daiComboBox;
+
+import daiBeans.daiGrid;
 
 import java.awt.Dimension;
 import java.awt.LayoutManager;
@@ -19,6 +22,8 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import java.util.ArrayList;
+
+import java.util.StringTokenizer;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -51,6 +56,8 @@ public class StorageQueryPanel extends WizardContentBasePanel {
     private JLabel jLabel_dbId = new JLabel("Databse ID:");
     private JLabel jLabel_startSnapId = new JLabel("Start Snapshot ID:");
     private JLabel jLabel_endSnapId = new JLabel("End Snapshot ID:");
+    //Create and set up the content pane.
+    daiGrid outputTable = new daiGrid();
 
     public StorageQueryPanel() {
         super();
@@ -71,7 +78,7 @@ public class StorageQueryPanel extends WizardContentBasePanel {
                     jButton_doQuery_actionPerformed(e);
                 }
             });
-        scrollPaneTextArea.setBounds(new Rectangle(15, 145, 500, 185));
+        scrollPaneTextArea.setBounds(new Rectangle(15, 145, 500, 125));
         scrollPaneTextArea.setSize(new Dimension(500, 185));
         textArea_awrData.setEditable(false);
         jTextField_dbId.setBounds(new Rectangle(115, 50, 140, 20));
@@ -87,6 +94,7 @@ public class StorageQueryPanel extends WizardContentBasePanel {
         jLabel_startSnapId.setBounds(new Rectangle(10, 85, 95, 15));
         jLabel_endSnapId.setBounds(new Rectangle(10, 115, 90, 15));
 
+        outputTable.setBounds(new Rectangle(25, 190, 630, 180));
         this.add(jLabel_endSnapId, null);
         this.add(jLabel_startSnapId, null);
         this.add(jLabel_dbId, null);
@@ -96,9 +104,10 @@ public class StorageQueryPanel extends WizardContentBasePanel {
         this.add(jTextField_startSnapId, null);
         this.add(jTextField_dbId, null);
         this.add(jButton_doQuery, null);
-        this.add(scrollPaneTextArea, null);
-        
+        //this.add(scrollPaneTextArea, null);
+
         //Set the Wizard Label
+        this.add(outputTable, null);
         this.setPanelLabel("4. Query the database for AWR data.");
     }
 
@@ -144,44 +153,86 @@ public class StorageQueryPanel extends WizardContentBasePanel {
 
             //System.out.println("Result = " + cs.getObject(2));
 
-            String textAreaString = "";
-            String dgGroups = cs.getString(1);
-            textAreaString += dgGroups + "\n";
+//            { "Disk Group Name", "Num Disks", "Max Tot MB",
+//                                                           "Tot MB", "Tot MB Used",
+//                                                           "Tot MB Free", "Tot PCT Free"});            String textAreaString = "";
+            String dgGroupsRec = cs.getString(1);
+            ArrayList<String> vals1 = this.getStorageColValues(dgGroupsRec);
+            System.out.println(dgGroupsRec);
 
-            dgGroups = cs.getString(2);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String numDisksRec = cs.getString(2);
+            ArrayList<String> vals2 = this.getStorageColValues(numDisksRec);
+            System.out.println(numDisksRec);
 
-            dgGroups = cs.getString(3);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String maxTotMBRec = cs.getString(3);
+            ArrayList<String> vals3 = this.getStorageColValues(maxTotMBRec);
+            System.out.println(maxTotMBRec);
 
-            dgGroups = cs.getString(4);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String totMBRec = cs.getString(4);
+            ArrayList<String> vals4 = this.getStorageColValues(totMBRec);
+            System.out.println(totMBRec);
 
-            dgGroups = cs.getString(5);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String totMBUsedRec = cs.getString(5);
+            ArrayList<String> vals5 = this.getStorageColValues(totMBUsedRec);
+            System.out.println(totMBUsedRec);
 
-            dgGroups = cs.getString(6);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String totMBFreeRec = cs.getString(6);
+            ArrayList<String> vals6 = this.getStorageColValues(totMBFreeRec);
+            System.out.println(totMBFreeRec);
             
-            dgGroups = cs.getString(7);
-            textAreaString += dgGroups + "\n";
-            System.out.println(dgGroups);
+            String totPctFreeRec = cs.getString(7);
+            ArrayList<String> vals7 = this.getStorageColValues(totPctFreeRec);
+            System.out.println(totPctFreeRec);
             
             cs.close();
-            c.close();
+            //c.close();
+
+
+            //grid.setOpaque(true); //content panes must be opaque
+
+            //grid.createColumns(14);
+            int[] colTypes = new int[7];
+            colTypes[0] = daiGrid.CHAR_COL_TYPE;
+            colTypes[1] = daiGrid.CHAR_COL_TYPE;
+            colTypes[2] = daiGrid.CHAR_COL_TYPE;
+            colTypes[3] = daiGrid.CHAR_COL_TYPE;
+            colTypes[4] = daiGrid.CHAR_COL_TYPE;
+            colTypes[5] = daiGrid.CHAR_COL_TYPE;
+            colTypes[6] = daiGrid.CHAR_COL_TYPE;
+            outputTable.createColumns(colTypes);
+            outputTable.setHeaderNames(new String[] { "Disk Group Name", "Num Disks", "Max Size Per Disk MB",
+                                               "Tot DG Size MB", "Tot Used MB",
+                                               "Tot Free MB", "Tot PCT Free"});
+            outputTable.removeAllRows();
+            for (int i=0; i<vals1.size(); i++) {
+                outputTable.addRow();
+                outputTable.set(i, 0, vals1.get(i));
+                outputTable.set(i, 1, vals2.get(i));
+                outputTable.set(i, 2, vals3.get(i));
+                outputTable.set(i, 3, vals4.get(i));
+                outputTable.set(i, 4, vals5.get(i));
+                outputTable.set(i, 5, vals6.get(i));
+                outputTable.set(i, 6, vals7.get(i));
+            }
+            //grid.set(0, 2, "123.00");
+            //grid.setColEditable(2, false);
+            //grid.setColEditable(3, false);
+            //grid.setColEditable(5, false);
+            //              grid.set(0, 1, new Double("123.00"));
+            //grid.hideColumn(3);
+            outputTable.setColumnSize(0, 100);
+            outputTable.setColumnSize(1, 75);
+            outputTable.setColumnSize(2, 75);
+            outputTable.setColumnSize(3, 75);
+            outputTable.setColumnSize(4, 75);
+            outputTable.setColumnSize(5, 75);
+            outputTable.setColumnSize(6, 75);
+            //Turn off row selection
+            outputTable.allowRowSelection(false);
 
 
 
 
-
-            //Update the Status in the Text Area
-            this.textArea_awrData.setText(textAreaString);
-            this.textArea_awrData.repaint();
 
         } catch (Exception ex) {
             daiBeans.daiDetailInfoDialog dialog =
@@ -195,6 +246,19 @@ public class StorageQueryPanel extends WizardContentBasePanel {
         RootFrame.stopWaitCursor();
     }
 
+    private ArrayList<String> getStorageColValues (String rec) {
+        ArrayList<String> ret = new ArrayList<String>();
+        if (rec.length() > 0) {
+
+            StringTokenizer st = new StringTokenizer(rec, "~");
+            DBAttributes dbAttribs = new DBAttributes();
+            while (st.hasMoreTokens()) {
+                String tok = st.nextToken().trim();
+                ret.add(tok);
+            }
+        }
+        return ret;
+    }
     private void jButton_doQuery_actionPerformed(ActionEvent e) {
 
         this.doAWRQuery();

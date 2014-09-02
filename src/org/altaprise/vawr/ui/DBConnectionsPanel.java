@@ -74,20 +74,20 @@ public class DBConnectionsPanel extends JPanel {
     private void jbInit() throws Exception {
         this.setLayout(null);
         this.setSize(new Dimension(651, 440));
-        jTextField_connName.setBounds(new Rectangle(300, 25, 320, 20));
-        jTextField_uId.setBounds(new Rectangle(300, 55, 320, 20));
-        jTextField_hostName.setBounds(new Rectangle(300, 145, 320, 20));
-        jTextField_port.setBounds(new Rectangle(300, 175, 320, 20));
-        jTextField_SID.setBounds(new Rectangle(300, 215, 320, 20));
-        jTextField_serviceName.setBounds(new Rectangle(300, 245, 320, 20));
-        jLabel_connName.setBounds(new Rectangle(195, 30, 90, 15));
-        jLabel_uId.setBounds(new Rectangle(195, 60, 60, 15));
-        jLabel_pwd.setBounds(new Rectangle(195, 85, 60, 15));
-        jLabel_hostName.setBounds(new Rectangle(195, 150, 80, 15));
+        jTextField_connName.setBounds(new Rectangle(315, 25, 275, 20));
+        jTextField_uId.setBounds(new Rectangle(315, 55, 275, 20));
+        jTextField_hostName.setBounds(new Rectangle(315, 145, 275, 20));
+        jTextField_port.setBounds(new Rectangle(315, 175, 275, 20));
+        jTextField_SID.setBounds(new Rectangle(315, 215, 275, 20));
+        jTextField_serviceName.setBounds(new Rectangle(315, 245, 275, 20));
+        jLabel_connName.setBounds(new Rectangle(195, 30, 115, 15));
+        jLabel_uId.setBounds(new Rectangle(195, 60, 105, 15));
+        jLabel_pwd.setBounds(new Rectangle(195, 85, 100, 15));
+        jLabel_hostName.setBounds(new Rectangle(195, 150, 105, 15));
         jLabel_port.setBounds(new Rectangle(195, 180, 95, 15));
         jRadioButton_SID.setBounds(new Rectangle(195, 215, 90, 20));
-        jRadioButton_serviceName.setBounds(new Rectangle(195, 245, 95, 20));
-        jPasswordField_pwd.setBounds(new Rectangle(300, 85, 320, 20));
+        jRadioButton_serviceName.setBounds(new Rectangle(195, 245, 120, 20));
+        jPasswordField_pwd.setBounds(new Rectangle(315, 85, 275, 20));
         jList_connectionNames.setBounds(new Rectangle(25, 25, 130, 320));
         jList_connectionNames.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         jButton_testConn.setBounds(new Rectangle(195, 280, 105, 20));
@@ -102,13 +102,13 @@ public class DBConnectionsPanel extends JPanel {
                     jButton_delete_actionPerformed(e);
                 }
             });
-        jButton_save.setBounds(new Rectangle(430, 400, 75, 21));
+        jButton_save.setBounds(new Rectangle(420, 400, 75, 21));
         jButton_save.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_save_actionPerformed(e);
                 }
             });
-        jButton_reset.setBounds(new Rectangle(545, 400, 75, 21));
+        jButton_reset.setBounds(new Rectangle(520, 400, 75, 21));
         jButton_reset.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_reset_actionPerformed(e);
@@ -117,9 +117,9 @@ public class DBConnectionsPanel extends JPanel {
         jTextArea_dbTestResults.setBounds(new Rectangle(195, 295, 430, 85));
         jTextArea_dbTestResults.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         jTextArea_dbTestResults.setFont(jTextArea_dbTestResults.getFont().deriveFont(11f));
-        jScrollPane1.setBounds(new Rectangle(195, 305, 425, 85));
-        jComboBox_roles.setBounds(new Rectangle(300, 115, 115, 20));
-        jLabel_role.setBounds(new Rectangle(195, 120, 55, 15));
+        jScrollPane1.setBounds(new Rectangle(195, 305, 410, 85));
+        jComboBox_roles.setBounds(new Rectangle(315, 115, 115, 20));
+        jLabel_role.setBounds(new Rectangle(195, 120, 95, 15));
         buttonGroup_SID.add(jRadioButton_SID);
         buttonGroup_SID.add(jRadioButton_serviceName);
         jRadioButton_SID.setSelected(true);

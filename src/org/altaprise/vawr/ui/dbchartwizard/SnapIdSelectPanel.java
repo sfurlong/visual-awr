@@ -77,6 +77,7 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
     private void jbInit() throws Exception {
         this.setLayout(null);
 
+        this.setSize(new Dimension(537, 353));
         scrollPane_startSnapId.setBounds(new Rectangle(55, 70, 200, 280));
         scrollPane_endSnapId.setBounds(new Rectangle(345, 70, 200, 280));
         jButton1.setText("Get Snapshot Ids");
@@ -86,11 +87,11 @@ public class SnapIdSelectPanel extends WizardContentBasePanel {
                     jButton1_actionPerformed(e);
                 }
             });
-        jTextField_dbId.setBounds(new Rectangle(135, 25, 145, 20));
+        jTextField_dbId.setBounds(new Rectangle(155, 25, 145, 20));
         jTextField_dbId.setEditable(false);
-        jLabel1.setBounds(new Rectangle(60, 55, 150, 15));
-        jLabel2.setBounds(new Rectangle(345, 55, 140, 15));
-        jLabel3.setBounds(new Rectangle(60, 30, 70, 15));
+        jLabel1.setBounds(new Rectangle(60, 55, 200, 15));
+        jLabel2.setBounds(new Rectangle(345, 55, 190, 15));
+        jLabel3.setBounds(new Rectangle(60, 30, 95, 15));
         this.add(jLabel3, null);
         this.add(jLabel2, null);
         this.add(jLabel1, null);

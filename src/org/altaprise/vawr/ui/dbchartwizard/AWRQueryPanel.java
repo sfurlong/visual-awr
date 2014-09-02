@@ -78,21 +78,21 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                     jButton_doQuery_actionPerformed(e);
                 }
             });
-        scrollPaneTextArea.setBounds(new Rectangle(15, 145, 500, 185));
+        scrollPaneTextArea.setBounds(new Rectangle(10, 145, 500, 185));
         scrollPaneTextArea.setSize(new Dimension(500, 185));
         textArea_awrData.setEditable(false);
-        jTextField_dbId.setBounds(new Rectangle(115, 50, 140, 20));
+        jTextField_dbId.setBounds(new Rectangle(130, 50, 140, 20));
         jTextField_dbId.setEditable(false);
-        jTextField_startSnapId.setBounds(new Rectangle(115, 80, 140, 20));
+        jTextField_startSnapId.setBounds(new Rectangle(130, 80, 140, 20));
         jTextField_startSnapId.setEditable(false);
-        jTextField_endSnapId.setBounds(new Rectangle(115, 110, 140, 20));
+        jTextField_endSnapId.setBounds(new Rectangle(130, 110, 140, 20));
         jTextField_endSnapId.setEditable(false);
-        jTextField_connName.setBounds(new Rectangle(115, 20, 140, 20));
+        jTextField_connName.setBounds(new Rectangle(130, 20, 140, 20));
         jTextField_connName.setEditable(false);
-        jLabel_connName.setBounds(new Rectangle(10, 25, 100, 15));
-        jLabel_dbId.setBounds(new Rectangle(10, 55, 65, 15));
-        jLabel_startSnapId.setBounds(new Rectangle(10, 85, 95, 15));
-        jLabel_endSnapId.setBounds(new Rectangle(10, 115, 90, 15));
+        jLabel_connName.setBounds(new Rectangle(10, 25, 120, 15));
+        jLabel_dbId.setBounds(new Rectangle(10, 55, 105, 15));
+        jLabel_startSnapId.setBounds(new Rectangle(10, 85, 120, 15));
+        jLabel_endSnapId.setBounds(new Rectangle(10, 115, 115, 15));
 
         this.add(jLabel_endSnapId, null);
         this.add(jLabel_startSnapId, null);

@@ -81,7 +81,7 @@ public class ChartPanel extends WizardContentBasePanel {
                 jButton_chartMetric_actionPerformed(e);
             }
         });
-        jLabel_selectMetrics.setBounds(new Rectangle(70, 45, 150, 15));
+        jLabel_selectMetrics.setBounds(new Rectangle(70, 45, 225, 15));
 
         //jScrollPane_osInfo.setBounds(new Rectangle(60, 160, 450, 160));
         //this.add(jScrollPane_osInfo, null);
