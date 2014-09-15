@@ -14,7 +14,6 @@ import java.util.Map;
 public class OSWRecord {
     
     private HashMap _metricKeyVal = new HashMap();
-    private ArrayList<AvgActiveSessRecord> _avgActiveSess = new ArrayList<AvgActiveSessRecord>();
     private ArrayList<DBRec> _avgCPUData = new ArrayList<DBRec>();
     
     private static OSWRecord _theInstance = null;
