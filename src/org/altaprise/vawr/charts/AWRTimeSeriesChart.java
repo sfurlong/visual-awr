@@ -50,6 +50,10 @@ public class AWRTimeSeriesChart extends JFrame {
     BorderLayout borderLayout = new BorderLayout();
     int _totalNumRacInstances = 0;
 
+    public JPanel getChartPanel() {
+        return _outerP;    
+    }
+    
     public AWRTimeSeriesChart() {
 
     }
