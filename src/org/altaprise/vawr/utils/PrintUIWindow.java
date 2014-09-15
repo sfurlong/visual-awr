@@ -1,5 +1,6 @@
 package org.altaprise.vawr.utils;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,18 +13,32 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
+import org.altaprise.vawr.charts.AWRTimeSeriesChart;
+
 public class PrintUIWindow extends JFrame implements Printable {
 
     JTextArea _textArea = new JTextArea(50, 20);
+    JPanel _contentPanel = new JPanel();
+    JScrollPane _theScrollPanel = null;
+    JPanel[] daPanels = new JPanel[2];
 
-    public int print(Graphics g, PageFormat pf,
-                     int page) throws PrinterException {
+    public PrintUIWindow() {
+        AWRTimeSeriesChart chart1 = new AWRTimeSeriesChart("OS_CPU");
+        AWRTimeSeriesChart chart2 = new AWRTimeSeriesChart("AAS");
+        daPanels[0] = chart1.getChartPanel();
+        daPanels[1] = chart2.getChartPanel();
+        jbInit(daPanels);
+    }
+
+    public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
 
         if (page > 0) { /* We have only one page, and 'page' is zero-based */
             return NO_SUCH_PAGE;
@@ -33,21 +48,24 @@ public class PrintUIWindow extends JFrame implements Printable {
      * User (0,0) is typically outside the imageable area, so we must translate
      * by the X and Y values in the PageFormat to avoid clipping
      */
-        Graphics2D g2d = (Graphics2D)g;
+        Graphics2D g2d = (Graphics2D) g;
         g2d.translate(pf.getImageableX(), pf.getImageableY());
 
         /* Now print the window and its visible contents */
         //frameToPrint.printComponents(g);
         //frameToPrint.printAll(g);
-        _textArea.print(g);
+        Component[] comp = _theScrollPanel.getComponents();
+        for (int i = 0; i < comp.length; i++) {
+            System.out.println(comp[i].getClass().getName());
+            if (comp[i].getClass().getName().equals("javax.swing.JViewport")) {
+                comp[i].printAll(g);
+            }
+        }
 
         /* tell the caller that this page is part of the printed document */
         return PAGE_EXISTS;
     }
 
-    public PrintUIWindow() {
-        jbInit();
-    }
 
     private void jButton_print_actionPerformed(ActionEvent e) {
         PrinterJob job = PrinterJob.getPrinterJob();
@@ -64,32 +82,44 @@ public class PrintUIWindow extends JFrame implements Printable {
         }
     }
 
-    public void jbInit() {
+    public void jbInit(JPanel[] newPanel) {
         UIManager.put("swing.boldMetal", Boolean.FALSE);
         this.setTitle("Print UI Example");
         this.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    System.exit(0);
-                }
-            });
-        for (int i = 1; i <= 50; i++) {
-            _textArea.append("Line " + i + "\n");
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+
+        _contentPanel.setLayout(new BoxLayout(_contentPanel, BoxLayout.Y_AXIS));
+
+        for (int i = 0; i < newPanel.length; i++) {
+            newPanel[i].setPreferredSize(new Dimension(300, 400));
+
+            _contentPanel.add(newPanel[i]);
+
+
         }
-        JScrollPane pane = new JScrollPane(_textArea);
-        pane.setPreferredSize(new Dimension(250, 200));
-        this.add("Center", pane);
+
+        _theScrollPanel = new JScrollPane(_contentPanel);
+        
+        this.setSize(new java.awt.Dimension(400, 400));
+        _theScrollPanel.setPreferredSize(new Dimension(300,400));
+
+        this.add("Center", _theScrollPanel);
         JButton printButton = new JButton("Print This Window");
         printButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    jButton_print_actionPerformed(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                jButton_print_actionPerformed(e);
+            }
+        });
         this.add("South", printButton);
+        //this.setResizable(false);
         this.pack();
         this.setVisible(true);
     }
 
-    
+
     public static void main(String[] args) {
         PrintUIWindow uiw = new PrintUIWindow();
     }
