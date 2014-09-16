@@ -7,11 +7,12 @@ import javax.swing.*;
 
 public class RootFrame extends JFrame {
     private GridLayout gridLayout = new GridLayout();
-    private BorderLayout borderLayout = new BorderLayout();
     private JMenuBar menubarFrame = new JMenuBar();
     private JMenu menuFile = new JMenu();
     private JMenuItem itemFileExit = new JMenuItem();
     private JMenu menuHelp = new JMenu();
+    private JMenuItem itemHelpAWR = new JMenuItem();
+    private JMenuItem itemHelpOSW = new JMenuItem();
     private JMenuItem itemHelpAbout = new JMenuItem();
     private String aboutMessage =
         "Visual AWR" + "\n" +
@@ -57,16 +58,33 @@ public class RootFrame extends JFrame {
         menuFile.setText("File");
         menuFile.setMnemonic('F');
         menubarFrame.add(menuFile);
+
         menuHelp.setText("Help");
         menuHelp.setMnemonic('H');
         itemHelpAbout.setText("About");
         itemHelpAbout.setMnemonic('A');
-
         itemHelpAbout.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     help_about_action(e);
                 }
             });
+        itemHelpAWR.setText("About AWR Metrics");
+        itemHelpAWR.setMnemonic('R');
+        itemHelpAWR.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    help_AWR_action(e);
+                }
+            });
+        itemHelpOSW.setText("About OSWatcher Metrics");
+        itemHelpOSW.setMnemonic('O');
+        itemHelpOSW.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    help_OSW_action(e);
+                }
+            });
+        menuHelp.add(itemHelpAWR);
+        menuHelp.add(itemHelpOSW);
+        menuHelp.addSeparator();
         menuHelp.add(itemHelpAbout);
         menubarFrame.add(menuHelp);
         
@@ -80,6 +98,14 @@ public class RootFrame extends JFrame {
 
     private void help_about_action(ActionEvent e) {
         JOptionPane.showMessageDialog(this, aboutMessage, aboutTitle,
+                                      JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void help_AWR_action(ActionEvent e) {
+        new MetricsDescriptionDialog(this, true).setVisible(true);
+    }
+    private void help_OSW_action(ActionEvent e) {
+        JOptionPane.showMessageDialog(this, "Coming Soon.", "Visual AWR",
                                       JOptionPane.INFORMATION_MESSAGE);
     }
 

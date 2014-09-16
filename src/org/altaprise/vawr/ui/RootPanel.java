@@ -73,18 +73,15 @@ public class RootPanel extends JPanel {
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Storage Analysis</body></html>",
                           this._storageChartTab);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-
+*/
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>OSWatcher Analysis</body></html>",
                           this._OSWRootPanel);
-        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
-*/
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
-                          _dbConnPanel);
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>About AWR Metrics</body></html>",
-                          _metricDescPanel);
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
+                          _dbConnPanel);
         tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+
 
         //Add the tabbed pane to this panel.
         add(tabbedPane);

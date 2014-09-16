@@ -60,7 +60,7 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.ui.StandardGradientPaintTransformer;
 
-public class AvgActiveSessionChart extends JFrame {
+public class AvgActiveSessionChart extends RootChartFrame {
 
     JPanel _outerP = new JPanel();
     JScrollPane _thePanel = new JScrollPane(_outerP);
@@ -73,10 +73,9 @@ public class AvgActiveSessionChart extends JFrame {
         this.setSize(new java.awt.Dimension(800, 800));
         _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
+        TimeSeriesCollection xyDataset = createDataset("", metricName);
 
-        TimeSeriesCollection xyDataset = createDataset(1, metricName);
-
-        JFreeChart chart = createChart(xyDataset, metricName, 1);
+        JFreeChart chart = createChart(xyDataset, metricName, 0, "", "");
 
         ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
 
@@ -89,44 +88,8 @@ public class AvgActiveSessionChart extends JFrame {
     }
 
 
-    private static final long serialVersionUID = 1L;
-
-    {
-        // set a theme using the new shadow generator feature available in
-        // 1.0.14 - for backwards compatibility it is not enabled by default
-        ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
-    }
-
-
-    /**
-     * Creates a panel for the demo (used by SuperDemo.java).
-     *
-     * @return A panel.
-     */
-    public static JPanel createChartPanel(JFreeChart chart) {
-
-
-        ChartPanel panel = new ChartPanel(chart);
-
-        int numSeries = panel.getChart().getXYPlot().getSeriesCount();
-
-        for (int i = 0; i < numSeries; i++) {
-            //panel.getChart().getXYPlot().getRenderer().setSeriesPaint(1, legend.getColor());
-            panel.getChart().getXYPlot().getRenderer().setSeriesStroke(i, new BasicStroke(1.0f));
-            //panel.getChart().getXYPlot().getRenderer().setseriess.setSeriesShapesVisible(1, false);
-            XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) panel.getChart().getXYPlot().getRenderer();
-            r.setSeriesShapesVisible(i, false);
-        }
-
-        panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        return panel;
-    }
-
-    public void windowClosing(final WindowEvent event) {
-        if (event.getWindow() == this) {
-            dispose();
-        }
+    public JPanel getChartPanel() {
+        return _outerP;    
     }
 
     /**
@@ -134,7 +97,7 @@ public class AvgActiveSessionChart extends JFrame {
      *
      * @return The dataset.
      */
-    private TimeSeriesCollection createDataset(int racInstance, String awrMetric) {
+    protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
 
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
 
@@ -198,79 +161,4 @@ public class AvgActiveSessionChart extends JFrame {
 
         return xyDataset;
     }
-
-    /**
-     * Creates a chart.
-     *
-     * @param dataset  a dataset.
-     *
-     * @return A chart.
-     */
-    private static JFreeChart createChart(XYDataset dataset, String metricName, int racInstNum) {
-
-        String chartTitle = AWRMetrics.getInstance().getMetricChartTitle(metricName);
-        String chartYAxisLabel = AWRMetrics.getInstance().getMetricRangeDescription(metricName);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle,
-                                                              // title
-                                                              "Date", // x-axis label
-                                                              chartYAxisLabel, // y-axis label
-                                                              dataset, // data
-                                                              true, // create legend?
-                                                              true, // generate tooltips?
-                                                              false); // generate URLs?
-
-        chart.setBackgroundPaint(Color.white);
-
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-
-        /*
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
-            renderer.setDrawSeriesLineAsPath(true);
-        }
-
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("dd-MMM-yyyy"));
-*/
-
-        ///
-        XYItemRenderer r2 = new XYLineAndShapeRenderer(true, false) {
-
-            public LegendItem getLegendItem(int datasetIndex, int series) {
-                if (getPlot() == null) {
-                    return null;
-                }
-                XYDataset dataset = getPlot().getDataset(datasetIndex);
-                if (dataset == null) {
-                    return null;
-                }
-                String label = dataset.getSeriesKey(series).toString();
-                LegendItem legendItem = new LegendItem(label, lookupSeriesPaint(series));
-                legendItem.setLine(new Rectangle2D.Double(0.0, 0.0, 5.0,
-                                                          5.0)); //setLine takes a Shape, not just Lines so you can pass any Shape to it...
-                return legendItem;
-            }
-        };
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r2;
-        renderer.setBaseShapesVisible(true);
-        renderer.setBaseShapesFilled(true);
-        renderer.setDrawSeriesLineAsPath(true);
-        plot.setRenderer(r2);
-        ///
-
-
-        return chart;
-
-    }
-
-
 }
