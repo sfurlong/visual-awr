@@ -1,40 +1,19 @@
 package org.altaprise.vawr.ui;
 
-import daiBeans.BrowserPanel;
-
 import java.awt.BorderLayout;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
-import java.net.URL;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTabbedPane;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-
-import org.altaprise.vawr.ui.dbchartwizard.DBConnectPanel;
-import org.altaprise.vawr.ui.common.WizardRootPanel;
 import org.altaprise.vawr.ui.dbchartwizard.DBWizardRootPanel;
 import org.altaprise.vawr.ui.oswchartwizard.OSWWizardRootPanel;
-import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 
 public class RootPanel extends JPanel {
@@ -45,7 +24,6 @@ public class RootPanel extends JPanel {
     DBWizardRootPanel _dbChartTab = new DBWizardRootPanel();
     StorageWizardRootPanel _storageChartTab = new StorageWizardRootPanel();
     AppAboutPanel _aboutPanel = new AppAboutPanel();
-    MetricsDescriptionPanel _metricDescPanel = new MetricsDescriptionPanel();
     OSWWizardRootPanel _OSWRootPanel = new OSWWizardRootPanel();
 
     public RootPanel() {
