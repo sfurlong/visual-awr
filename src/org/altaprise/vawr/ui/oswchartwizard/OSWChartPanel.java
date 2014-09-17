@@ -161,8 +161,14 @@ public class OSWChartPanel extends WizardContentBasePanel {
 
     private void jButton_chartMetric_actionPerformed(ActionEvent e) {
         
-        String selectedFile = this.jTextField_fileName.getText();
-
+        if (this.jRadioButton_cellSrvStat.isSelected()) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                          " Sorry, Cell Server Stats are not supported yet.",
+                                          "Visual AWR",
+                                          JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
         //SetCursor
         RootFrame.startWaitCursor();
 
@@ -171,7 +177,7 @@ public class OSWChartPanel extends WizardContentBasePanel {
         try {
 
             OSWData.getInstance().clearData();
-            for (int i=0; i<_selectedFiles.length; i++) {
+            for (int i=0; _selectedFiles != null && i<_selectedFiles.length; i++) {
                 oswFileParser.parse(_selectedFiles[i].getPath());
             }
             if (SessionMetaData.getInstance().debugOn()) {
@@ -192,6 +198,7 @@ public class OSWChartPanel extends WizardContentBasePanel {
             if (OSWData.getInstance().getTopStatRecs().size() > 0) {
                 new TopStatTimeSeriesChart("");
             } else {
+
                 JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                               " TopStat data does not exist in this file.",
                                               "Error",
@@ -200,11 +207,18 @@ public class OSWChartPanel extends WizardContentBasePanel {
 
             
         } catch (Exception ex) {
+            RootFrame.stopWaitCursor();
             
             ex.printStackTrace();
+            String msg = "Are you sure this is a ";
+            if (this.jRadioButton_topStat.isSelected()) {
+                msg += "OSW TopStat File?";
+            } else {
+                msg += "OSW CellSrvStat File?";
+            }
 
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
-                                          ex.getCause().getLocalizedMessage(), "Error",
+                                          ex.getLocalizedMessage() +"\n" + msg, "Error",
                                           JOptionPane.ERROR_MESSAGE);
         } finally {
             RootFrame.stopWaitCursor();
