@@ -31,8 +31,8 @@ public class PrintUIWindow extends JFrame implements Printable {
     JPanel[] daPanels = new JPanel[2];
 
     public PrintUIWindow() {
-        AWRTimeSeriesChart chart1 = new AWRTimeSeriesChart("OS_CPU");
-        AWRTimeSeriesChart chart2 = new AWRTimeSeriesChart("AAS");
+        AWRTimeSeriesChart chart1 = new AWRTimeSeriesChart("OS_CPU","");
+        AWRTimeSeriesChart chart2 = new AWRTimeSeriesChart("AAS", "");
         daPanels[0] = chart1.getChartPanel();
         daPanels[1] = chart2.getChartPanel();
         jbInit(daPanels);
@@ -102,9 +102,9 @@ public class PrintUIWindow extends JFrame implements Printable {
         }
 
         _theScrollPanel = new JScrollPane(_contentPanel);
-        
+
         this.setSize(new java.awt.Dimension(400, 400));
-        _theScrollPanel.setPreferredSize(new Dimension(300,400));
+        _theScrollPanel.setPreferredSize(new Dimension(300, 400));
 
         this.add("Center", _theScrollPanel);
         JButton printButton = new JButton("Print This Window");
