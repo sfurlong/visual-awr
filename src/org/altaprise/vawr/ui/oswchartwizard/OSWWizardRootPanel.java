@@ -12,7 +12,8 @@ public class OSWWizardRootPanel extends WizardRootPanel {
         super();
 
         ArrayList<WizardContentBasePanel> wizardPanels = new ArrayList<WizardContentBasePanel>();
-        wizardPanels.add(new OSWChartPanel());
+        wizardPanels.add(new OSWSelectFilesPanel());
+        wizardPanels.add(new OSWSelectChartPanel());
 
         setWizardPanels(wizardPanels);
     }
