@@ -25,20 +25,17 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 public class AWRMemoryTimeSeriesChart extends RootChartFrame {
 
-    JPanel _outerP = new JPanel();
-    JScrollPane _thePanel = new JScrollPane(_outerP);
     BorderLayout borderLayout = new BorderLayout();
-
-    public AWRMemoryTimeSeriesChart(String metricName) {
-        super("Visual AWR Charting");
+    private int _totalNumRacInstances = 0;
+    
+    public AWRMemoryTimeSeriesChart(String metricName, String chartHeaderText) {
+        super("Visual AWR Charting", chartHeaderText);
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
+        _totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
 
-        _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
-
-
-        for (int i = 0; i < AWRData.getInstance().getNumRACInstances(); i++) {
+        for (int i = 0; i < _totalNumRacInstances; i++) {
 
             int racInstNum = i + 1;
             
@@ -50,18 +47,20 @@ public class AWRMemoryTimeSeriesChart extends RootChartFrame {
 
             ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
 
-            chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
+            chartPanel.setPreferredSize(new java.awt.Dimension(600, 370));
 
-            _outerP.add(chartPanel);
+            THE_ROOT_CONTENT_PANEL.add(chartPanel);
         }
 
-        this.add(_thePanel, BorderLayout.CENTER);
+        //Size of Y should be 200 (for header) + 260 * numCharts)
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*_totalNumRacInstances)));
+        this.add(THE_SCROLL_PANE, BorderLayout.CENTER);
         this.setVisible(true);
     }
 
 
     public JPanel getChartPanel() {
-        return _outerP;    
+        return THE_ROOT_CONTENT_PANEL;    
     }
 
     /**
