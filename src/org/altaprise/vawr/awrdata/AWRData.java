@@ -5,6 +5,8 @@ import dai.shared.businessObjs.DBRecSet;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -22,8 +24,8 @@ public class AWRData {
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
-    private DBRecSet _platformInfo = null;;
-    
+    private DBRecSet _platformInfo = null; ;
+
     private static AWRData _theInstance = null;
 
     private AWRData() {
@@ -235,19 +237,57 @@ public class AWRData {
         _platformInfo = recSet;
     }
 
-    public String getPlatformInfoDisplayText() {
+    public DBRecSet getPlatformInfoRecs() {
+        return _platformInfo;
+    }
 
-        String ret = "";
-        
+    public String getPlatformInfoHTML() {
+
+        String ret = "<table>\n";
         for (int i = 0; i < _platformInfo.getSize(); i++) {
-
             DBRec dbRec = _platformInfo.getRec(i);
-            String attribName = dbRec.getAttrib(0).getName();
-            //Right Padd the name            
-            attribName = String.format("%1$-" + 25 + "s", attribName);
-            ret += attribName + dbRec.getAttrib(0).getValue() + "\n";
+            ret += "<tr>\n";
+            ret += "<td>\n";
+            ret += dbRec.getAttrib(0).getName();
+            ret += "</td>\n";
+            ret += "<td>\n";
+            ret += dbRec.getAttrib(0).getValue();
+            ret += "</td>\n";
+            ret += "</tr>\n";
         }
-        
+        ret += "</table>\n";
+
+        return ret;
+    }
+
+    public String getChartHeaderHTML() {
+
+        String ret = "<table border=\"1\" font size=\"1\">\n";
+        ret += "<tr>\n";
+        ret += "<td>\n";
+        ret += "<b>CHART_DATE</b>";
+        ret += "</td>\n";
+        ret += "<td>\n";
+        ret += Calendar.getInstance().getTime().toString();
+        ret += "</td>\n";
+        ret += "</tr>\n";
+        for (int i = 0; i < _platformInfo.getSize(); i++) {
+            DBRec dbRec = _platformInfo.getRec(i);
+            String name = dbRec.getAttrib(0).getName();
+            String val = dbRec.getAttrib(0).getValue();
+            if (name.equals("DB_NAME") || name.equals("DBID") || name.equals("INSTNANCES") || name.equals("HOSTS")) {
+                ret += "<tr>\n";
+                ret += "<td>\n";
+                ret += "<b>" + name +"</b>";
+                ret += "</td>\n";
+                ret += "<td>\n";
+                ret += val;
+                ret += "</td>\n";
+                ret += "</tr>\n";
+            }
+        }
+        ret += "</table>\n";
+
         return ret;
     }
 
@@ -350,7 +390,7 @@ public class AWRData {
             ret = true;
         } else if (_headerTokens.contains(metric.toUpperCase())) {
             ret = true;
-        } 
+        }
         return ret;
     }
 
