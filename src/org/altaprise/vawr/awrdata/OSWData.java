@@ -15,6 +15,7 @@ import java.util.Map;
 public class OSWData {
     
     private ArrayList<DBRec> _topStatRecs = new ArrayList<DBRec>();
+    private ArrayList<DBRec> _cellSrvStatRecs = new ArrayList<DBRec>();
     private static OSWData _theInstance = null;
     private String _platformType = "";
 
@@ -30,9 +31,21 @@ public class OSWData {
     
     
     public void dump() {
-        System.out.println("r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st");
+        //System.out.println("r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st");
         for (int i=0; i< _topStatRecs.size(); i++) {
             DBRec dbRec = _topStatRecs.get(i);
+            for (int j = 0; j < dbRec.size(); j++) {
+                DBAttributes dbAttribs = dbRec.getAttrib(j);
+                if (dbAttribs.getName().equals("DATE")) {
+                    System.out.print(dbRec.getAttrib(j).getObjValue() + ",");
+                } else {                    
+                    System.out.print(dbRec.getAttrib(j).getValue() + ",");
+                }
+            }
+            System.out.println();
+        }
+        for (int i=0; i< _cellSrvStatRecs.size(); i++) {
+            DBRec dbRec = _cellSrvStatRecs.get(i);
             for (int j = 0; j < dbRec.size(); j++) {
                 DBAttributes dbAttribs = dbRec.getAttrib(j);
                 if (dbAttribs.getName().equals("DATE")) {
@@ -47,11 +60,16 @@ public class OSWData {
 
     public void clearData() {
         _topStatRecs.clear();
+        _cellSrvStatRecs.clear();
         _platformType = "";
     }
     
     public void addTopStatRec(DBRec topStatRec) {
         _topStatRecs.add(topStatRec);
+    }
+
+    public void addCellSrvStatRec(DBRec cellSrvStatRec) {
+        _cellSrvStatRecs.add(cellSrvStatRec);
     }
 
     public void setPlatformType(String type) {
@@ -64,5 +82,9 @@ public class OSWData {
 
     public ArrayList<DBRec> getTopStatRecs() {
         return _topStatRecs;
+    }
+
+    public ArrayList<DBRec> getCellSrvStatRecs() {
+        return _cellSrvStatRecs;
     }
 }
