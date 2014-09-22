@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.OSWData;
+import org.altaprise.vawr.awrdata.OSWMetrics;
 import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
 
 
@@ -32,7 +33,7 @@ public class ReadCellSrvStatFile {
         try {
             ReadCellSrvStatFile duFile = new ReadCellSrvStatFile();
             //duFile.parse("C:/Git/visual-awr/testing/oswatcher/osc2cn01-d1_top_14.09.10.0400.dat");
-            duFile.parse("C:/Git/visual-awr/testing/oswatcher/2014_09_10_04_09_58_CellSrvStatExaWatcher_osc2es01.osc.us.oracle.com.dat");
+            duFile.parse("C:/Git/visual-awr/testing/oswatcher/CellSrvStat/2014_09_10_04_09_58_CellSrvStatExaWatcher_osc2es01.osc.us.oracle.com.dat");
             OSWData.getInstance().dump();
             //new TopStatTimeSeriesChart("");
         } catch (Exception e) {
@@ -86,58 +87,34 @@ public class ReadCellSrvStatFile {
             System.out.println("platformType/topFileType: " + _platformType + "/" + _topFileType);
             int recCount = 0;
             DBRec dbRec = null;
-
+            boolean firstRead = true;
             while (rec != null) {
 
-
                 if (rec.startsWith("===Current Time===")) {
+                    if (!firstRead) {
+                        OSWData.getInstance().addCellSrvStatRec(dbRec);
+                    }
                     //Create the record structure
                     dbRec = new DBRec();
                     //Parse the datetime and add the attributes to the dbRec
-                    System.out.println(rec);
                     this.parseDateTime(rec, dbRec);
 
-                } else if (rec.startsWith("Number of hard disk block IO")) {
-                    if (_platformType.equals("SUNOS")) {
-                        this.parseSunCpuMetrics(rec, dbRec);
-                    } else {
-                        System.out.println(rec);
-                        //this.parseLinuxCpuMetrics(rec, dbRec);
-                    }
-
-                } else if (rec.startsWith("Number of flash disk block IO")) {
-                    if (_platformType.equals("SUNOS")) {
-                        this.parseSunMemoryMetrics(rec, dbRec);
-                    } else {
-                        System.out.println(rec);
-                        //                      this.parseLinuxMemoryMetrics(rec, dbRec);
-                    }
-                    //Add to the stats
-                    OSWData.getInstance().addTopStatRec(dbRec);
-                } else if (rec.startsWith("Hard disk block IO ")) {
-                    if (_platformType.equals("SUNOS")) {
-                        this.parseSunMemoryMetrics(rec, dbRec);
-                    } else {
-                        System.out.println(rec);
-                        //                      this.parseLinuxMemoryMetrics(rec, dbRec);
-                    }
-                    //Add to the stats
-                    //                    OSWData.getInstance().addTopStatRec(dbRec);
-                } else if (rec.startsWith("Flash disk block IO ")) {
-                    if (_platformType.equals("SUNOS")) {
-                        this.parseSunMemoryMetrics(rec, dbRec);
-                    } else {
-                        System.out.println(rec);
-                        //                      this.parseLinuxMemoryMetrics(rec, dbRec);
-                    }
-                    //Add to the stats
                 } else {
-                    //Do nothing
+                    if (rec.length() > 60) {
+                        String metric = rec.substring(0, 60).trim();
+                        if (OSWMetrics.getInstance().oswMetricExists(metric)) {
+                            firstRead = false;
+                            String metricValS = rec.substring(53, 66).trim();
+                            String metricName = rec.substring(0, 52).trim();
+                            dbRec.addAttrib(new DBAttributes(metricName, metricValS));
+                        }
+                    }
                 }
 
                 //Read the next record
                 rec = _fileReader.readLine();
             }
+            OSWData.getInstance().addCellSrvStatRec(dbRec);
         } catch (Exception e) {
             System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
             e.printStackTrace();
