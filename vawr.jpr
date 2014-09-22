@@ -309,6 +309,14 @@
             <value n="id" v="Commons-compress-1.8.1.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
+         <hash>
+            <value n="id" v="Pdfbox-app-1.8.6.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Imgscalr-lib-4.2.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
       </list>
       <hash n="internalDefinitions">
          <list n="libraryDefinitions">
@@ -364,6 +372,24 @@
                <value n="deployedByDefault" v="true"/>
                <value n="description" v="Commons-compress-1.8.1.jar"/>
                <value n="id" v="Commons-compress-1.8.1.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/pdfbox-app-1.8.6.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Pdfbox-app-1.8.6.jar"/>
+               <value n="id" v="Pdfbox-app-1.8.6.jar"/>
+               <value n="locked" v="true"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="lib/imgscalr-lib-4.2.jar" jar-entry=""/>
+               </list>
+               <value n="deployedByDefault" v="true"/>
+               <value n="description" v="Imgscalr-lib-4.2.jar"/>
+               <value n="id" v="Imgscalr-lib-4.2.jar"/>
                <value n="locked" v="true"/>
             </hash>
          </list>
@@ -463,6 +489,14 @@
          </hash>
          <hash>
             <value n="id" v="Commons-compress-1.8.1.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Pdfbox-app-1.8.6.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="Imgscalr-lib-4.2.jar"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
