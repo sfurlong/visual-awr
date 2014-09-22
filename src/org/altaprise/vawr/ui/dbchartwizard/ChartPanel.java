@@ -117,13 +117,13 @@ public class ChartPanel extends WizardContentBasePanel {
 
             if (awrMetricName.equals("SGA_PGA_TOT")) {
                 //Get the memory Data
-                new AWRMemoryTimeSeriesChart(awrMetricName);
+                new AWRMemoryTimeSeriesChart(awrMetricName, "");
             } else if (awrMetricName.equals("AVG_ACTIVE_SESS_WAITS")) {
-                new AvgActiveSessionChart(awrMetricName);
+                new AvgActiveSessionChart(awrMetricName, "");
             } else if (awrMetricName.equals("TOP_N_TIMED_EVENTS")) {
                 new TopWaitEventsBarChart(awrMetricName);
             } else {
-                new AWRTimeSeriesChart(awrMetricName);
+                new AWRTimeSeriesChart(awrMetricName, "");
             }    
             
             //SetCursor
