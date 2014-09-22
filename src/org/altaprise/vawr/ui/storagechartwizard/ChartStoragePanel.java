@@ -91,9 +91,9 @@ public class ChartStoragePanel extends WizardContentBasePanel {
 
             if (awrMetricName.equals("SGA_PGA_TOT")) {
                 //Get the memory Data
-                new AWRMemoryTimeSeriesChart(awrMetricName);
+                new AWRMemoryTimeSeriesChart(awrMetricName,"");
             } else {
-                new AWRTimeSeriesChart(awrMetricName);
+                new AWRTimeSeriesChart(awrMetricName, "");
             }
             //SetCursor
             RootFrame.stopWaitCursor();
