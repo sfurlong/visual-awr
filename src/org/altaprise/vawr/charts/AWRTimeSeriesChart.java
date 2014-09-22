@@ -5,11 +5,7 @@ import java.util.Date;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
-import javax.swing.JScrollPane;
-
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 
@@ -26,21 +22,19 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 public class AWRTimeSeriesChart extends RootChartFrame {
 
-    JPanel _outerP = new JPanel();
-    JScrollPane _thePanel = new JScrollPane(_outerP);
-    BorderLayout borderLayout = new BorderLayout();
-    int _totalNumRacInstances = 0;
+    private BorderLayout borderLayout = new BorderLayout();
+    private int _totalNumRacInstances = 0;
 
     public AWRTimeSeriesChart() {
 
     }
 
-    public AWRTimeSeriesChart(String metricName) {
-        super("Visual AWR Charting");
+    public AWRTimeSeriesChart(String metricName, String chartHeaderText) {
+        super("Visual AWR Charting", chartHeaderText);
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
-        _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
+
 
         _totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
 
@@ -56,16 +50,18 @@ public class AWRTimeSeriesChart extends RootChartFrame {
 
             ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
 
-            _outerP.add(chartPanel);
+            THE_ROOT_CONTENT_PANEL.add(chartPanel);
         }
 
-        add(_thePanel, BorderLayout.CENTER);
+        //Size of Y should be 200 (for header) + 260 * numCharts)
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*_totalNumRacInstances)));
+        add(THE_SCROLL_PANE, BorderLayout.CENTER);
 
         this.setVisible(true);
     }
 
     public JPanel getChartPanel() {
-        return _outerP;    
+        return THE_ROOT_CONTENT_PANEL;    
     }
     
     protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
