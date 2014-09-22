@@ -10,15 +10,9 @@ import java.awt.event.ActionListener;
 
 import java.io.File;
 
-import java.nio.file.Files;
-
-import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
@@ -32,23 +26,16 @@ import javax.swing.JTextField;
 
 import javax.swing.border.EtchedBorder;
 
-import org.altaprise.vawr.awrdata.AWRData;
-import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.OSWData;
-import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
+import org.altaprise.vawr.awrdata.file.ReadCellSrvStatFile;
 import org.altaprise.vawr.awrdata.file.ReadTopStatFile;
-import org.altaprise.vawr.awrdata.file.ReadVMStatFile;
-import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
-import org.altaprise.vawr.charts.AWRTimeSeriesChart;
-import org.altaprise.vawr.charts.AvgActiveSessionChart;
 import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
-import org.altaprise.vawr.charts.TopWaitEventsBarChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 
-public class OSWChartPanel extends WizardContentBasePanel {
+public class OSWSelectFilesPanel extends WizardContentBasePanel {
     private JButton jButton_chartMetric = new JButton("Chart Metric");
     private JLabel jLabel_selectMetrics =
         new JLabel("Select AWR Metric to Chart");
@@ -66,7 +53,7 @@ public class OSWChartPanel extends WizardContentBasePanel {
     private JScrollPane jScrollPane1 = new JScrollPane();
     private JTextArea jTextArea1 = new JTextArea();
 
-    public OSWChartPanel() {
+    public OSWSelectFilesPanel() {
         super();
         try {
             jbInit();
@@ -161,29 +148,14 @@ public class OSWChartPanel extends WizardContentBasePanel {
 
     private void jButton_chartMetric_actionPerformed(ActionEvent e) {
         
-        if (this.jRadioButton_cellSrvStat.isSelected()) {
-            JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
-                                          " Sorry, Cell Server Stats are not supported yet.",
-                                          "Visual AWR",
-                                          JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
         //SetCursor
         RootFrame.startWaitCursor();
 
-        ReadTopStatFile oswFileParser = new ReadTopStatFile();
+        ReadTopStatFile topStatFileParser = new ReadTopStatFile();
+        ReadCellSrvStatFile cellSrvStatFileParser = new ReadCellSrvStatFile();
         
         try {
 
-            OSWData.getInstance().clearData();
-            for (int i=0; _selectedFiles != null && i<_selectedFiles.length; i++) {
-                oswFileParser.parse(_selectedFiles[i].getPath());
-            }
-            if (SessionMetaData.getInstance().debugOn()) {
-                OSWData.getInstance().dump();
-            }
-            
 /*
             if (!OSW_FILE_NAME.equals(selectedFile)) {
                 TopStatData.getInstance().clearData();
@@ -195,10 +167,28 @@ public class OSWChartPanel extends WizardContentBasePanel {
             }
 */            
             
-            if (OSWData.getInstance().getTopStatRecs().size() > 0) {
-                new TopStatTimeSeriesChart("");
+            OSWData.getInstance().clearData();
+            if (this.jRadioButton_topStat.isSelected()) {
+                for (int i=0; _selectedFiles != null && i<_selectedFiles.length; i++) {
+                    topStatFileParser.parse(_selectedFiles[i].getPath());
+                }
+                if (SessionMetaData.getInstance().debugOn()) {
+                    OSWData.getInstance().dump();
+                }
+                if (OSWData.getInstance().getTopStatRecs().size() > 0) {
+                    new TopStatTimeSeriesChart("", this.jTextArea_chartHeading.getText().trim());
+                }
+            } else if (this.jRadioButton_cellSrvStat.isSelected()) {
+                for (int i=0; _selectedFiles != null && i<_selectedFiles.length; i++) {
+                    cellSrvStatFileParser.parse(_selectedFiles[i].getPath());
+                }
+                if (SessionMetaData.getInstance().debugOn()) {
+                    OSWData.getInstance().dump();
+                }
+                if (OSWData.getInstance().getCellSrvStatRecs().size() > 0) {
+                    
+                }
             } else {
-
                 JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                               " TopStat data does not exist in this file.",
                                               "Error",
