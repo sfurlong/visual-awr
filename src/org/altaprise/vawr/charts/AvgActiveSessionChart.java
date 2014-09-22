@@ -62,16 +62,13 @@ import org.jfree.ui.StandardGradientPaintTransformer;
 
 public class AvgActiveSessionChart extends RootChartFrame {
 
-    JPanel _outerP = new JPanel();
-    JScrollPane _thePanel = new JScrollPane(_outerP);
     BorderLayout borderLayout = new BorderLayout();
 
-    public AvgActiveSessionChart(String metricName) {
-        super("VisualAWR Charting");
+    public AvgActiveSessionChart(String metricName, String chartHeaderText) {
+        super("VisualAWR Charting", chartHeaderText);
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
-        _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
         TimeSeriesCollection xyDataset = createDataset("", metricName);
 
@@ -79,17 +76,19 @@ public class AvgActiveSessionChart extends RootChartFrame {
 
         ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
 
-        chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
+        chartPanel.setPreferredSize(new java.awt.Dimension(600, 600));
 
-        _outerP.add(chartPanel);
-
-        this.add(_thePanel, BorderLayout.CENTER);
+        THE_ROOT_CONTENT_PANEL.add(chartPanel);
+        //Size of Y should be 200 (for header) + 260 * numCharts)
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + 260));
+        this.add(THE_SCROLL_PANE, BorderLayout.CENTER);
+        
         this.setVisible(true);
     }
 
 
     public JPanel getChartPanel() {
-        return _outerP;    
+        return THE_ROOT_CONTENT_PANEL;    
     }
 
     /**
