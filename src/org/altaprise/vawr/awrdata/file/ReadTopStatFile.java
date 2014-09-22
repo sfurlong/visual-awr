@@ -34,7 +34,7 @@ public class ReadTopStatFile {
             //duFile.parse("C:/Git/visual-awr/testing/oswatcher/osc2cn01-d1_top_14.09.10.0400.dat");
             duFile.parse("C:/Git/visual-awr/testing/oswatcher/linux/em12c_top_14.09.12.0300.dat");
             OSWData.getInstance().dump();
-            new TopStatTimeSeriesChart("");
+            new TopStatTimeSeriesChart("", "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +84,6 @@ public class ReadTopStatFile {
             }
 
             System.out.println("platformType/topFileType: " + _platformType + "/" + _topFileType);
-            int recCount = 0;
             DBRec dbRec = null;
             String rowHeaderString = "";
             boolean cpuRecFound = false;
