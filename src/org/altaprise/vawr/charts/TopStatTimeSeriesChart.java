@@ -5,10 +5,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
-import javax.swing.JScrollPane;
 
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.utils.SessionMetaData;
@@ -20,17 +17,13 @@ import org.jfree.data.time.TimeSeriesCollection;
 
 public class TopStatTimeSeriesChart extends RootChartFrame {
 
-    JPanel _outerP = new JPanel();
-    JScrollPane _thePanel = new JScrollPane(_outerP);
     BorderLayout borderLayout = new BorderLayout();
 
-    public TopStatTimeSeriesChart(String metricName) {
-        super("Visual AWR Charting");
+    public TopStatTimeSeriesChart(String metricName, String chartHeaderText) {
+        super("Visual AWR Charting", chartHeaderText);
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
-
-        _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
 
         //Chart CPU Metrics
         TimeSeriesCollection xyCpuDataset = null;
@@ -42,7 +35,7 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
         JFreeChart cpuChart = createChart(xyCpuDataset, "CPU Utilization", 0, "CPU Utilization", " ");
         ChartPanel cpuChartPanel = (ChartPanel) createChartPanel(cpuChart);
         cpuChartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
-        _outerP.add(cpuChartPanel);
+        THE_ROOT_CONTENT_PANEL.add(cpuChartPanel);
 
         //Chart Memory Metrics
         TimeSeriesCollection xyMemDataset = null;
@@ -54,16 +47,19 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
         JFreeChart memChart = createChart(xyMemDataset, "Memory Utilization", 0, "Memory Utilization", " ");
         ChartPanel memChartPanel = (ChartPanel) createChartPanel(memChart);
         memChartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
-        _outerP.add(memChartPanel);
 
 
-        this.add(_thePanel, BorderLayout.CENTER);
         this.setVisible(true);
+        THE_ROOT_CONTENT_PANEL.add(memChartPanel);
+        //Size of Y should be 200 (for header) + 260 * numCharts)
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260* 2)));
+        add(THE_SCROLL_PANE, BorderLayout.CENTER);
+        
     }
 
 
     public JPanel getChartPanel() {
-        return _outerP;    
+        return THE_ROOT_CONTENT_PANEL;    
     }
 
     //Just implementing to satisfy the abstract base class
