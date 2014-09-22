@@ -1,5 +1,7 @@
 package org.altaprise.vawr.ui;
 
+import dai.shared.businessObjs.DBRecSet;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -34,7 +36,7 @@ public class ChartFilePanel extends JPanel {
     private JPanel  jPanel_panelTitle = new JPanel();
     private JPanel jPanel_contentPanel = new JPanel();
     private JLabel jLabel_panelTitle = new JLabel();
-    private JTextArea jTextArea_osInfo = new JTextArea();
+    private JTextPane jTextArea_osInfo = new JTextPane();
     private JScrollPane jScrollPane_osInfo = new JScrollPane(jTextArea_osInfo);
 
     private static String AWR_FILE_NAME = "INITIALIZED";
@@ -165,18 +167,19 @@ public class ChartFilePanel extends JPanel {
             //Convert to AWRMiner metric name
             String metricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
 
-            this.jTextArea_osInfo.setText(AWRData.getInstance().getPlatformInfoDisplayText());
+            this.jTextArea_osInfo.setContentType("text/html");
+            this.jTextArea_osInfo.setText(AWRData.getInstance().getPlatformInfoHTML());
             this.jTextArea_osInfo.setCaretPosition(0);
 
             if (AWRData.getInstance().awrMetricExists(metricName)) {
                 if (metricName.equals("SGA_PGA_TOT")) {
-                    new AWRMemoryTimeSeriesChart(metricName);
+                    new AWRMemoryTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
-                    new AvgActiveSessionChart(metricName);
+                    new AvgActiveSessionChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("TOP_N_TIMED_EVENTS")) {
                         new TopWaitEventsBarChart(metricName);
                 } else {
-                    new AWRTimeSeriesChart(metricName);
+                    new AWRTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 }
             } else {
                 JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
