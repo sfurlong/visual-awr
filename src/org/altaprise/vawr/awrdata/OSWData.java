@@ -16,6 +16,7 @@ public class OSWData {
     
     private ArrayList<DBRec> _topStatRecs = new ArrayList<DBRec>();
     private ArrayList<DBRec> _cellSrvStatRecs = new ArrayList<DBRec>();
+    private ArrayList<DBRec> _ioStatRecs = new ArrayList<DBRec>();
     private static OSWData _theInstance = null;
     private String _platformType = "";
 
@@ -56,11 +57,20 @@ public class OSWData {
             }
             System.out.println();
         }
+        for (int i=0; i< _ioStatRecs.size(); i++) {
+            DBRec dbRec = _ioStatRecs.get(i);
+            for (int j = 0; j < dbRec.size(); j++) {
+                DBAttributes dbAttribs = dbRec.getAttrib(j);
+                System.out.print(dbRec.getAttrib(j).getValue() + ",");
+            }
+            System.out.println();
+        }
     }
 
     public void clearData() {
         _topStatRecs.clear();
         _cellSrvStatRecs.clear();
+        _ioStatRecs.clear();
         _platformType = "";
     }
     
@@ -70,6 +80,10 @@ public class OSWData {
 
     public void addCellSrvStatRec(DBRec cellSrvStatRec) {
         _cellSrvStatRecs.add(cellSrvStatRec);
+    }
+
+    public void addIoStatRec(DBRec ioStatRec) {
+        _ioStatRecs.add(ioStatRec);
     }
 
     public void setPlatformType(String type) {
@@ -86,5 +100,9 @@ public class OSWData {
 
     public ArrayList<DBRec> getCellSrvStatRecs() {
         return _cellSrvStatRecs;
+    }
+
+    public ArrayList<DBRec> getIoStatRecs() {
+        return _ioStatRecs;
     }
 }
