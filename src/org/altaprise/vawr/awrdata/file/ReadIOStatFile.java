@@ -8,10 +8,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.OSWRecord;
-import org.altaprise.vawr.charts.IOStatAvgCPUTimeSeriesChart;
+import org.altaprise.vawr.charts.IOStatStorageCellTimeSeriesChart;
 
 
 public class ReadIOStatFile {
@@ -21,6 +24,7 @@ public class ReadIOStatFile {
     private String _osVersion = null;
     private String _hostName = null;
     private String _fileDateS = null;
+    private LinkedHashMap<String, DBRec> _deviceMap = new LinkedHashMap<String, DBRec>();
 
     public ReadIOStatFile() {
 
@@ -29,7 +33,8 @@ public class ReadIOStatFile {
     public static void main(String[] args) {
         try {
             ReadIOStatFile duFile = new ReadIOStatFile();
-            duFile.parse("D:\\_NATO\\Excite-20-20\\capacity-tools\\OSW-Tool\\exa3db01.osc.us.oracle.com_iostat_14.01.20.1100.dat");
+            //duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\du1.dat");
+            duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\2014_09_10_07_13_02_IostatExaWatcher_osc2es01.osc.us.oracle.com.dat");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,10 +42,12 @@ public class ReadIOStatFile {
 
     public void parse(String fileName) throws Exception {
         try {
-            
+
             _fileReader = new BufferedReader(new FileReader(fileName));
             readMainMetrics();
-            new IOStatAvgCPUTimeSeriesChart("");
+            OSWData.getInstance().dump();
+            //new IOStatAvgCPUTimeSeriesChart("");
+            new IOStatStorageCellTimeSeriesChart("FLASH", "Cell IOPS");
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
@@ -54,29 +61,31 @@ public class ReadIOStatFile {
 
     private void readMainMetrics() throws Exception {
         String rec = "";
-        String timeS = null;
+        String currentRecTimeS = "";
 
 
         try {
             //Priming read
             rec = _fileReader.readLine();
 
-            //Read the 2nd line that contains the machine name and date
-            rec = _fileReader.readLine();
-            this.parseHostNameAndDate(rec);
 
+            while (rec != null) {
+                if (rec.startsWith("Linux")) {
+                    this.parseHostNameAndDate(rec);
 
-            int recCount = 0;
-            boolean mainMetricsFound = false;
+                } else if (rec.startsWith("Time:")) {
+                    //Parse the datetime and add the attributes to the dbRec
+                    currentRecTimeS = parseTime(rec);
 
-            while (rec != null && !mainMetricsFound) {
-                if (rec.startsWith("Time:")) {
-                    timeS = parseTime(rec);
                 } else if (rec.startsWith("avg-cpu:")) {
-                    DBRec avgCPURec = parseAvgCPU(_fileDateS, timeS);
+
+                    DBRec avgCPURec = parseAvgCPU(_fileDateS, currentRecTimeS);
                     OSWRecord.getInstance().addAvgCPUData(avgCPURec);
-                } else if (rec.startsWith("Device:")) {
-                    parseDevice(rec);
+
+                } else if (rec.startsWith("sd")) {
+
+                    parseDevice(rec, this._fileDateS, currentRecTimeS);
+
                 } else {
                     //rec = _fileReader.readLine();
                 }
@@ -85,7 +94,14 @@ public class ReadIOStatFile {
                 rec = _fileReader.readLine();
             }
 
-            OSWRecord.getInstance().dump();
+
+            for (Map.Entry<String, DBRec> entry : _deviceMap.entrySet()) {
+                DBRec mapVal = entry.getValue();
+                OSWData.getInstance().addIoStatRec(mapVal);
+            }
+
+
+            //OSWRecord.getInstance().dump();
 
         } catch (Exception e) {
             System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
@@ -109,19 +125,15 @@ public class ReadIOStatFile {
                 tokCnt++;
                 switch (tokCnt) {
                 case 1:
-                    tokCnt = 1;
                     _osFlavor = tok;
                     break;
                 case 2:
-                    tokCnt = 2;
                     _osVersion = tok;
                     break;
                 case 3:
-                    tokCnt = 3;
                     _hostName = tok;
                     break;
                 case 4:
-                    tokCnt = 4;
                     _fileDateS = tok;
                     break;
                 }
@@ -132,7 +144,6 @@ public class ReadIOStatFile {
     private String parseTime(String rec) {
         //mainMetricsFound = true;
         String t = rec.substring(5).trim();
-        System.out.println("Found Time: " + t);
         return t;
     }
 
@@ -188,14 +199,173 @@ public class ReadIOStatFile {
         return dbRec;
     }
 
-    private void parseDevice(String rec) throws Exception {
-        System.out.println(rec);
+    /*
+    Device:         rrqm/s   wrqm/s   r/s   w/s   rsec/s   wsec/s avgrq-sz avgqu-sz   await  svctm  %util
+    sda               0.00    16.96 32.39 26.20   163.84   265.60     7.33     0.03    0.51   0.14   0.85
+    sda1              0.00     0.00  0.00  0.00     0.41     0.00    92.97     0.00    7.09   0.37   0.00
+    sda2              0.00     0.00  0.00  0.00     0.00     0.00     1.65     0.00    0.69   0.69   0.00
+    sda3              0.00     0.00 31.35 20.84    44.70    87.02     2.52     0.01    0.21   0.14   0.74
+    sda4              0.00     0.00  0.00  0.00     0.00     0.00     1.62     0.00    0.92   0.92   0.00
+    sda5              0.00    15.75  0.28  5.11    35.18   166.88    37.50     0.01    1.35   0.12   0.06
+    sda6              0.00     0.00  0.28  0.00    35.15     0.00   127.45     0.00   17.64   0.65   0.02
+    sda7              0.00     1.15  0.08  0.15    10.55    10.44    88.66     0.00    6.36   0.31   0.01
+    sda8              0.00     0.00  0.08  0.00    10.55     0.00   126.19     0.00   17.42   0.66   0.01
+    sda9              0.00     0.00  0.06  0.00     7.03     0.00   125.30     0.00   17.92   0.67   0.00
+    sda10             0.00     0.00  0.02  0.00     2.40     0.00   120.40     0.00   16.12   0.65   0.00
+    sda11             0.00     0.06  0.15  0.09    17.80     1.25    77.01     0.00   10.80   0.57   0.01
+    sdb               0.00    16.96  1.07  6.32   121.73   222.19    46.54     0.01    1.95   0.20   0.15
+    sdb1              0.00     0.00  0.00  0.00     0.41     0.00    95.08     0.00    2.81   0.22   0.00
+    sdb2              0.00     0.00  0.00  0.00     0.00     0.00     1.65     0.00    0.73   0.72   0.00
+    sdb3              0.00     0.00  0.03  0.96     2.58    43.61    46.39     0.00    1.04   0.34   0.03
+    sdb4              0.00     0.00  0.00  0.00     0.00     0.00     1.62     0.00    0.82   0.82   0.00
+    sdb5              0.00    15.75  0.28  5.11    35.17   166.88    37.50     0.01    1.04   0.13   0.07
+    sdb6              0.00     0.00  0.28  0.00    35.15     0.00   127.48     0.00   12.20   0.57   0.02
+    sdb7              0.00     1.15  0.08  0.15    10.56    10.44    88.72     0.00    4.40   0.29   0.01
+    sdb8              0.00     0.00  0.08  0.00    10.55     0.00   126.28     0.00   12.25   0.57   0.00
+    sdb9              0.00     0.00  0.06  0.00     7.03     0.00   125.51     0.00   11.28   0.56   0.00
+    sdb10             0.00     0.00  0.02  0.00     2.40     0.00   120.95     0.00   11.92   0.58   0.00
+    sdb11             0.00     0.06  0.15  0.09    17.79     1.25    77.02     0.00    5.93   0.46   0.01
+    sdc               0.00     0.00  0.03  0.20     2.32    19.02    90.96     0.00    2.58   0.63   0.01
+    sdd               0.00     0.00  1.98  0.86    64.42    39.01    36.52     0.00    0.43   0.25   0.07
+    sde               0.00     0.00  0.11  0.63     4.29    31.81    48.85     0.00    0.96   0.32   0.02
+    sdf               0.00     0.00  0.31  0.49    11.05    27.45    48.05     0.00    0.92   0.29   0.02
+    sdg               0.00     0.00  1.20  0.48    39.56    27.74    40.08     0.00    0.54   0.22   0.04
+    sdh               0.00     0.00  0.05  0.57     2.92    30.07    53.29     0.00    1.08   0.31   0.02
+    sdi               0.00     0.00  0.70  1.01    22.68    43.61    38.82     0.00    0.54   0.27   0.05
+    sdj               0.00     0.00  0.67  1.57    22.93    62.74    38.17     0.00    0.47   0.25   0.06
+    sdk               0.00     0.00  0.07  2.05     3.48    78.01    38.38     0.00    0.56   0.31   0.07
+    sdl               0.00     0.00  0.07  1.23     2.93    51.19    41.82     0.00    0.72   0.30   0.04
+    sdm               0.01     0.00  0.00  0.00     0.03     0.02    28.97     0.00   39.69   1.60   0.00
+    sdm1              0.01     0.00  0.00  0.00     0.03     0.02    29.10     0.00   41.86   1.62   0.00
+    md1               0.00     0.00  0.00  0.00     0.00     0.00     8.00     0.00    0.00   0.00   0.00
+    md11              0.00     0.00  0.03  0.12     0.44     0.98     9.17     0.00    0.00   0.00   0.00
+    md2               0.00     0.00  0.00  0.00     0.00     0.00     8.00     0.00    0.00   0.00   0.00
+    md8               0.00     0.00  0.00  0.00     0.00     0.00     7.99     0.00    0.00   0.00   0.00
+    md7               0.00     0.00  0.00  1.26     0.02    10.09     8.02     0.00    0.00   0.00   0.00
+    md6               0.00     0.00  0.00  0.00     0.00     0.00     7.98     0.00    0.00   0.00   0.00
+    md5               0.00     0.00  0.00 20.17     0.05   161.40     8.00     0.00    0.00   0.00   0.00
+    md4               0.00     0.00  0.00  0.00     0.00     0.00    57.90     0.00    0.00   0.00   0.00
+    sdo               0.00     0.00  0.19  0.22     8.53     6.12    35.89     0.00    0.94   0.09   0.00
+    sdn               0.00     0.00  0.13  0.14     6.62     3.58    38.13     0.00    2.22   0.08   0.00
+    sdq               0.00     0.00  0.13  0.14     6.68     3.54    37.80     0.00    1.81   0.07   0.00
+    sdp               0.00     0.00  0.13  0.14     6.67     3.37    37.66     0.00    1.81   0.07   0.00
+    sdu               0.00     0.00  0.18  0.14     8.19     3.38    36.91     0.00    1.74   0.08   0.00
+    sds               0.00     0.00  0.13  0.14     6.71     3.57    37.40     0.00    1.46   0.07   0.00
+    sdr               0.00     0.00  0.13  0.14     6.82     3.47    37.83     0.00    2.29   0.08   0.00
+    sdt               0.00     0.00  0.15  0.13     7.13     3.31    37.76     0.00    3.29   0.08   0.00
+    sdw               0.00     0.00  0.13  0.13     6.67     3.39    38.49     0.00    1.73   0.07   0.00
+    sdv               0.00     0.00  0.75  0.14    26.73     3.61    34.00     0.00    0.55   0.09   0.01
+    sdx               0.00     0.00  0.62  0.32    22.42     9.42    33.80     0.00    0.66   0.09   0.01
+    sdy               0.00     0.00  0.13  0.14     6.78     3.58    38.49     0.00    2.85   0.08   0.00
+    sdab              0.00     0.00  0.84  0.29    29.23     8.46    33.35     0.00    0.41   0.09   0.01
+    sdac              0.00     0.00  0.27  0.32    11.15     9.27    34.54     0.00    1.03   0.08   0.00
+    sdz               0.00     0.00  0.14  0.13     6.91     3.34    37.73     0.00    1.88   0.08   0.00
+    sdaa              0.00     0.00  0.14  0.14     6.86     3.44    37.29     0.00    1.77   0.07   0.00
+        */
+    private void parseDevice(String rec, String recDate, String recTime) throws Exception {
 
-        //Read the next record
-        String deviceRec = _fileReader.readLine();
-        while (deviceRec != null && deviceRec.trim().length() > 0) {
-            //System.out.println(deviceRec);
-            deviceRec = _fileReader.readLine();
+        int tokCnt = 0;
+        boolean isFlash = false;
+
+        if (rec.length() > 0) {
+
+            StringTokenizer st = new StringTokenizer(rec);
+            String deviceName = null;
+            String deviceType = null;
+
+            DBRec ioStatRec = null;
+
+            //Device:         rrqm/s   wrqm/s   r/s   w/s   rsec/s   wsec/s avgrq-sz avgqu-sz   await  svctm  %util
+            while (st.hasMoreTokens()) {
+                String tok = st.nextToken();
+                tokCnt++;
+                DBAttributes dbAttribs = null;
+                switch (tokCnt) {
+                case 1:
+                    deviceName = tok;
+
+                    deviceType = getDeviceType(deviceName);
+
+                    if (_deviceMap.containsKey(_hostName + deviceType + recDate + recTime)) {
+                        ioStatRec = _deviceMap.get(_hostName + deviceType + recDate + recTime);
+                    } else {
+                        //Create a DBRec
+                        ioStatRec = new DBRec();
+                        ioStatRec.addAttrib(new DBAttributes("HOST_NAME", _hostName));
+                        ioStatRec.addAttrib(new DBAttributes("DEVICE_NAME", deviceName));
+                        ioStatRec.addAttrib(new DBAttributes("DEVICE_TYPE", deviceType));
+                        ioStatRec.addAttrib(new DBAttributes("DATE", recDate));
+                        ioStatRec.addAttrib(new DBAttributes("TIME", recTime));
+
+                        //Add to the device map
+                        _deviceMap.put(_hostName + deviceType + recDate + recTime, ioStatRec);
+                    }
+
+                    break;
+                case 2:
+                    sumDeviceMetric("rrqm/s", tok, ioStatRec);
+                    break;
+                case 3:
+                    sumDeviceMetric("wrqm/s", tok, ioStatRec);
+                    break;
+                case 4:
+                    sumDeviceMetric("r/s", tok, ioStatRec);
+                    break;
+                case 5:
+                    sumDeviceMetric("w/s", tok, ioStatRec);
+                    break;
+                case 6:
+                    sumDeviceMetric("rsec/s", tok, ioStatRec);
+                    break;
+                case 7:
+                    sumDeviceMetric("wsec/s", tok, ioStatRec);
+                    break;
+                case 8:
+                    sumDeviceMetric("avgrq/sz", tok, ioStatRec);
+                    break;
+                case 9:
+                    sumDeviceMetric("avgqu/sz", tok, ioStatRec);
+                    break;
+                case 10:
+                    sumDeviceMetric("await", tok, ioStatRec);
+                    break;
+                case 11:
+                    sumDeviceMetric("svctm", tok, ioStatRec);
+                    break;
+                case 12:
+                    sumDeviceMetric("%util", tok, ioStatRec);
+                    break;
+                }
+            }
         }
+    }
+
+    private void sumDeviceMetric(String metricName, String metricValP, DBRec ioStatRec) {
+        DBAttributes dbAttrib = ioStatRec.getAttrib(metricName);
+        if (dbAttrib == null) {
+            ioStatRec.addAttrib(new DBAttributes(metricName, metricValP));
+        } else {
+            String metricValS = dbAttrib.getValue();
+            double sumVal = Double.parseDouble(metricValS) + Double.parseDouble(metricValP);
+            dbAttrib.setValue(Double.toString(sumVal));
+//            if (metricName.equals("wrqm/s") & ioStatRec.getAttribVal("DEVICE_NAME").equals("sda")) {
+//                System.out.println("metricName/metricValS/metricValP/sumVal: " + metricName + "/" + metricValS + "/" +
+//                                   metricValP + "/" + sumVal);
+//            }
+        }
+    }
+
+    private String getDeviceType(String deviceName) {
+        String ret = null;
+        if (deviceName.matches("sda[1-9]?[0-9]?|sdb[1-9]?[0-9]?|sd[c,d,e,f,g,h,i,j,k,l][1-9]?[0-9]?")) {
+            //Its a disk
+            ret = "DISK";
+        } else if (deviceName.matches("sdaa[1-9]?[0-9]?|sdab[1-9]?[0-9]?|sdac[1-9]?[0-9]?|sd[n,o,p,q,r,s,t,u,v,w,x,y,z][1-9]?[0-9]?")) {
+            //Its Flash
+            ret = "FLASH";
+        } else {
+            ret = "UNKNOWN";
+        }
+        return ret;
     }
 }
