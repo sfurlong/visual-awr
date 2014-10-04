@@ -9,13 +9,13 @@
     <h1>Visual AWR Readme - v01g</h1>
     <p><strong>Author:</strong> Stephen Furlong, steve.furlong@oracle.com</p>
     <p><strong>Project Overview:</strong>
-    The Visual AWR toolkit provides fine grained graphical trend analysis for 
-    Oracle Database AWR (Automatic Workload Repository) and OSWatcher/ExaWatcher 
+    The Visual AWR toolkit provides fine grained graphical trend analysis for
+    Oracle Database AWR (Automatic Workload Repository) and OSWatcher/ExaWatcher
     performance metrics. AWR & OSWatcher/ExaWatcher metrics are collected automatically
-    by Oracle systems.  This raw data can be difficult to interpret unless aggredated
+    by Oracle systems.  This raw data can be difficult to interpret unless aggregated
     over multiple days and charted for trend and root cause analysis.
-    VisualAWR is intended for use by experienced DBAs and performance 
-    engineers to diagnose workload performance issues and inform platform 
+    VisualAWR is intended for use by experienced DBAs and performance
+    engineers to diagnose workload performance issues and inform platform
     capacity planning.
     </p>
     <p>
@@ -32,36 +32,36 @@
     2.  An Oracle Database Diagnostic Pack License is required.  This script queries DBA_HIST_ views
         in the Automatic Workload Repository (AWR). To generate AWR
         reports, take AWR snapshots, or queries these views requires a
-        license for the Diagnostic Pack from Oracle.  If you are not sure whether you 
+        license for the Diagnostic Pack from Oracle.  If you are not sure whether you
         are licensed to for the Diagnostic Pack, contact your Oracle sales rep or support.
         </p>
 
     <h2>Quick Start</h2>
     <p>
-       See my 
+       See my
       <a href="https://www.youtube.com/watch?v=CINrQkQOPWE">
         <b>video guide on YouTube</b></a>
        and my blog <a href="http://visualawr.blogspot.com"><b>here.</b></a>
     </p>
     <p>
     This tool will chart AWR performance metrics by directly attaching to the
-    database or by reading the output file from an AWRMiner collection script. 
+    database or by reading the output file from an AWRMiner collection script.
      AWR performance metrics can be visualized from one of two data sources:
-    JDBC Connection or from an AWRMiner text file. 
+    JDBC Connection or from an AWRMiner text file.
     <h3>Charting AWR metrics from a JDBC Connection</h3>
      1. Connect to the target database using the DB Connections screen below and
     save the connection.<br/>
-     
+
     <img src="./lib/db-connections-screen.gif" height="319" width="510"/>
     <p>2. Use the Chart DB Data wizard to collect the AWR snapshot data and
        chart the metrics.</p>
     <img src="./lib/db-connections-wizard.gif" height="319" width="510"/>
     <p>3. Follow the wizard and chart the specific metrics you are interested in.</p>
     <img src="./lib/chart-from-db.gif" height="519" width="510"/>
-    
+
     <h3>Charting AWR metrics from an AWRMiner collection file.</h3>
      1. Choose a valid AWRMiner output file and select a metric to chart.<br/>
-     
+
     <img src="./lib/chart-wizard.gif" height="519" width="510"/>
   </body>
 </html>
