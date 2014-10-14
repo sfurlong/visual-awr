@@ -8,6 +8,7 @@ import daiBeans.daiComboBox;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.LayoutManager;
 
 import java.awt.Rectangle;
@@ -72,6 +73,10 @@ public class DBConnectPanel extends WizardContentBasePanel {
             });
         this.scrollPaneTextArea.setBounds(new Rectangle(45, 100, 505, 135));
         jLabel1.setBounds(new Rectangle(45, 50, 215, 15));
+
+        this.textArea_DBConn.setEnabled(false);
+        this.textArea_DBConn.setFont(new Font("monospaced", Font.PLAIN, 11));
+
 
         this.add(this.scrollPaneTextArea, null);
         this.add(jLabel1, null);

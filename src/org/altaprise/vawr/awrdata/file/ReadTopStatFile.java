@@ -40,6 +40,74 @@ public class ReadTopStatFile {
         }
     }
 
+    public DBRec testFile(String fileName, Date startDateFilter, Date endDateFilter, boolean doFilter) throws Exception {
+        try {
+            String rec = "";
+            String filteredFileList = null;
+            _fileReader = new BufferedReader(new FileReader(fileName));
+            DBRec fileRecSet = null;
+
+            try {
+                //Priming read
+                rec = _fileReader.readLine();
+                String dateTimeS = null;
+                boolean timeDateFound = false;
+                Date lastDateTimeRead = null;
+                Date firstDateTimeRead = null;
+
+                while (rec != null) {
+                    if (rec.startsWith("zzz ***")) {
+                        try {
+                            Date dateTimeD = this.parseDateTime(rec);
+
+                            if (doFilter) {
+                                if (dateTimeD.after(startDateFilter) && dateTimeD.before(endDateFilter)) {
+                                    if (firstDateTimeRead == null) {
+                                        firstDateTimeRead = dateTimeD;
+                                    }
+                                    lastDateTimeRead = dateTimeD;
+                                }
+                            } else {
+                                if (firstDateTimeRead == null) {
+                                    firstDateTimeRead = dateTimeD;
+                                }
+                                lastDateTimeRead = dateTimeD;
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+                    //Read the next record
+                    rec = _fileReader.readLine();
+                }
+
+                if (firstDateTimeRead != null) {
+                    fileRecSet = new DBRec();
+                    fileRecSet.addAttrib(new DBAttributes("FILE_START_DATETIME", firstDateTimeRead.toString()));
+                    fileRecSet.addAttrib(new DBAttributes("FILE_END_DATETIME", lastDateTimeRead.toString()));
+                }
+                
+                return fileRecSet;
+
+            } catch (Exception e) {
+                System.out.println("IOSTAT File Read Error\n" + e.getLocalizedMessage());
+                e.printStackTrace();
+                throw e;
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            throw new Exception("File Not Found: " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            _fileReader.close();
+        }
+    }
+
     public void parse(String fileName) throws Exception {
         try {
 
@@ -85,23 +153,22 @@ public class ReadTopStatFile {
 
             System.out.println("platformType/topFileType: " + _platformType + "/" + _topFileType);
             DBRec dbRec = null;
-            String rowHeaderString = "";
             boolean cpuRecFound = false;
             boolean memRecFound = false;
 
             while (rec != null) {
 
-                rowHeaderString = (rec.length() >= 3) ? rec.toUpperCase().substring(0, 3) : ""; 
-
-                if (rowHeaderString.equals("ZZZ")) {
+                if (rec.startsWith("zzz ***")) {
                     cpuRecFound = false;
                     memRecFound = false;
                     //Create the record structure
                     dbRec = new DBRec();
                     //Parse the datetime and add the attributes to the dbRec
-                    this.parseDateTime(rec, dbRec);
+                    Date recDateTime = this.parseDateTime(rec);
+                    dbRec.addAttrib(new DBAttributes("DATE", recDateTime));
 
-                } else if (rowHeaderString.equals("CPU")) {
+
+                } else if (rec.startsWith("CPU") || rec.startsWith("Cpu")) {
                     cpuRecFound = true;
                     if (_platformType.equals("SUNOS")) {
                         this.parseSunCpuMetrics(rec, dbRec);
@@ -109,7 +176,7 @@ public class ReadTopStatFile {
                         this.parseLinuxCpuMetrics(rec, dbRec);
                     }
 
-                } else if (rowHeaderString.equals("MEM")) {
+                } else if (rec.startsWith("Mem")) {
                     memRecFound = true;
                     if (_platformType.equals("SUNOS")) {
                         this.parseSunMemoryMetrics(rec, dbRec);
@@ -136,8 +203,8 @@ public class ReadTopStatFile {
     }
 
     //zzz ***Wed Sep 10 04:00:08 PDT 2014
-    private void parseDateTime(String rec, DBRec dbRec) {
-
+    private Date parseDateTime(String rec) {
+        Date ret = null;
         if (rec.length() > 0) {
 
             String recDateTimeS = rec.substring(11, 35);
@@ -146,14 +213,13 @@ public class ReadTopStatFile {
             try {
                 //_intervalSeconds = Integer.parseInt(intervalSecondsS);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd hh:mm:ss zzz yyyy");
-                Date recDateTime = dateFormat.parse(recDateTimeS);
-
-                dbRec.addAttrib(new DBAttributes("DATE", recDateTime));
+                ret = dateFormat.parse(recDateTimeS);
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+        return ret;
     }
 
     //SUNOS:  CPU states: 94.5% idle,  4.6% user,  0.9% kernel,  0.0% iowait,  0.0% swap

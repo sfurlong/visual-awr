@@ -8,6 +8,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -20,10 +24,12 @@ import org.altaprise.vawr.charts.IOStatStorageCellTimeSeriesChart;
 public class ReadIOStatFile {
 
     private BufferedReader _fileReader;
+    private Date _fileStartDateTime = null;
     private String _osFlavor = null;
     private String _osVersion = null;
     private String _hostName = null;
     private String _fileDateS = null;
+    private boolean _isExadataStorage = false;
     private LinkedHashMap<String, DBRec> _deviceMap = new LinkedHashMap<String, DBRec>();
 
     public ReadIOStatFile() {
@@ -34,20 +40,88 @@ public class ReadIOStatFile {
         try {
             ReadIOStatFile duFile = new ReadIOStatFile();
             //duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\du1.dat");
-            duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\2014_09_10_07_13_02_IostatExaWatcher_osc2es01.osc.us.oracle.com.dat");
+            duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\2014_09_10_07_13_02_IostatExaWatcher_osc2es01.osc.us.oracle.com.dat", false);
+            OSWData.getInstance().dump();
+            //new IOStatAvgCPUTimeSeriesChart("");
+            new IOStatStorageCellTimeSeriesChart("FLASH", "Cell IOPS");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void parse(String fileName) throws Exception {
+    public DBRec testFile(String fileName, Date startDateFilter, Date endDateFilter, boolean doFilter) throws Exception {
         try {
+            String rec = "";
+            String filteredFileList = null;
+            _fileReader = new BufferedReader(new FileReader(fileName));
+            DBRec fileRecSet = null;
 
+            try {
+                //Priming read
+                rec = _fileReader.readLine();
+                String dateTimeS = null;
+                boolean timeDateFound = false;
+                Date lastDateTimeRead = null;
+                Date firstDateTimeRead = null;
+
+                while (rec != null) {
+                    if (rec.startsWith("zzz ***") || rec.startsWith("zzz <") || rec.startsWith ("Time:")) {
+                        try {
+                            Date dateTimeD = this.parseDateTime(rec);
+
+                            if (doFilter) {
+                                if (dateTimeD.after(startDateFilter) && dateTimeD.before(endDateFilter)) {
+                                    if (firstDateTimeRead == null) {
+                                        firstDateTimeRead = dateTimeD;
+                                    }
+                                    lastDateTimeRead = dateTimeD;
+                                }
+                            } else {
+                                if (firstDateTimeRead == null) {
+                                    firstDateTimeRead = dateTimeD;
+                                }
+                                lastDateTimeRead = dateTimeD;
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+                    //Read the next record
+                    rec = _fileReader.readLine();
+                }
+
+                if (firstDateTimeRead != null) {
+                    fileRecSet = new DBRec();
+                    fileRecSet.addAttrib(new DBAttributes("FILE_START_DATETIME", firstDateTimeRead.toString()));
+                    fileRecSet.addAttrib(new DBAttributes("FILE_END_DATETIME", lastDateTimeRead.toString()));
+                }
+                
+                return fileRecSet;
+
+            } catch (Exception e) {
+                System.out.println("IOSTAT File Read Error\n" + e.getLocalizedMessage());
+                e.printStackTrace();
+                throw e;
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            throw new Exception("File Not Found: " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            _fileReader.close();
+        }
+    }
+
+    public void parse(String fileName, boolean isExadataStorage) throws Exception {
+        try {
+            _isExadataStorage = isExadataStorage;
             _fileReader = new BufferedReader(new FileReader(fileName));
             readMainMetrics();
-            OSWData.getInstance().dump();
-            //new IOStatAvgCPUTimeSeriesChart("");
-            new IOStatStorageCellTimeSeriesChart("FLASH", "Cell IOPS");
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
@@ -61,7 +135,7 @@ public class ReadIOStatFile {
 
     private void readMainMetrics() throws Exception {
         String rec = "";
-        String currentRecTimeS = "";
+        Date currentRecDateTime = null;
 
 
         try {
@@ -73,21 +147,19 @@ public class ReadIOStatFile {
                 if (rec.startsWith("Linux")) {
                     this.parseHostNameAndDate(rec);
 
-                } else if (rec.startsWith("Time:")) {
+                } else if (rec.startsWith("zzz ***") || rec.startsWith("zzz <") || rec.startsWith ("Time:")) {
                     //Parse the datetime and add the attributes to the dbRec
-                    currentRecTimeS = parseTime(rec);
+                    currentRecDateTime = parseDateTime(rec);
 
                 } else if (rec.startsWith("avg-cpu:")) {
 
-                    DBRec avgCPURec = parseAvgCPU(_fileDateS, currentRecTimeS);
+                    DBRec avgCPURec = parseAvgCPU(currentRecDateTime);
                     OSWRecord.getInstance().addAvgCPUData(avgCPURec);
 
-                } else if (rec.startsWith("sd")) {
-
-                    parseDevice(rec, this._fileDateS, currentRecTimeS);
-
-                } else {
-                    //rec = _fileReader.readLine();
+                //sd is scsi device hd is IDE hard disk
+                } else if (rec.startsWith("sd") || rec.startsWith("hd")) {
+                    
+                    parseDevice(rec, currentRecDateTime);
                 }
 
                 //Read the next record
@@ -100,9 +172,6 @@ public class ReadIOStatFile {
                 OSWData.getInstance().addIoStatRec(mapVal);
             }
 
-
-            //OSWRecord.getInstance().dump();
-
         } catch (Exception e) {
             System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
             e.printStackTrace();
@@ -110,11 +179,11 @@ public class ReadIOStatFile {
         }
     }
 
+
     //Linux 2.6.32-400.21.1.el5uek (exa3db01.osc.us.oracle.com)       01/20/14
     private void parseHostNameAndDate(String rec) {
 
         int tokCnt = 0;
-
 
         if (rec.length() > 0) {
 
@@ -141,22 +210,62 @@ public class ReadIOStatFile {
         }
     }
 
-    private String parseTime(String rec) {
-        //mainMetricsFound = true;
-        String t = rec.substring(5).trim();
-        return t;
+    private Date parseDateTime(String rec) {
+        String dateTimeS = null;
+        Date ret = null;
+        if (rec.startsWith("zzz ***")) {
+            //zzz ***Sun Aug 10 20:43:48 CEST 2014
+            dateTimeS = rec.substring(7, 36);
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
+                ret = dateFormat.parse(dateTimeS);
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        } else if (rec.startsWith("zzz <")) {
+            //zzz <09/10/2014 07:13:02>
+            dateTimeS = rec.substring(6, 24);
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                ret = dateFormat.parse(dateTimeS);
+                _fileStartDateTime = ret;
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else if (rec.startsWith("Time:")) {
+            //Time: 07:13:02 AM
+            String hourS = rec.substring(6, 8);
+            String minS = rec.substring(9, 11);
+            String secS = rec.substring(12, 14);
+            String am_pmS = rec.substring(15, 17);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(this._fileStartDateTime);
+            cal.set(Calendar.HOUR, Integer.parseInt(hourS));
+            cal.set(Calendar.MINUTE, Integer.parseInt(minS));
+            cal.set(Calendar.SECOND, Integer.parseInt(secS));
+            if (am_pmS.equals("AM")) {
+                cal.set(Calendar.AM_PM, Calendar.AM);
+            } else if (am_pmS.equals("PM")) {
+                cal.set(Calendar.AM_PM, Calendar.PM);
+            } else {
+                System.out.println("warning not AM/PM found in file.");
+            }
+            ret = cal.getTime();
+        }
+        return ret;
     }
 
     //Device:         rrqm/s   wrqm/s   r/s   w/s   rsec/s   wsec/s avgrq-sz avgqu-sz   await  svctm  %util
-    private DBRec parseAvgCPU(String date, String time) throws Exception {
+    private DBRec parseAvgCPU(Date dateTime) throws Exception {
         //Read the next record
         String rec = _fileReader.readLine();
         DBRec dbRec = new DBRec();
-        DBAttributes dateAttribs = new DBAttributes("DATE", date);
-        DBAttributes timeAttribs = new DBAttributes("TIME", time);
+        DBAttributes dateAttribs = new DBAttributes("DATE", dateTime);
 
         dbRec.addAttrib(dateAttribs);
-        dbRec.addAttrib(timeAttribs);
 
         int tokCnt = 0;
 
@@ -262,7 +371,7 @@ public class ReadIOStatFile {
     sdz               0.00     0.00  0.14  0.13     6.91     3.34    37.73     0.00    1.88   0.08   0.00
     sdaa              0.00     0.00  0.14  0.14     6.86     3.44    37.29     0.00    1.77   0.07   0.00
         */
-    private void parseDevice(String rec, String recDate, String recTime) throws Exception {
+    private void parseDevice(String rec, Date dateTime) throws Exception {
 
         int tokCnt = 0;
         boolean isFlash = false;
@@ -286,19 +395,18 @@ public class ReadIOStatFile {
 
                     deviceType = getDeviceType(deviceName);
 
-                    if (_deviceMap.containsKey(_hostName + deviceType + recDate + recTime)) {
-                        ioStatRec = _deviceMap.get(_hostName + deviceType + recDate + recTime);
+                    if (_deviceMap.containsKey(_hostName + deviceType + dateTime.getTime())) {
+                        ioStatRec = _deviceMap.get(_hostName + deviceType + dateTime.getTime());
                     } else {
                         //Create a DBRec
                         ioStatRec = new DBRec();
                         ioStatRec.addAttrib(new DBAttributes("HOST_NAME", _hostName));
                         ioStatRec.addAttrib(new DBAttributes("DEVICE_NAME", deviceName));
                         ioStatRec.addAttrib(new DBAttributes("DEVICE_TYPE", deviceType));
-                        ioStatRec.addAttrib(new DBAttributes("DATE", recDate));
-                        ioStatRec.addAttrib(new DBAttributes("TIME", recTime));
+                        ioStatRec.addAttrib(new DBAttributes("DATE", dateTime));
 
                         //Add to the device map
-                        _deviceMap.put(_hostName + deviceType + recDate + recTime, ioStatRec);
+                        _deviceMap.put(_hostName + deviceType + dateTime.getTime(), ioStatRec);
                     }
 
                     break;
@@ -348,15 +456,14 @@ public class ReadIOStatFile {
             String metricValS = dbAttrib.getValue();
             double sumVal = Double.parseDouble(metricValS) + Double.parseDouble(metricValP);
             dbAttrib.setValue(Double.toString(sumVal));
-//            if (metricName.equals("wrqm/s") & ioStatRec.getAttribVal("DEVICE_NAME").equals("sda")) {
-//                System.out.println("metricName/metricValS/metricValP/sumVal: " + metricName + "/" + metricValS + "/" +
-//                                   metricValP + "/" + sumVal);
-//            }
         }
     }
 
     private String getDeviceType(String deviceName) {
         String ret = null;
+        if (!_isExadataStorage) {
+            return "DISK";
+        }
         if (deviceName.matches("sda[1-9]?[0-9]?|sdb[1-9]?[0-9]?|sd[c,d,e,f,g,h,i,j,k,l][1-9]?[0-9]?")) {
             //Its a disk
             ret = "DISK";
@@ -364,6 +471,7 @@ public class ReadIOStatFile {
             //Its Flash
             ret = "FLASH";
         } else {
+            //USB, Tape, and other block divices
             ret = "UNKNOWN";
         }
         return ret;

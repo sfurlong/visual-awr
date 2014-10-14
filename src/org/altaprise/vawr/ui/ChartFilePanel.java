@@ -78,7 +78,7 @@ public class ChartFilePanel extends JPanel {
         jPanel_contentPanel.setLayout(null);
 
         //jPanel_contentPanel.setSize(new Dimension(706, 300));
-        jScrollPane_osInfo.setBounds(new Rectangle(35, 200, 535, 220));
+        jScrollPane_osInfo.setBounds(new Rectangle(35, 200, 560, 220));
         jScrollPane_osInfo.setMinimumSize(new Dimension(48, 200));
         jScrollPane_osInfo.setPreferredSize(new Dimension(48, 200));
 
@@ -103,7 +103,6 @@ public class ChartFilePanel extends JPanel {
         this.add(jPanel_contentPanel, BorderLayout.CENTER);
         jTextField_fileName.setBounds(new Rectangle(40, 60, 480, 20));
         String appHome = SessionMetaData.getInstance().getDaiHome();
-        //        jTextField_fileName.setText(appHome + "\\testing\\awr-hist-389926331-U-775-985.out");
         jButton_selectFile.setText("Select File");
         jButton_selectFile.setBounds(new Rectangle(525, 60, 85, 20));
         jButton_selectFile.addActionListener(new ActionListener() {
@@ -120,9 +119,8 @@ public class ChartFilePanel extends JPanel {
             });
         jComboBox_metricName.setBounds(new Rectangle(40, 110, 300, 20));
 
-        jTextArea_osInfo.setBackground(Color.lightGray);
-        jTextArea_osInfo.setEditable(false);
-
+        jTextArea_osInfo.setEnabled(false);
+        jTextArea_osInfo.setFont(new Font("monospaced", Font.PLAIN, 11));
         setComboBoxOptions();
     }
 

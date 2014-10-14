@@ -81,15 +81,13 @@ public class IOStatStorageCellTimeSeriesChart extends RootChartFrame {
             DBRec ioStatRec = (DBRec) iter.next();
 
             //avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-            String dateS = ioStatRec.getAttribVal("DATE");
+            Date dateTimeD = (Date)ioStatRec.getAttrib("DATE").getObjValue();
             String timeS = ioStatRec.getAttribVal("TIME");
             String deviceType = ioStatRec.getAttribVal("DEVICE_TYPE");
             String readValS = ioStatRec.getAttribVal("r/s");
             String writeValS = ioStatRec.getAttribVal("w/s");
 
-            Date dateTimeD = null;
             try {
-                dateTimeD = this.parseDateTime(dateS, timeS);
                 double readValD = Double.parseDouble(readValS);
                 double writeValD = Double.parseDouble(writeValS);
 

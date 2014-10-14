@@ -13,8 +13,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -59,8 +61,12 @@ public class daiListBox extends JPanel {
                 }
             });
         scrollPane = new JScrollPane(theList);
-
+        
         this.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    public void setEnabled(boolean status) {
+        this.theList.setEnabled(status);
     }
 
     public void addItem(String itemText) {
@@ -75,7 +81,7 @@ public class daiListBox extends JPanel {
     }
 
     public void removeAllItems() {
-        listModel.clear();
+        listModel.removeAllElements();
     }
 
     public void removeItem(String item) {
@@ -84,6 +90,18 @@ public class daiListBox extends JPanel {
 
     public String getSelectedValue() {
         return (String)theList.getSelectedValue();
+    }
+    
+    public void setListItemsFont(Font font) {
+        theList.setFont(font);
+    }
+
+    public ArrayList<String> getAllListItems() {
+        ArrayList<String> ret = new ArrayList<String>();
+        for (int i=0; i<listModel.size(); i++) {
+            ret.add(listModel.get(i).toString());
+        }
+        return ret;
     }
 
     public synchronized void removedaiListBoxItemSelectedListener(daiGenericEventListener l) {

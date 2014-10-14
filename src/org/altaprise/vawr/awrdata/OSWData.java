@@ -61,7 +61,11 @@ public class OSWData {
             DBRec dbRec = _ioStatRecs.get(i);
             for (int j = 0; j < dbRec.size(); j++) {
                 DBAttributes dbAttribs = dbRec.getAttrib(j);
-                System.out.print(dbRec.getAttrib(j).getValue() + ",");
+                if (dbAttribs.getName().equals("DATE")) {
+                    System.out.print(dbRec.getAttrib(j).getObjValue() + ",");
+                } else {                    
+                    System.out.print(dbRec.getAttrib(j).getValue() + ",");
+                }
             }
             System.out.println();
         }

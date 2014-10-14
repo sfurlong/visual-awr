@@ -9,6 +9,7 @@ import dai.shared.businessObjs.DBRecSet;
 import daiBeans.daiComboBox;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.LayoutManager;
 
 import java.awt.Rectangle;
@@ -78,7 +79,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
                     jButton_doQuery_actionPerformed(e);
                 }
             });
-        scrollPaneTextArea.setBounds(new Rectangle(10, 145, 500, 185));
+        scrollPaneTextArea.setBounds(new Rectangle(10, 145, 570, 185));
         scrollPaneTextArea.setSize(new Dimension(500, 185));
         textArea_awrData.setEditable(false);
         jTextField_dbId.setBounds(new Rectangle(130, 50, 140, 20));
@@ -105,6 +106,9 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.add(jButton_doQuery, null);
         this.add(scrollPaneTextArea, null);
         
+        textArea_awrData.setEnabled(false);
+        textArea_awrData.setFont(new Font("monospaced", Font.PLAIN, 11));
+            
         //Set the Wizard Label
         this.setPanelLabel("4. Query the database for AWR data.");
     }
