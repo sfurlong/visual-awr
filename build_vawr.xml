@@ -90,10 +90,20 @@
       </fileset>
     </copy>
     
+    <!--Copy Test Files -->
     <copy todir="${build.root.dir}/dist/testing">
       <fileset dir="${build.root.dir}/testing">
-        <include name="*EDWPRD*.out"/>
-        <include name="*XXXX*.out"/>
+        <include name="**/AWRMiner/**/*EDWPRD*.out"/>
+        <include name="**/AWRMiner/**/*XXXX*.out"/>
+      </fileset>
+      <fileset dir="${build.root.dir}/testing">
+        <include name="**/IOStat-Linux/**/*.dat"/>
+      </fileset>
+      <fileset dir="${build.root.dir}/testing">
+        <include name="**/TopStat-Linux/**/*.dat"/>
+      </fileset>
+      <fileset dir="${build.root.dir}/testing">
+        <include name="**/TopStat-SunOS/**/*.dat"/>
       </fileset>
     </copy>
 

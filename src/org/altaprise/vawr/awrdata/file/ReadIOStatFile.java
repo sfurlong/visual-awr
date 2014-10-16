@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.OSWRecord;
-import org.altaprise.vawr.charts.IOStatStorageCellTimeSeriesChart;
+import org.altaprise.vawr.charts.IOStatTimeSeriesChart;
 
 
 public class ReadIOStatFile {
@@ -43,7 +43,7 @@ public class ReadIOStatFile {
             duFile.parse("C:\\Git\\visual-awr\\testing\\OSWatcher\\IOStat-Linux\\2014_09_10_07_13_02_IostatExaWatcher_osc2es01.osc.us.oracle.com.dat", false);
             OSWData.getInstance().dump();
             //new IOStatAvgCPUTimeSeriesChart("");
-            new IOStatStorageCellTimeSeriesChart("FLASH", "Cell IOPS");
+            new IOStatTimeSeriesChart("FLASH", "Cell IOPS");
         } catch (Exception e) {
             e.printStackTrace();
         }

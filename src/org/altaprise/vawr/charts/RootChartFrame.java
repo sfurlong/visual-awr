@@ -1,8 +1,5 @@
 package org.altaprise.vawr.charts;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 
@@ -40,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -49,18 +47,8 @@ import javax.swing.border.Border;
 
 import org.altaprise.vawr.awrdata.AWRMetrics;
 
-import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.pdmodel.PDDocument;
 
-import org.apache.pdfbox.pdmodel.PDPage;
-
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
-
-import org.imgscalr.Scalr;
+import org.altaprise.vawr.ui.RootFrame;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -100,9 +88,11 @@ abstract class RootChartFrame extends JFrame implements Printable {
         THE_ROOT_CONTENT_PANEL.setLayout(new BoxLayout(THE_ROOT_CONTENT_PANEL, BoxLayout.Y_AXIS));
         _headerTextPane.setContentType("text/html");
         _headerTextPane.setEditable(false);
-        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 200));
-        //_headerTextPane.setSize(600, 200);
-        //_headerTextPane.setMaximumSize(new java.awt.Dimension(600, 200));
+        
+        int numHeaderLines = countLines(chartHeaderText);
+        System.out.println("num header lines: " + numHeaderLines);
+        
+        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
         _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
         THE_HEADER_TEXT_PANEL.add(_headerTextPane);
         THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
@@ -113,7 +103,7 @@ abstract class RootChartFrame extends JFrame implements Printable {
         itemFilePrint.setMnemonic('P');
         itemFilePrint.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doPrintJob2();
+                doPrintJob();
             }
         });
         itemFileExit.setText("Exit");
@@ -252,6 +242,16 @@ abstract class RootChartFrame extends JFrame implements Printable {
 
     }
 
+    private static int countLines(String str){
+        int ret = 0;
+        if (str != null) {
+            String[] lines = str.split("\r\n|\r|\n|/tr");
+            ret = lines.length;
+        }
+       return  ret;
+    }
+    
+    
     public int print(Graphics graphics, PageFormat pf, int pageIndex) throws PrinterException {
 
             if (pageIndex < IMAGES_TO_PRINT.length) {
@@ -267,6 +267,12 @@ abstract class RootChartFrame extends JFrame implements Printable {
         }
 
     private void doPrintJob() {
+
+        JOptionPane.showMessageDialog(this,
+                                      "Coming Soon", "Message",
+                                      JOptionPane.INFORMATION_MESSAGE);
+
+        /*
 
         try {
             THE_ROOT_CONTENT_PANEL.setSize(600, THE_ROOT_CONTENT_PANEL.getSize().height);
@@ -319,7 +325,7 @@ abstract class RootChartFrame extends JFrame implements Printable {
             e.printStackTrace();
         }
 
-        /*
+
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(this);
         boolean ok = job.printDialog();
@@ -329,8 +335,8 @@ abstract class RootChartFrame extends JFrame implements Printable {
             } catch (PrinterException ex) {
                 ex.printStackTrace();
             }
-        }
-        */
+            }
+    */
     }
 
     BufferedImage[] IMAGES_TO_PRINT = null;
@@ -386,21 +392,22 @@ abstract class RootChartFrame extends JFrame implements Printable {
     private void saveImageAsJPEG(BufferedImage img, String filename) {
         try {
             OutputStream out = new FileOutputStream(filename + ".jpg");
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            encoder.encode(img);
+            //JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+            //encoder.encode(img);
             out.close();
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+/*    
     private void saveComponentAsJPEG(Component myComponent, String filename) {
         Dimension size = myComponent.getSize();
         BufferedImage myImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = myImage.createGraphics();
         myComponent.paint(g2);
-        BufferedImage newImage =
-            Scalr.resize(myImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH, 600, myImage.getHeight(),
-                         Scalr.OP_ANTIALIAS);
+        //BufferedImage newImage =
+        //    Scalr.resize(myImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH, 600, myImage.getHeight(),
+        //                 Scalr.OP_ANTIALIAS);
         try {
             OutputStream out = new FileOutputStream(filename + ".jpg");
             JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
@@ -410,4 +417,5 @@ abstract class RootChartFrame extends JFrame implements Printable {
             System.out.println(e);
         }
     }
+*/
 }

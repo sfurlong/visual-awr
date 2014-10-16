@@ -50,7 +50,7 @@ import daiBeans.daiListBox;
 import java.awt.Font;
 
 import org.altaprise.vawr.awrdata.file.ReadIOStatFile;
-import org.altaprise.vawr.charts.IOStatStorageCellTimeSeriesChart;
+import org.altaprise.vawr.charts.IOStatTimeSeriesChart;
 
 public class OSWSelectChartPanel extends WizardContentBasePanel {
     private JButton jButton_chartMetric = new JButton("Chart Metric");
@@ -71,6 +71,7 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
     private JLabel jLabel5 = new JLabel();
     private JCheckBox jCheckBox_chartFlash = new JCheckBox();
     private boolean _isExadataStorage = false;
+    private JLabel jLabel6 = new JLabel();
 
     public OSWSelectChartPanel() {
         super();
@@ -86,7 +87,7 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         //this.setSize(new Dimension(660, 520));
         
         this.setSize(new Dimension(686, 395));
-        jButton_chartMetric.setBounds(new Rectangle(520, 205, 100, 20));
+        jButton_chartMetric.setBounds(new Rectangle(515, 195, 100, 20));
         jButton_chartMetric.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jButton_chartMetric_actionPerformed(e);
@@ -94,8 +95,8 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         });
 
         jLabel1.setText("Report Header");
-        jLabel1.setBounds(new Rectangle(30, 230, 110, 15));
-        jTextArea_chartHeading.setBounds(new Rectangle(30, 250, 595, 65));
+        jLabel1.setBounds(new Rectangle(30, 230, 590, 15));
+        jTextArea_chartHeading.setBounds(new Rectangle(30, 265, 595, 75));
         
         this.jTextArea_chartHeading.setColumns(60);
         this.jTextArea_chartHeading.setRows(3);
@@ -116,18 +117,21 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         jLabel4.setText("End Filter:");
         jLabel4.setBounds(new Rectangle(20, 85, 75, 15));
         jTextField_fileType.setBounds(new Rectangle(100, 20, 140, 20));
-        jTextField_filesPath.setBounds(new Rectangle(100, 150, 515, 20));
+        jTextField_filesPath.setBounds(new Rectangle(100, 155, 515, 20));
         jLabel5.setText("File(s)  Path:");
         jLabel5.setBounds(new Rectangle(20, 155, 75, 15));
 
         jCheckBox_chartFlash.setText("Chart Exadata Flash – Separate Charts for DISK and FLASH  ");
         jCheckBox_chartFlash.setBounds(new Rectangle(30, 200, 410, 20));
+        jLabel6.setText("(Use this space for text that will appear on your Report Header, i.e. Machine Name, Date, etc. HTML markup supported.)");
+        jLabel6.setBounds(new Rectangle(30, 245, 595, 15));
         jTextField_filesPath.setEnabled(false);
         jTextField_fileType.setEnabled(false);
         jTextField_startFilterDate.setEnabled(false);
         jTextField_endFilterDate.setEnabled(false);
         listBox_filesToRead.setEnabled(false);
 
+        this.add(jLabel6, null);
         this.add(jCheckBox_chartFlash, null);
         this.add(jLabel5, null);
         this.add(jTextField_filesPath, null);
@@ -140,14 +144,14 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         this.add(jSeparator2, null);
         this.add(listBox_filesToRead, null);
         this.add(jSeparator1, null);
-        this.add(jTextArea_chartHeading, null);
 
+        this.add(jTextArea_chartHeading, null);
         this.add(jLabel1, null);
         this.add(jButton_chartMetric, null);
         this.listBox_filesToRead.setListItemsFont(new Font("monospaced", Font.PLAIN, 11));
 
         //Set the Wizard Label
-        this.setPanelLabel("OSWatcher/ExaWatcher Analytics");
+        this.setPanelLabel("2. Optionally include Report Header text, and run the Chart.");
         
     }
 
@@ -216,7 +220,7 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
                     OSWData.getInstance().dump();
                 }
                 if (OSWData.getInstance().getIoStatRecs().size() > 0) {
-                    new IOStatStorageCellTimeSeriesChart("FLASH", "Cell IOPS");
+                    new IOStatTimeSeriesChart("", this.jTextArea_chartHeading.getText().trim());
                 } else {
                     JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                                   " IOSTAT data does not exist in this file(s).", "Error",

@@ -34,7 +34,6 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
         }
         JFreeChart cpuChart = createChart(xyCpuDataset, "CPU Utilization", 0, "CPU Utilization", " ");
         ChartPanel cpuChartPanel = (ChartPanel) createChartPanel(cpuChart);
-        cpuChartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
         THE_ROOT_CONTENT_PANEL.add(cpuChartPanel);
 
         //Chart Memory Metrics
@@ -46,7 +45,7 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
         }
         JFreeChart memChart = createChart(xyMemDataset, "Memory Utilization", 0, "Memory Utilization", " ");
         ChartPanel memChartPanel = (ChartPanel) createChartPanel(memChart);
-        memChartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
+        //memChartPanel.setPreferredSize(new java.awt.Dimension(600, 260));
 
 
         this.setVisible(true);

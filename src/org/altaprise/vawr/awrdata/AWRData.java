@@ -262,31 +262,31 @@ public class AWRData {
 
     public String getChartHeaderHTML() {
 
-        String ret = "<table border=\"1\" font size=\"1\">\n";
-        ret += "<tr>\n";
-        ret += "<td>\n";
+        String ret = "<table border=\"1\" font size=\"1\">";
+        ret += "<tr>";
+        ret += "<td>";
         ret += "<b>CHART_DATE</b>";
-        ret += "</td>\n";
-        ret += "<td>\n";
+        ret += "</td>";
+        ret += "<td>";
         ret += Calendar.getInstance().getTime().toString();
-        ret += "</td>\n";
-        ret += "</tr>\n";
+        ret += "</td>";
+        ret += "</tr>";
         for (int i = 0; i < _platformInfo.getSize(); i++) {
             DBRec dbRec = _platformInfo.getRec(i);
             String name = dbRec.getAttrib(0).getName();
             String val = dbRec.getAttrib(0).getValue();
             if (name.equals("DB_NAME") || name.equals("DBID") || name.equals("INSTNANCES") || name.equals("HOSTS")) {
-                ret += "<tr>\n";
-                ret += "<td>\n";
+                ret += "<tr>";
+                ret += "<td>";
                 ret += "<b>" + name +"</b>";
-                ret += "</td>\n";
-                ret += "<td>\n";
+                ret += "</td>";
+                ret += "<td>";
                 ret += val;
-                ret += "</td>\n";
-                ret += "</tr>\n";
+                ret += "</td>";
+                ret += "</tr>";
             }
         }
-        ret += "</table>\n";
+        ret += "</table>";
 
         return ret;
     }

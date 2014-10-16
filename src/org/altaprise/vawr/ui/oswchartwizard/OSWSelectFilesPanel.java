@@ -48,7 +48,7 @@ import org.altaprise.vawr.utils.SessionMetaData;
 
 
 public class OSWSelectFilesPanel extends WizardContentBasePanel {
-    private JLabel jLabel_selectMetrics = new JLabel("Select AWR Metric to Chart");
+    private JLabel jLabel_selectMetrics = new JLabel();
     private JTextField jTextField_fileName = new JTextField();
     private JButton jButton_selectFile = new JButton();
     private static String OSW_FILE_NAME = "INITIALIZED";
@@ -144,7 +144,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         this.add(jLabel_selectMetrics, null);
 
         //Set the Wizard Label
-        this.setPanelLabel("OSWatcher/ExaWatcher Analytics");
+        this.setPanelLabel("1. Select the file(s) to chart and 0ptionally filter on date/time.");
     }
 
 
