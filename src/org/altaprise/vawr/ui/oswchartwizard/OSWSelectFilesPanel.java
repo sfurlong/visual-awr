@@ -186,6 +186,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         DBRec testResults = null;
         String fileType = "";
         boolean foundErr = false;
+        String selectedFile = "";
         
         if (jCheckBox_useTimeFilter.isSelected()) {
             doFilter = true;
@@ -193,6 +194,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
 
         for (int i = 0; _selectedFiles != null && i < _selectedFiles.length && !foundErr; i++) {
             try {
+                selectedFile = _selectedFiles[i].getName();
                 if (jRadioButton_topStat.isSelected()) {
                     fileType = "TOPSTAT";            
                     testResults =topStatFileParser.testFile(_selectedFiles[i].getPath(), startTimeD, endTimeD, doFilter);
@@ -210,7 +212,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
                 foundErr = true;
                 ex.printStackTrace();
                 String msg = "Are you sure this is a ";
-                msg += "OSW " + fileType + " File?";
+                msg += "OSW " + fileType + " File?:\n" + selectedFile;
                 JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
                                               ex.getLocalizedMessage() +"\n" + msg, "Error",
                                               JOptionPane.ERROR_MESSAGE);

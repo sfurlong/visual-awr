@@ -52,22 +52,24 @@ public class ReadIOStatFile {
     public DBRec testFile(String fileName, Date startDateFilter, Date endDateFilter, boolean doFilter) throws Exception {
         try {
             String rec = "";
-            String filteredFileList = null;
             _fileReader = new BufferedReader(new FileReader(fileName));
             DBRec fileRecSet = null;
 
             try {
                 //Priming read
                 rec = _fileReader.readLine();
-                String dateTimeS = null;
-                boolean timeDateFound = false;
                 Date lastDateTimeRead = null;
                 Date firstDateTimeRead = null;
+                boolean isValidFileFormat = false;
 
                 while (rec != null) {
                     if (rec.startsWith("zzz ***") || rec.startsWith("zzz <") || rec.startsWith ("Time:")) {
                         try {
                             Date dateTimeD = this.parseDateTime(rec);
+
+                            //All we are doing right now is validating that we can find 
+                            //a record that starts with "zzz ***", "zzz <" or "Time:" and the time format validates
+                            isValidFileFormat = true;
 
                             if (doFilter) {
                                 if (dateTimeD.after(startDateFilter) && dateTimeD.before(endDateFilter)) {
@@ -96,18 +98,21 @@ public class ReadIOStatFile {
                     fileRecSet = new DBRec();
                     fileRecSet.addAttrib(new DBAttributes("FILE_START_DATETIME", firstDateTimeRead.toString()));
                     fileRecSet.addAttrib(new DBAttributes("FILE_END_DATETIME", lastDateTimeRead.toString()));
+                } else {
+                        //Let's make sure we found at least one valid record regarless of the filter
+                        if (!isValidFileFormat) {
+                            throw new Exception ("Did not find any record descriptors of type: \"zzz ***\", \"zzz <\", or \"Time:\"");
+                        }
                 }
                 
                 return fileRecSet;
 
             } catch (Exception e) {
                 System.out.println("IOSTAT File Read Error\n" + e.getLocalizedMessage());
-                e.printStackTrace();
                 throw e;
             }
 
         } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
         } catch (Exception e) {
             e.printStackTrace();

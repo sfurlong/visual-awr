@@ -3,6 +3,7 @@ package org.altaprise.vawr.ui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
+
 import javax.swing.*;
 
 public class RootFrame extends JFrame {
@@ -15,9 +16,7 @@ public class RootFrame extends JFrame {
     private JMenuItem itemHelpOSW = new JMenuItem();
     private JMenuItem itemHelpAbout = new JMenuItem();
     private String aboutMessage =
-        "Visual AWR" + "\n" +
-        "Stephen Furlong 2014" + "\n" +
-        "Version " + "v01g\n" +
+        "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + "v02c\n" +
         "For latest news and versions: http://visualawr.blogspot.com";
     private String aboutTitle = "About";
     private RootPanel _rootTabbedPanel = new RootPanel();
@@ -27,10 +26,10 @@ public class RootFrame extends JFrame {
      */
     public RootFrame() {
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    System.exit(0);
-                }
-            });
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
 
 
@@ -46,14 +45,12 @@ public class RootFrame extends JFrame {
         setJMenuBar(menubarFrame);
         itemFileExit.setText("Exit");
         itemFileExit.setMnemonic('X');
-        itemFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
-                                                           Event.ALT_MASK,
-                                                           false));
+        itemFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, Event.ALT_MASK, false));
         itemFileExit.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    file_exit_action(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                file_exit_action(e);
+            }
+        });
         menuFile.add(itemFileExit);
         menuFile.setText("File");
         menuFile.setMnemonic('F');
@@ -64,30 +61,30 @@ public class RootFrame extends JFrame {
         itemHelpAbout.setText("About");
         itemHelpAbout.setMnemonic('A');
         itemHelpAbout.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    help_about_action(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                help_about_action(e);
+            }
+        });
         itemHelpAWR.setText("About AWR Metrics");
         itemHelpAWR.setMnemonic('R');
         itemHelpAWR.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    help_AWR_action(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                help_AWR_action(e);
+            }
+        });
         itemHelpOSW.setText("About OSWatcher Metrics");
         itemHelpOSW.setMnemonic('O');
         itemHelpOSW.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    help_OSW_action(e);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                help_OSW_action(e);
+            }
+        });
         menuHelp.add(itemHelpAWR);
         menuHelp.add(itemHelpOSW);
         menuHelp.addSeparator();
         menuHelp.add(itemHelpAbout);
         menubarFrame.add(menuHelp);
-        
+
         _frameRef = this;
 
     }
@@ -97,38 +94,35 @@ public class RootFrame extends JFrame {
     }
 
     private void help_about_action(ActionEvent e) {
-        JOptionPane.showMessageDialog(this, aboutMessage, aboutTitle,
-                                      JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, aboutMessage, aboutTitle, JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void help_AWR_action(ActionEvent e) {
         new MetricsDescriptionDialog(this, true).setVisible(true);
     }
+
     private void help_OSW_action(ActionEvent e) {
-        JOptionPane.showMessageDialog(this, "Coming Soon.", "Visual AWR",
-                                      JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Coming Soon.", "Visual AWR", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void startWaitCursor() {
         RootPaneContainer root = (RootPaneContainer) _frameRef.getRootPane().getTopLevelAncestor();
-        root.getGlassPane().setCursor(
-                Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        root.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         root.getGlassPane().setVisible(true);
     }
-     
+
     public static void stopWaitCursor() {
         RootPaneContainer root = (RootPaneContainer) _frameRef.getRootPane().getTopLevelAncestor();
-        root.getGlassPane().setCursor(
-                Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        root.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         root.getGlassPane().setVisible(false);
     }
-    
+
     public static JFrame getFrameRef() {
         return _frameRef;
     }
 
     public static void main(String[] args) {
-        
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception exemp) {
@@ -153,8 +147,7 @@ public class RootFrame extends JFrame {
             if (frameSize.width > screenSize.width) {
                 frameSize.width = screenSize.width;
             }
-            frame.setLocation(screenSize.width/2 - frameSize.width/2,
-                              screenSize.height/2 - frameSize.height/2);
+            frame.setLocation(screenSize.width / 2 - frameSize.width / 2, screenSize.height / 2 - frameSize.height / 2);
             frame.setVisible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
