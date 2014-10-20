@@ -1,20 +1,15 @@
 package org.altaprise.vawr.ui.dbchartwizard;
 
 
-import dai.server.dbService.SQLResolver;
-import dai.server.dbService.dbconnect;
-
-import dai.shared.businessObjs.DBRecSet;
-
 import java.awt.Dimension;
-import java.awt.LayoutManager;
-
 import java.awt.Rectangle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
+
+import java.util.Calendar;
 
 import javax.swing.JButton;
 
@@ -28,8 +23,6 @@ import javax.swing.JTextArea;
 
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
-import org.altaprise.vawr.awrdata.AWRData;
-import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
@@ -40,10 +33,11 @@ import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 public class ChartPanel extends WizardContentBasePanel {
     JComboBox jComboBox_metrics = new JComboBox();
     private JButton jButton_chartMetric = new JButton("Chart Metric");
-    private ArrayList<String> _awrStringRecs = null;
     private JLabel jLabel_selectMetrics = new JLabel("Select AWR Metric to Chart");
-    private JTextArea jTextArea_osInfo = new JTextArea();
-    private JScrollPane jScrollPane_osInfo = new JScrollPane(jTextArea_osInfo);
+    private JScrollPane jScrollPane1 = new JScrollPane();
+    private JTextArea jTextArea_reportHeader = new JTextArea();
+    private JLabel jLabel1 = new JLabel();
+    private JLabel jLabel2 = new JLabel();
 
     public ChartPanel() {
         super();
@@ -54,37 +48,42 @@ public class ChartPanel extends WizardContentBasePanel {
         }
     }
 
-    public ChartPanel(boolean b) {
-        super(b);
+    protected void doNextOperation() {
+        this.jTextArea_reportHeader.setText("");
+        this.jTextArea_reportHeader.append("AWR Metric Analysis<br>\n");
+        this.jTextArea_reportHeader.append("Database ID: " + SelectDBIdPanel.getSelectedDBId() + "  Database Name: " + SelectDBIdPanel.getSelectedDBName()+"<br>\n");
+        this.jTextArea_reportHeader.append("Start SnapShot: " + SnapIdSelectPanel.getStartSnapId() + "  End SnapShot: " + SnapIdSelectPanel.getEndSnapId()+"<br>\n");
+        this.jTextArea_reportHeader.append("Date: " + Calendar.getInstance().getTime().toString() + "<br>\n");
+        this.jTextArea_reportHeader.setCaretPosition(1);
     }
-
-    public ChartPanel(LayoutManager layoutManager) {
-        super(layoutManager);
-    }
-
-    public ChartPanel(LayoutManager layoutManager, boolean b) {
-        super(layoutManager, b);
-    }
-
 
     private void jbInit() throws Exception {
         this.setLayout(null);
         //this.setSize(new Dimension(660, 520));
 
-        this.setSize(new Dimension(571, 342));
-        jComboBox_metrics.setBounds(new Rectangle(70, 65, 320, 20));
+        this.setSize(new Dimension(628, 342));
+        jComboBox_metrics.setBounds(new Rectangle(20, 60, 320, 20));
         jComboBox_metrics.setVisible(true);
         jComboBox_metrics.setEditable(false);
-        jButton_chartMetric.setBounds(new Rectangle(400, 65, 100, 20));
+        jButton_chartMetric.setBounds(new Rectangle(355, 60, 100, 20));
         jButton_chartMetric.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jButton_chartMetric_actionPerformed(e);
             }
         });
-        jLabel_selectMetrics.setBounds(new Rectangle(70, 45, 225, 15));
+        jLabel_selectMetrics.setBounds(new Rectangle(20, 45, 225, 15));
 
         //jScrollPane_osInfo.setBounds(new Rectangle(60, 160, 450, 160));
         //this.add(jScrollPane_osInfo, null);
+        jScrollPane1.setBounds(new Rectangle(20, 135, 580, 125));
+        jLabel1.setText("Report Header");
+        jLabel1.setBounds(new Rectangle(20, 105, 160, 15));
+        jLabel2.setText("(Use this space for text that will appear on your Report Header, i.e. Machine Name, Date, etc. HTML markup supported.)");
+        jLabel2.setBounds(new Rectangle(20, 120, 600, 15));
+        jScrollPane1.getViewport().add(jTextArea_reportHeader, null);
+        this.add(jLabel2, null);
+        this.add(jLabel1, null);
+        this.add(jScrollPane1, null);
         this.add(jLabel_selectMetrics, null);
         this.add(jButton_chartMetric, null);
         this.add(jComboBox_metrics, null);
@@ -117,13 +116,13 @@ public class ChartPanel extends WizardContentBasePanel {
 
             if (awrMetricName.equals("SGA_PGA_TOT")) {
                 //Get the memory Data
-                new AWRMemoryTimeSeriesChart(awrMetricName, "");
+                new AWRMemoryTimeSeriesChart(awrMetricName, this.jTextArea_reportHeader.getText());
             } else if (awrMetricName.equals("AVG_ACTIVE_SESS_WAITS")) {
-                new AvgActiveSessionChart(awrMetricName, "");
+                new AvgActiveSessionChart(awrMetricName, this.jTextArea_reportHeader.getText());
             } else if (awrMetricName.equals("TOP_N_TIMED_EVENTS")) {
                 new TopWaitEventsBarChart(awrMetricName);
             } else {
-                new AWRTimeSeriesChart(awrMetricName, "");
+                new AWRTimeSeriesChart(awrMetricName, this.jTextArea_reportHeader.getText());
             }    
             
             //SetCursor

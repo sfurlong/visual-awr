@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
 import javax.swing.JTextField;
@@ -47,6 +48,8 @@ public class AWRQueryPanel extends WizardContentBasePanel {
     private JLabel jLabel_dbId = new JLabel("Databse ID:");
     private JLabel jLabel_startSnapId = new JLabel("Start Snapshot ID:");
     private JLabel jLabel_endSnapId = new JLabel("End Snapshot ID:");
+    private JButton jButton1 = new JButton();
+    private JSeparator jSeparator1 = new JSeparator();
 
     public AWRQueryPanel() {
         super();
@@ -73,28 +76,33 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.setLayout(null);
         this.setSize(new Dimension(760, 429));
 
-        jButton_doQuery.setBounds(new Rectangle(310, 20, 150, 20));
+        jButton_doQuery.setBounds(new Rectangle(460, 120, 150, 20));
         jButton_doQuery.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     jButton_doQuery_actionPerformed(e);
                 }
             });
-        scrollPaneTextArea.setBounds(new Rectangle(10, 145, 570, 185));
-        scrollPaneTextArea.setSize(new Dimension(500, 185));
+        scrollPaneTextArea.setBounds(new Rectangle(10, 180, 630, 185));
+        //scrollPaneTextArea.setSize(new Dimension(500, 185));
         textArea_awrData.setEditable(false);
         jTextField_dbId.setBounds(new Rectangle(130, 50, 140, 20));
         jTextField_dbId.setEditable(false);
-        jTextField_startSnapId.setBounds(new Rectangle(130, 80, 140, 20));
+        jTextField_startSnapId.setBounds(new Rectangle(480, 20, 140, 20));
         jTextField_startSnapId.setEditable(false);
-        jTextField_endSnapId.setBounds(new Rectangle(130, 110, 140, 20));
+        jTextField_endSnapId.setBounds(new Rectangle(480, 50, 140, 20));
         jTextField_endSnapId.setEditable(false);
         jTextField_connName.setBounds(new Rectangle(130, 20, 140, 20));
         jTextField_connName.setEditable(false);
         jLabel_connName.setBounds(new Rectangle(10, 25, 120, 15));
         jLabel_dbId.setBounds(new Rectangle(10, 55, 105, 15));
-        jLabel_startSnapId.setBounds(new Rectangle(10, 85, 120, 15));
-        jLabel_endSnapId.setBounds(new Rectangle(10, 115, 115, 15));
+        jLabel_startSnapId.setBounds(new Rectangle(315, 25, 120, 15));
+        jLabel_endSnapId.setBounds(new Rectangle(315, 55, 115, 15));
 
+        jButton1.setText("Export Dataset");
+        jButton1.setBounds(new Rectangle(460, 150, 150, 20));
+        jSeparator1.setBounds(new Rectangle(25, 115, 600, 2));
+        this.add(jSeparator1, null);
+        this.add(jButton1, null);
         this.add(jLabel_endSnapId, null);
         this.add(jLabel_startSnapId, null);
         this.add(jLabel_dbId, null);
@@ -103,9 +111,9 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         this.add(jTextField_endSnapId, null);
         this.add(jTextField_startSnapId, null);
         this.add(jTextField_dbId, null);
+
         this.add(jButton_doQuery, null);
         this.add(scrollPaneTextArea, null);
-        
         textArea_awrData.setEnabled(false);
         textArea_awrData.setFont(new Font("monospaced", Font.PLAIN, 11));
             

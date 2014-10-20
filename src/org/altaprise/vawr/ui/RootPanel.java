@@ -40,11 +40,11 @@ public class RootPanel extends JPanel {
                           _aboutPanel);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart from AWRMiner File</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>AWR from AWRMiner File</body></html>",
                           this._fileTabPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Chart direct from DB</body></html>",
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>AWR Direct from DB</body></html>",
                           this._dbChartTab);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 /*

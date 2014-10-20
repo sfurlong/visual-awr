@@ -97,6 +97,17 @@ public class SelectDBIdPanel extends WizardContentBasePanel {
         return ret;
     }
     
+    public static String getSelectedDBName() {
+        String ret = null;
+        String val = jList_connectionNames.getSelectedValue(); 
+        if (val != null) {
+            int pos = val.indexOf(">");
+            ret = val.substring(pos+1, val.length());
+        }
+        
+        return ret;
+    }
+
     public void showDBIds() {
         
         //SetCursor
