@@ -1,8 +1,15 @@
 package org.altaprise.vawr.awrdata;
 
+import dai.shared.businessObjs.DBAttributes;
 import dai.shared.businessObjs.DBRec;
 import dai.shared.businessObjs.DBRecSet;
 
+
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,6 +94,7 @@ public class AWRData {
         }
     }
 
+    //Parse records read from the DB
     public void parseDataRecords(DBRecSet recSet) {
 
         for (int i = 0; i < recSet.getSize(); i++) {
@@ -99,13 +107,19 @@ public class AWRData {
                 String dbFieldVal = dbRec.getAttrib(j).getValue();
                 String dbFieldName = dbRec.getAttrib(j).getName();
 
-                this.addHeaderName(dbFieldName);
-
+                //Only Add header vals if this is the first record
+                if (i == 0) {
+                    this.addHeaderName(dbFieldName);
+                }
+                
                 //Check to see if this is the header.  If so, add another header field for time.
+                //The END field value has the format: "14/06/28 21:55"
+                //we need to break it up into two fields END and TIME
                 if (dbFieldName.toUpperCase().equals("END")) {
-                    //The END field value has the format: "14/06/28 21:55"
-                    //we need to break it up into two fields END and TIME
-                    this.addHeaderName("TIME");
+                    //Only Add header vals if this is the first record
+                    if (i == 0) {
+                        this.addHeaderName("TIME");
+                    }
                     String endDateS = dbFieldVal.substring(0, 8);
                     String endTimeS = dbFieldVal.substring(9, 14);
                     awrRec.putVal("END", endDateS);
@@ -224,11 +238,14 @@ public class AWRData {
             String memTot = dbRec.getAttribVal("SGA_PGA_TOT");
 
             AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
-            this.addHeaderName("SGA");
+            //Only add the headers for the first record
+            if (i == 0) {
+                this.addHeaderName("SGA");
+                this.addHeaderName("PGA");
+                this.addHeaderName("SGA_PGA_TOT");
+            }
             awrRec.putVal("SGA", sga);
-            this.addHeaderName("PGA");
             awrRec.putVal("PGA", pga);
-            this.addHeaderName("SGA_PGA_TOT");
             awrRec.putVal("SGA_PGA_TOT", memTot);
         }
     }
@@ -278,7 +295,7 @@ public class AWRData {
             if (name.equals("DB_NAME") || name.equals("DBID") || name.equals("INSTNANCES") || name.equals("HOSTS")) {
                 ret += "<tr>";
                 ret += "<td>";
-                ret += "<b>" + name +"</b>";
+                ret += "<b>" + name + "</b>";
                 ret += "</td>";
                 ret += "<td>";
                 ret += val;
@@ -310,6 +327,7 @@ public class AWRData {
         return ret;
     }
 
+    //Called when Reading from File
     public void parseHeaders(String rec) {
         if (rec.length() > 0) {
 
@@ -338,6 +356,7 @@ public class AWRData {
         return new ArrayList<TopWaitEventsRecord>(this._topWaitEventsMap.values());
     }
 
+    //Parse records read from AWR Files.
     public AWRRecord parseDataRecord(String rec) {
         AWRRecord awrRec = new AWRRecord();
         String racInstNum = "";
@@ -403,5 +422,60 @@ public class AWRData {
             }
         }
         return numRacInst;
+    }
+
+    public void exportAWRData(String outFileName) throws Exception {
+        Writer writer = null;
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(outFileName);
+            OutputStreamWriter streamWriter = new OutputStreamWriter(fileOutputStream, "utf-8");
+            writer = new BufferedWriter(streamWriter);
+            DBRec dbRec = null;
+
+            //Write out header fields
+            String outRec = "";
+            for (int i = 0; i < getHeaderCount(); i++) {
+                outRec += getHeaderName(i) + ",";
+            }
+            //Add the record seperator
+            outRec += System.getProperty("line.separator");
+            //Write the line to disk
+            writer.write(outRec);
+
+
+            //Write out the data records
+            for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
+                outRec = "";
+                AWRRecord awrRec = entry.getValue();
+                for (int j = 0; j < awrRec.getSize(); j++) {
+                    String headerName = getHeaderName(j);
+                    String val = awrRec.getVal(headerName);
+                    outRec += val + ", ";
+                }
+                //Add the record seperator
+                outRec += System.getProperty("line.separator");
+
+                //Write the line to disk
+                writer.write(outRec);
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

@@ -102,6 +102,9 @@ public class ChartPanel extends WizardContentBasePanel {
 
     private void jButton_chartMetric_actionPerformed(ActionEvent e) {
 
+        String startSnapId = SnapIdSelectPanel.getStartSnapId();
+        String endSnapId = SnapIdSelectPanel.getEndSnapId();
+        
         String oracleMetricName = (String) jComboBox_metrics.getSelectedItem();
         //Convert to AWRMiner metric name
         String awrMetricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
@@ -110,6 +113,10 @@ public class ChartPanel extends WizardContentBasePanel {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "No AWR Data Found.", "Error",
                                           JOptionPane.ERROR_MESSAGE);
 
+        } else if (startSnapId.equals(endSnapId)) {
+            JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "The Start & End Snapshot IDs cannot be the same.", "Error",
+                                          JOptionPane.ERROR_MESSAGE);
+            
         } else if (AWRData.getInstance().awrMetricExists(awrMetricName)) {
             //SetCursor
             RootFrame.startWaitCursor();

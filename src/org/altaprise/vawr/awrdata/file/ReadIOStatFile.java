@@ -5,6 +5,7 @@ import dai.shared.businessObjs.DBAttributes;
 import dai.shared.businessObjs.DBRec;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -26,6 +27,7 @@ public class ReadIOStatFile {
     private BufferedReader _fileReader;
     private Date _fileStartDateTime = null;
     private String _osFlavor = null;
+    private String _fileName = null;
     private String _osVersion = null;
     private String _hostName = null;
     private String _fileDateS = null;
@@ -126,6 +128,8 @@ public class ReadIOStatFile {
         try {
             _isExadataStorage = isExadataStorage;
             _fileReader = new BufferedReader(new FileReader(fileName));
+            //Strip the path off.
+            _fileName = fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length());
             readMainMetrics();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
@@ -405,6 +409,7 @@ public class ReadIOStatFile {
                     } else {
                         //Create a DBRec
                         ioStatRec = new DBRec();
+                        ioStatRec.addAttrib(new DBAttributes("FILE_NAME", _fileName));
                         ioStatRec.addAttrib(new DBAttributes("HOST_NAME", _hostName));
                         ioStatRec.addAttrib(new DBAttributes("DEVICE_NAME", deviceName));
                         ioStatRec.addAttrib(new DBAttributes("DEVICE_TYPE", deviceType));

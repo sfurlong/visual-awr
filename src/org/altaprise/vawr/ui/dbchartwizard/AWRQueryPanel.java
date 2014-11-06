@@ -17,10 +17,13 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.File;
+
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,6 +35,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.altaprise.vawr.awrdata.AWRData;
+import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
@@ -100,6 +104,11 @@ public class AWRQueryPanel extends WizardContentBasePanel {
 
         jButton1.setText("Export Dataset");
         jButton1.setBounds(new Rectangle(460, 150, 150, 20));
+        jButton1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jButton1_doExport_actionPerformed(e);
+            }
+        });
         jSeparator1.setBounds(new Rectangle(25, 115, 600, 2));
         this.add(jSeparator1, null);
         this.add(jButton1, null);
@@ -198,7 +207,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
 
         } catch (Exception ex) {
             daiBeans.daiDetailInfoDialog dialog =
-                new daiBeans.daiDetailInfoDialog(null, "Error", true,
+                new daiBeans.daiDetailInfoDialog(RootFrame.getFrameRef(), "Error", true,
                                                  ex.getLocalizedMessage());
             ex.printStackTrace();
         } finally {
@@ -231,5 +240,53 @@ public class AWRQueryPanel extends WizardContentBasePanel {
         }
         
         this.doAWRQuery();
+        
     }
+
+    private void jButton1_doExport_actionPerformed(ActionEvent e) {
+        //SetCursor
+        RootFrame.startWaitCursor();
+        
+        try {
+            //Do an Export
+            if (AWRData.getInstance().getAWRDataRecordCount() > 0) {
+                //Get the file name to export
+                String fileName = getExportFileName();
+                
+                //Export it.
+                if (fileName != null && fileName.length() > 0) {
+                    AWRData.getInstance().exportAWRData(fileName);
+                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "File Saved.  " + fileName, "Status",
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                              "No AWR records found. Do Query First", "Error",
+                                              JOptionPane.ERROR_MESSAGE);
+            }        
+        } catch (Exception ex) {
+            daiBeans.daiDetailInfoDialog dialog =
+                new daiBeans.daiDetailInfoDialog(RootFrame.getFrameRef(), "Error", true,
+                                                 ex.getLocalizedMessage());
+            ex.printStackTrace();
+        } finally {
+            this.textArea_awrData.setCaretPosition(0);
+
+            //SetCursor
+            RootFrame.stopWaitCursor();
+        }
+    }
+    
+    private String getExportFileName() {
+        String fileName = "";
+        JFileChooser FC = new JFileChooser(System.getProperty("user.dir"));
+        int ret = FC.showSaveDialog(RootFrame.getFrameRef());
+
+        if (ret == FC.APPROVE_OPTION) {
+            File f = FC.getSelectedFile();
+            fileName = f.getAbsolutePath();
+        }
+        return fileName;
+    }
+
 }

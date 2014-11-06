@@ -16,7 +16,7 @@ public class RootFrame extends JFrame {
     private JMenuItem itemHelpOSW = new JMenuItem();
     private JMenuItem itemHelpAbout = new JMenuItem();
     private String aboutMessage =
-        "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + "v02e\n" +
+        "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + "v02f\n" +
         "For latest news and versions: http://visualawr.blogspot.com";
     private String aboutTitle = "About";
     private RootPanel _rootTabbedPanel = new RootPanel();

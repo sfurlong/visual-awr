@@ -125,14 +125,14 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
 
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
 
-        TimeSeries s1 = new TimeSeries("us");
-        TimeSeries s2 = new TimeSeries("sy");
-        TimeSeries s3 = new TimeSeries("ni");
-        TimeSeries s4 = new TimeSeries("id");
-        TimeSeries s5 = new TimeSeries("wa");
-        TimeSeries s6 = new TimeSeries("hi");
-        TimeSeries s7 = new TimeSeries("si");
-        TimeSeries s8 = new TimeSeries("st");
+        TimeSeries s1 = new TimeSeries("user");
+        TimeSeries s2 = new TimeSeries("system");
+        TimeSeries s3 = new TimeSeries("nice");
+        TimeSeries s4 = new TimeSeries("idle");
+        TimeSeries s5 = new TimeSeries("wait-io");
+        TimeSeries s6 = new TimeSeries("HW IRQ");
+        TimeSeries s7 = new TimeSeries("SW IRQ");
+        TimeSeries s8 = new TimeSeries("steal");
 
         ArrayList<DBRec> awrRecords = OSWData.getInstance().getTopStatRecs();
         for (int i = 0; i < awrRecords.size(); i++) {

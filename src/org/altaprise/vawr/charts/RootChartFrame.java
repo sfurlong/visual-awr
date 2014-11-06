@@ -71,6 +71,7 @@ abstract class RootChartFrame extends JFrame implements Printable {
     private JMenu menuFile = new JMenu();
     private JMenuItem itemFilePrint = new JMenuItem();
     private JMenuItem itemFileExit = new JMenuItem();
+    private BufferedImage[] IMAGES_TO_PRINT = null;
 
     protected JPanel THE_ROOT_CONTENT_PANEL = new JPanel();
     protected JScrollPane THE_SCROLL_PANE = new JScrollPane(THE_ROOT_CONTENT_PANEL);
@@ -88,10 +89,10 @@ abstract class RootChartFrame extends JFrame implements Printable {
         THE_ROOT_CONTENT_PANEL.setLayout(new BoxLayout(THE_ROOT_CONTENT_PANEL, BoxLayout.Y_AXIS));
         _headerTextPane.setContentType("text/html");
         _headerTextPane.setEditable(false);
-        
+
         int numHeaderLines = countLines(chartHeaderText);
         System.out.println("num header lines: " + numHeaderLines);
-        
+
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
         _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
         THE_HEADER_TEXT_PANEL.add(_headerTextPane);
@@ -242,121 +243,48 @@ abstract class RootChartFrame extends JFrame implements Printable {
 
     }
 
-    private static int countLines(String str){
+    private static int countLines(String str) {
         int ret = 0;
         if (str != null) {
             String[] lines = str.split("\r\n|\r|\n|/tr");
             ret = lines.length;
         }
-       return  ret;
+        return ret;
     }
-    
-    
+
+    @Override
     public int print(Graphics graphics, PageFormat pf, int pageIndex) throws PrinterException {
-
-            if (pageIndex < IMAGES_TO_PRINT.length) {
-                System.out.println("pageformat/page!!: " + pf.toString() + "/" + pageIndex);
-
-                saveImageAsJPEG(IMAGES_TO_PRINT[pageIndex], "img"+pageIndex);
-                
-                graphics.drawImage(IMAGES_TO_PRINT[pageIndex], IMAGES_TO_PRINT[pageIndex].getWidth(), IMAGES_TO_PRINT[pageIndex].getHeight(), null);
-                return PAGE_EXISTS;
-            } else {
-                return NO_SUCH_PAGE;
-            }
+        if (pageIndex < IMAGES_TO_PRINT.length) {
+            int pWidth = 0;
+            int pHeight = 0;
+            System.out.println("portrait/pageindex/pf.ImageableWidth/pf.getImageableX/pf.getImageableY/IMage.getWidth/IMage.getHeight: " +
+                               pageIndex + "/" + pf.getImageableWidth() + "/" + pf.getImageableX() + "/" +
+                               pf.getImageableY() + "/" + IMAGES_TO_PRINT[pageIndex].getWidth() + "/" +
+                               IMAGES_TO_PRINT[pageIndex].getHeight());
+            pWidth = (int) Math.min(pf.getImageableWidth(), (double) IMAGES_TO_PRINT[pageIndex].getWidth());
+            pHeight = pWidth * IMAGES_TO_PRINT[pageIndex].getHeight() / IMAGES_TO_PRINT[pageIndex].getWidth();
+            graphics.drawImage(IMAGES_TO_PRINT[pageIndex], (int) pf.getImageableX(), (int) pf.getImageableY(), pWidth,
+                               pHeight, null);
+            return PAGE_EXISTS;
+        } else {
+            return NO_SUCH_PAGE;
         }
+    }
 
     private void doPrintJob() {
 
-        JOptionPane.showMessageDialog(this,
-                                      "Coming Soon", "Message",
-                                      JOptionPane.INFORMATION_MESSAGE);
-
-        /*
-
-        try {
-            THE_ROOT_CONTENT_PANEL.setSize(600, THE_ROOT_CONTENT_PANEL.getSize().height);
-            this.setSize(600, this.getSize().height);
-            Component[] comp = THE_ROOT_CONTENT_PANEL.getComponents();
-            PDDocument document = new PDDocument();
-            for (int i = 0; i < comp.length; i++) {
-
-                System.out.println(comp[i].getClass().getName());
-                comp[i].setSize(600, comp[i].getSize().height);
-                this.saveComponentAsJPEG(comp[i], "comp" + i);
-
-                Dimension size = comp[i].getSize();
-                BufferedImage myImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
-
-                GraphicsConfiguration gc = BufferedImageGraphicsConfig.getConfig(myImage);
-
-                Graphics2D g2 = myImage.createGraphics();
-                comp[i].paint(g2);
-
-                //New image needs to be resized to no more than 600 wide
-                //BufferedImage newImage = this.resizeImage(myImage, 600, myImage.getHeight());
-                //BufferedImage newImage = this.resizeImage(myImage, myImage.getWidth(), myImage.getHeight());
-                //BufferedImage newImage = Scalr.resize(myImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH,
-                //               600, myImage.getHeight(), Scalr.OP_ANTIALIAS);
-                //BufferedImage newImage = gc.createCompatibleImage(myImage.getWidth(), myImage.getHeight());
-
-                float width = myImage.getWidth();
-                float height = myImage.getHeight();
-
-                //PDPage page = new PDPage(new PDRectangle(width, height));
-                System.out.println("Letter width/hight: " + PDPage.PAGE_SIZE_LETTER.getWidth() + "/" +
-                                   PDPage.PAGE_SIZE_LETTER.getHeight());
-                System.out.println("Image width/hight: " + width + "/" + height);
-                PDPage page =
-                    new PDPage(new PDRectangle(PDPage.PAGE_SIZE_LETTER.getWidth(),
-                                               PDPage.PAGE_SIZE_LETTER.getHeight()));
-                document.addPage(page);
-                PDXObjectImage img = new PDJpeg(document, myImage);
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                contentStream.drawImage(img, 0, 400);
-                contentStream.close();
-
-
-                //saveComponentAsJPEG(comp[i], "comp"+i);
-            }
-            document.save("test.pdf");
-            document.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(this);
-        boolean ok = job.printDialog();
-        if (ok) {
-            try {
-                job.print();
-            } catch (PrinterException ex) {
-                ex.printStackTrace();
-            }
-            }
-    */
-    }
-
-    BufferedImage[] IMAGES_TO_PRINT = null;
-    private void doPrintJob2() {
-
         try {
             IMAGES_TO_PRINT = new BufferedImage[THE_ROOT_CONTENT_PANEL.getComponents().length];
-            THE_ROOT_CONTENT_PANEL.setSize(600, THE_ROOT_CONTENT_PANEL.getSize().height);
-            this.setSize(600, this.getSize().height);
             Component[] comp = THE_ROOT_CONTENT_PANEL.getComponents();
             for (int i = 0; i < comp.length; i++) {
 
                 System.out.println(comp[i].getClass().getName());
-                comp[i].setSize(600, comp[i].getSize().height);
                 Dimension size = comp[i].getSize();
                 IMAGES_TO_PRINT[i] = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 
                 Graphics2D g2 = IMAGES_TO_PRINT[i].createGraphics();
                 comp[i].paint(g2);
-                
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -375,47 +303,4 @@ abstract class RootChartFrame extends JFrame implements Printable {
         }
     }
 
-    private BufferedImage resizeImage(BufferedImage inputImage, int scaledWidth, int scaledHeight) throws IOException {
-
-        // creates output image
-        BufferedImage outputImage = new BufferedImage(scaledWidth, scaledHeight, inputImage.getType());
-
-        // scales the input image to the output image
-        //Graphics2D g2d = outputImage.createGraphics();
-        Graphics g2d = outputImage.createGraphics();
-        g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
-        g2d.dispose();
-
-        return outputImage;
-    }
-
-    private void saveImageAsJPEG(BufferedImage img, String filename) {
-        try {
-            OutputStream out = new FileOutputStream(filename + ".jpg");
-            //JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            //encoder.encode(img);
-            out.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-/*    
-    private void saveComponentAsJPEG(Component myComponent, String filename) {
-        Dimension size = myComponent.getSize();
-        BufferedImage myImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = myImage.createGraphics();
-        myComponent.paint(g2);
-        //BufferedImage newImage =
-        //    Scalr.resize(myImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH, 600, myImage.getHeight(),
-        //                 Scalr.OP_ANTIALIAS);
-        try {
-            OutputStream out = new FileOutputStream(filename + ".jpg");
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-            encoder.encode(newImage);
-            out.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-*/
 }

@@ -5,6 +5,7 @@ import dai.shared.businessObjs.DBAttributes;
 import dai.shared.businessObjs.DBRec;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -22,6 +23,7 @@ public class ReadTopStatFile {
     private BufferedReader _fileReader;
     private String _platformType = "";
     private String _topFileType = "";
+    private String _fileName = null;
 
 
     public ReadTopStatFile() {
@@ -115,6 +117,8 @@ public class ReadTopStatFile {
         try {
 
             _fileReader = new BufferedReader(new FileReader(fileName));
+            //Strip the path off.
+            _fileName = fileName.substring(fileName.lastIndexOf(File.separator)+1, fileName.length());
             readMainMetrics();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
@@ -168,6 +172,7 @@ public class ReadTopStatFile {
                     dbRec = new DBRec();
                     //Parse the datetime and add the attributes to the dbRec
                     Date recDateTime = this.parseDateTime(rec);
+                    dbRec.addAttrib(new DBAttributes("FILE_NAME", _fileName));
                     dbRec.addAttrib(new DBAttributes("DATE", recDateTime));
 
 
