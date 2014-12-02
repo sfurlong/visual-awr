@@ -24,6 +24,7 @@ public class OSWData {
     private ArrayList<DBRec> _topStatRecs = new ArrayList<DBRec>();
     private ArrayList<DBRec> _cellSrvStatRecs = new ArrayList<DBRec>();
     private ArrayList<DBRec> _ioStatRecs = new ArrayList<DBRec>();
+    private ArrayList<DBRec> _vmStatRecs = new ArrayList<DBRec>();
     private static OSWData _theInstance = null;
     private String _platformType = "";
 
@@ -76,12 +77,25 @@ public class OSWData {
             }
             System.out.println();
         }
+        for (int i = 0; i < _vmStatRecs.size(); i++) {
+            DBRec dbRec = _vmStatRecs.get(i);
+            for (int j = 0; j < dbRec.size(); j++) {
+                DBAttributes dbAttribs = dbRec.getAttrib(j);
+                if (dbAttribs.getName().equals("DATE")) {
+                    System.out.print(dbRec.getAttrib(j).getObjValue() + ",");
+                } else {
+                    System.out.print(dbRec.getAttrib(j).getValue() + ",");
+                }
+            }
+            System.out.println();
+        }
     }
 
     public void clearData() {
         _topStatRecs.clear();
         _cellSrvStatRecs.clear();
         _ioStatRecs.clear();
+        _vmStatRecs.clear();
         _platformType = "";
     }
 
@@ -95,6 +109,10 @@ public class OSWData {
 
     public void addIoStatRec(DBRec ioStatRec) {
         _ioStatRecs.add(ioStatRec);
+    }
+
+    public void addVmStatRec(DBRec vmStatRec) {
+        _vmStatRecs.add(vmStatRec);
     }
 
     public void setPlatformType(String type) {
@@ -117,6 +135,10 @@ public class OSWData {
         return _ioStatRecs;
     }
 
+    public ArrayList<DBRec> getVmStatRecs() {
+        return _vmStatRecs;
+    }
+
     public void exportTopStatData(String outFileName) throws Exception  {
         exportOswStatData(_topStatRecs, outFileName);
     }
@@ -125,6 +147,14 @@ public class OSWData {
         exportOswStatData(_ioStatRecs, outFileName);
     }
     
+    public void exportCellSrvStatData(String outFileName) throws Exception {
+        exportOswStatData(_cellSrvStatRecs, outFileName);
+    }
+
+    public void exportVmStatData(String outFileName) throws Exception {
+        exportOswStatData(_vmStatRecs, outFileName);
+    }
+
     private void exportOswStatData(ArrayList<DBRec> dbRecList, String outFileName) throws Exception {
         Writer writer = null;
 
