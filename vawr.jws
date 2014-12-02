@@ -27,6 +27,7 @@
       <string v="oracle.jdeveloper.model.PathsConfiguration/ApplicationSrcContentSet"/>
       <string v="oracle.jdeveloper.model.PathsConfiguration/ApplicationBuildToolContentSet"/>
       <string v="oracle.jdeveloper.model.PathsConfiguration/ResourceBundlesContentSet"/>
+      <string v="oracle.jdeveloper.model.PathsConfiguration/MobileResourcesContentSet"/>
    </list>
    <list n="listOfChildren">
       <hash><url n="URL" path="vawr.jpr"/></hash>
