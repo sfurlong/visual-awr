@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import org.altaprise.vawr.awrdata.VMStatData;
+import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.charts.VMStatTimeSeriesChart;
 import org.altaprise.vawr.utils.SessionMetaData;
 
@@ -47,8 +47,8 @@ public class ReadVMStatFile {
 
             _fileReader = new BufferedReader(new FileReader(fileName));
             readMainMetrics();
-            VMStatData.getInstance().dump();
-            new VMStatTimeSeriesChart("");
+            OSWData.getInstance().dump();
+            new VMStatTimeSeriesChart("", "");
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
@@ -84,7 +84,7 @@ public class ReadVMStatFile {
                     DBRec dbRec = this.parseDataRec(rec);
                     this.addCumulativeTimeInterval();
                     dbRec.addAttrib(new DBAttributes("DATE", _cumulativeDateTime));
-                    VMStatData.getInstance().addVMStatRec(dbRec);
+                    OSWData.getInstance().addVmStatRec(dbRec);
 
                 }
 
