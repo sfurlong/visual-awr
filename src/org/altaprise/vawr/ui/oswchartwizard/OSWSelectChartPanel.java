@@ -1,6 +1,5 @@
 package org.altaprise.vawr.ui.oswchartwizard;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
@@ -12,36 +11,25 @@ import java.io.File;
 
 import java.util.ArrayList;
 
-import java.util.Date;
-
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-import javax.swing.JRadioButton;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import org.altaprise.vawr.awrdata.OSWData;
-import org.altaprise.vawr.awrdata.OSWMetrics;
 import org.altaprise.vawr.awrdata.file.ReadCellSrvStatFile;
 import org.altaprise.vawr.awrdata.file.ReadTopStatFile;
-import org.altaprise.vawr.charts.OSWCellSrvStatChart;
 import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
@@ -54,7 +42,9 @@ import java.awt.Font;
 import java.util.Calendar;
 
 import org.altaprise.vawr.awrdata.file.ReadIOStatFile;
+import org.altaprise.vawr.charts.CellSrvStatChart;
 import org.altaprise.vawr.charts.IOStatTimeSeriesChart;
+import org.altaprise.vawr.charts.VMStatTimeSeriesChart;
 
 public class OSWSelectChartPanel extends WizardContentBasePanel {
     private JButton jButton_chartMetric = new JButton("Chart Dataset");
@@ -226,6 +216,26 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
                                                   " IOSTAT data does not exist in this file(s).", "Error",
                                                   JOptionPane.ERROR_MESSAGE);
                 }
+            } else if (jTextField_fileType.getText().equals("VMSTAT")) {
+
+                //if (OSWData.getInstance().getVmStatRecs().size() > 0) {
+                //    new VMStatTimeSeriesChart("", this.jTextArea_chartHeading.getText().trim());
+                //
+                // } else {
+                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                                  " VMSTAT files not currently supported.", "Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                //}
+            } else if (jTextField_fileType.getText().equals("CELLSRVSTAT")) {
+
+                if (OSWData.getInstance().getCellSrvStatRecs().size() > 0) {
+                    new CellSrvStatChart("", this.jTextArea_chartHeading.getText().trim());
+
+                } else {
+                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                                  " CellSrvSTAT data does not exist in this file(s).", "Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
             }
 
         } catch (Exception ex) {
@@ -250,14 +260,14 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         try {
             //Ingest the data
             OSWData.getInstance().clearData();
-            readOSWData();
+            this.readOSWData();
 
             if (this.jTextField_fileType.getText().equals("TOPSTAT")) {
 
                 if (OSWData.getInstance().getTopStatRecs().size() > 0) {
                     //Get the file name.
                     String fileName = getExportFileName();
-                    
+
                     //Export it.
                     if (fileName != null && fileName.length() > 0) {
                         OSWData.getInstance().exportTopStatData(fileName);
@@ -276,10 +286,27 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
                 if (OSWData.getInstance().getIoStatRecs().size() > 0) {
                     //Get the file name to export
                     String fileName = getExportFileName();
-                    
+
                     //Export it.
                     if (fileName != null && fileName.length() > 0) {
                         OSWData.getInstance().exportIoStatData(fileName);
+                        JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "File Saved.  " + fileName, "Status",
+                                                      JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                                  " IOSTAT data does not exist in this file(s).", "Error",
+                                                  JOptionPane.ERROR_MESSAGE);
+                }
+            } else if (jTextField_fileType.getText().equals("CELLSRVSTAT")) {
+
+                if (OSWData.getInstance().getCellSrvStatRecs().size() > 0) {
+                    //Get the file name to export
+                    String fileName = this.getExportFileName();
+
+                    //Export it.
+                    if (fileName != null && fileName.length() > 0) {
+                        OSWData.getInstance().exportCellSrvStatData(fileName);
                         JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "File Saved.  " + fileName, "Status",
                                                       JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -338,6 +365,12 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
                     }
                     ReadIOStatFile ioStatFileParser = new ReadIOStatFile();
                     ioStatFileParser.parse(fullPathName, _isExadataStorage);
+                } else if (jTextField_fileType.getText().equals("CELLSRVSTAT")) {
+                    if (this.jCheckBox_chartFlash.isSelected()) {
+                        _isExadataStorage = true;
+                    }
+                    ReadCellSrvStatFile cellSrvStatFileParser = new ReadCellSrvStatFile();
+                    cellSrvStatFileParser.parse(fullPathName);
                 }
             }
             if (SessionMetaData.getInstance().debugOn()) {
