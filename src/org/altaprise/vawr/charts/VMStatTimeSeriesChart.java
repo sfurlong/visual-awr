@@ -5,95 +5,68 @@ import dai.shared.businessObjs.DBRec;
 import java.awt.BasicStroke;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-
-
 import java.awt.event.WindowEvent;
-
-import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
-
-
-import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import javax.swing.JScrollPane;
-
-import org.altaprise.vawr.awrdata.AWRData;
-import org.altaprise.vawr.awrdata.AWRMetrics;
-
-import org.altaprise.vawr.awrdata.AWRRecord;
-
-import org.altaprise.vawr.awrdata.OSWRecord;
-import org.altaprise.vawr.awrdata.VMStatData;
+import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.RefineryUtilities;
 
-public class VMStatTimeSeriesChart extends JFrame {
+public class VMStatTimeSeriesChart extends RootChartFrame {
 
-    JPanel _outerP = new JPanel();
-    JScrollPane _thePanel = new JScrollPane(_outerP);
     BorderLayout borderLayout = new BorderLayout();
 
-    public VMStatTimeSeriesChart(String metricName) {
-        super("Visual AWR Charting");
+    public VMStatTimeSeriesChart(String metricName, String chartHeaderText) {
+        super("Visual AWR Charting", chartHeaderText);
 
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
 
-        _outerP.setLayout(new BoxLayout(_outerP, BoxLayout.Y_AXIS));
+        //Chart CPU Metrics
+        TimeSeriesCollection xyCpuDataset = null;
+        xyCpuDataset = createCpuDataset();
+        
+        JFreeChart cpuChart = createChart(xyCpuDataset, "CPU Utilization", 0, "CPU Utilization", " ");
+        ChartPanel cpuChartPanel = (ChartPanel) createChartPanel(cpuChart);
+        THE_ROOT_CONTENT_PANEL.add(cpuChartPanel);
 
+        //Chart Memory Metrics
+        TimeSeriesCollection xyMemDataset = null;
+        xyCpuDataset = createMemDataset();
+        
+        JFreeChart memChart = createChart(xyCpuDataset, "Memory Utilization", 0, "Memory Utilization", " ");
+        ChartPanel memChartPanel = (ChartPanel) createChartPanel(memChart);
+        THE_ROOT_CONTENT_PANEL.add(memChartPanel);
 
-        //for (int i = 0; i < AWRData.getInstance().getNumRACInstances(); i++) {
-
-        //int racInstNum = i + 1;
-
-        TimeSeriesCollection xyDataset = createDataset();
-
-        JFreeChart chart = createChart(xyDataset, metricName);
-
-        ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
-
-        chartPanel.setPreferredSize(new java.awt.Dimension(600, 270));
-
-        _outerP.add(chartPanel);
-        //}
-
-        this.add(_thePanel, BorderLayout.CENTER);
         this.setVisible(true);
+
+        //Size of Y should be 200 (for header) + 260 * numCharts)
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260* 2)));
+        add(THE_SCROLL_PANE, BorderLayout.CENTER);
+        
     }
 
 
-    private static final long serialVersionUID = 1L;
-
-    {
-        // set a theme using the new shadow generator feature available in
-        // 1.0.14 - for backwards compatibility it is not enabled by default
-        ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
+    public JPanel getChartPanel() {
+        return THE_ROOT_CONTENT_PANEL;    
     }
 
-
+    //Just implementing to satisfy the abstract base class
+    protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
+        return null;    
+    }
+    
     /**
      * Creates a panel for the demo (used by SuperDemo.java).
      *
@@ -130,7 +103,7 @@ public class VMStatTimeSeriesChart extends JFrame {
      *
      * @return The dataset.
      */
-    private TimeSeriesCollection createDataset() {
+    private TimeSeriesCollection createCpuDataset() {
         
         String metricToChart = "free";
 
@@ -140,8 +113,9 @@ public class VMStatTimeSeriesChart extends JFrame {
         TimeSeries s2 = new TimeSeries("sys");
         TimeSeries s3 = new TimeSeries("idle");
         TimeSeries s4 = new TimeSeries("wait");
+        TimeSeries s5 = new TimeSeries("steal");
 
-        ArrayList<DBRec> awrRecords = VMStatData.getInstance().getVMStatRecs();
+        ArrayList<DBRec> awrRecords = OSWData.getInstance().getVmStatRecs();
         for (int i = 0; i < awrRecords.size(); i++) {
             DBRec awrRec = awrRecords.get(i);
             //avg-cpu:  %user   %nice %system %iowait  %steal   %idle
@@ -150,12 +124,14 @@ public class VMStatTimeSeriesChart extends JFrame {
             String sysCpuS = awrRec.getAttribVal("sy");
             String idleCpuS = awrRec.getAttribVal("id");
             String waitCpuS = awrRec.getAttribVal("wa");
+            String stealCpuS = awrRec.getAttribVal("st");
 
             try {
                 double userCpuD = Double.parseDouble(userCpuS);
                 double sysCpuD = Double.parseDouble(sysCpuS);
                 double idleCpuD = Double.parseDouble(idleCpuS);
                 double waitCpuD = Double.parseDouble(waitCpuS);
+                double stealCpuD = Double.parseDouble(stealCpuS);
 
                 if (SessionMetaData.getInstance().debugOn()) {
                     //System.out.println("snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
@@ -164,6 +140,59 @@ public class VMStatTimeSeriesChart extends JFrame {
                 s2.add(new Second(snapShotDate), sysCpuD);
                 s3.add(new Second(snapShotDate), idleCpuD);
                 s4.add(new Second(snapShotDate), waitCpuD);
+                s5.add(new Second(snapShotDate), stealCpuD);
+            } catch (Exception e) {
+                //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
+                System.out.println(e.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        xyDataset.addSeries(s1);
+        xyDataset.addSeries(s2);
+        xyDataset.addSeries(s3);
+        xyDataset.addSeries(s4);
+        xyDataset.addSeries(s5);
+
+        return xyDataset;
+    }
+
+    private TimeSeriesCollection createMemDataset() {
+        
+        String metricToChart = "free";
+
+        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
+
+        TimeSeries s1 = new TimeSeries("swpd");
+        TimeSeries s2 = new TimeSeries("free");
+        TimeSeries s3 = new TimeSeries("buff");
+        TimeSeries s4 = new TimeSeries("cache");
+
+        ArrayList<DBRec> awrRecords = OSWData.getInstance().getVmStatRecs();
+        for (int i = 0; i < awrRecords.size(); i++) {
+            DBRec awrRec = awrRecords.get(i);
+            //avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+            Date snapShotDate = (Date) awrRec.getAttrib("DATE").getObjValue();
+            String swapdMemS = awrRec.getAttribVal("swpd");
+            String freeMemS = awrRec.getAttribVal("free");
+            String buffMemS = awrRec.getAttribVal("buff");
+            String cacheMemS = awrRec.getAttribVal("cache");
+
+            try {
+                double swapdMemD = Double.parseDouble(swapdMemS);
+                double freeMemD = Double.parseDouble(freeMemS);
+                double buffMemD = Double.parseDouble(buffMemS);
+                double cacheMemD = Double.parseDouble(cacheMemS);
+
+                if (SessionMetaData.getInstance().debugOn()) {
+                    //System.out.println("snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
+                }
+                s1.add(new Second(snapShotDate), swapdMemD);
+                s2.add(new Second(snapShotDate), freeMemD);
+                s3.add(new Second(snapShotDate), buffMemD);
+                s4.add(new Second(snapShotDate), cacheMemD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
                 System.out.println(e.getLocalizedMessage());
@@ -180,66 +209,4 @@ public class VMStatTimeSeriesChart extends JFrame {
 
         return xyDataset;
     }
-
-    /**
-     * Creates a chart.
-     *
-     * @param dataset  a dataset.
-     *
-     * @return A chart.
-     */
-    private static JFreeChart createChart(XYDataset dataset, String metricName) {
-
-        String chartTitle = ""; //AWRMetrics.getInstance().getMetricChartTitle(metricName);
-        String chartYAxisLabel = ""; //AWRMetrics.getInstance().getMetricRangeDescription(metricName);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle,
-                                                              // title
-                                                              "Date", // x-axis label
-                                                              chartYAxisLabel, // y-axis label
-                                                              dataset, // data
-                                                              true, // create legend?
-                                                              true, // generate tooltips?
-                                                              false); // generate URLs?
-
-        chart.setBackgroundPaint(Color.white);
-
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        plot.setDomainCrosshairVisible(true);
-        plot.setRangeCrosshairVisible(true);
-
-        XYItemRenderer r = plot.getRenderer();
-        if (r instanceof XYLineAndShapeRenderer) {
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-            renderer.setBaseShapesVisible(true);
-            renderer.setBaseShapesFilled(true);
-            renderer.setDrawSeriesLineAsPath(true);
-        }
-
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("dd-MMM-yy HH:mm:ss"));
-
-        return chart;
-
-    }
-
-    private Date getAvgCPUDateTime(String dateS, String timeS) {
-        //01/30/14 00:59:01
-        Calendar cal = Calendar.getInstance();
-        int yy = Integer.parseInt(dateS.substring(6, 8)) + 2000;
-        int mm = Integer.parseInt(dateS.substring(0, 2)) - 1;
-        int dd = Integer.parseInt(dateS.substring(3, 5));
-        int hh = Integer.parseInt(timeS.substring(0, 2));
-        int min = Integer.parseInt(timeS.substring(3, 5));
-        int sec = Integer.parseInt(timeS.substring(6, 8));
-        cal.set(yy, mm, dd, hh, min, sec);
-        Date date = cal.getTime();
-
-        return date;
-    }
-
-
 }
