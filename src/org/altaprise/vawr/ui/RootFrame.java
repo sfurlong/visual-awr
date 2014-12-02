@@ -1,5 +1,7 @@
 package org.altaprise.vawr.ui;
 
+import daiBeans.PhoneHome;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
@@ -15,16 +17,24 @@ public class RootFrame extends JFrame {
     private JMenuItem itemHelpAWR = new JMenuItem();
     private JMenuItem itemHelpOSW = new JMenuItem();
     private JMenuItem itemHelpAbout = new JMenuItem();
+    private static String VAWR_VERSION="v02f";
     private String aboutMessage =
-        "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + "v02f\n" +
+        "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + VAWR_VERSION +"\n" +
         "For latest news and versions: http://visualawr.blogspot.com";
     private String aboutTitle = "About";
     private RootPanel _rootTabbedPanel = new RootPanel();
     private static JFrame _frameRef = null;
 
+    public static String getProgramVersion() {
+        return VAWR_VERSION;
+    }
+
     /**The default constructor for form
      */
     public RootFrame() {
+        //Phone home if possible
+        PhoneHome ph = new PhoneHome();
+        
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
