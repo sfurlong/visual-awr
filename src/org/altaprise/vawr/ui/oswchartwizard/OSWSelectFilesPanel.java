@@ -54,6 +54,8 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
     private static String OSW_FILE_NAME = "INITIALIZED";
     private static JRadioButton jRadioButton_topStat = new JRadioButton();
     private static JRadioButton jRadioButton_IoStat = new JRadioButton();
+    private static JRadioButton jRadioButton_VmStat = new JRadioButton();
+    private static JRadioButton jRadioButton_CellSrvStat = new JRadioButton();
     private JLabel jLabel2 = new JLabel();
     private ButtonGroup buttonGroup_fileType = new ButtonGroup();
     private JSeparator jSeparator1 = new JSeparator();
@@ -98,6 +100,10 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         jRadioButton_topStat.setBounds(new Rectangle(165, 100, 86, 18));
         jRadioButton_IoStat.setText("IOStat");
         jRadioButton_IoStat.setBounds(new Rectangle(260, 100, 86, 18));
+        jRadioButton_VmStat.setText("VMStat");
+        jRadioButton_VmStat.setBounds(new Rectangle(355, 100, 86, 18));
+        jRadioButton_CellSrvStat.setText("CellSrvStat");
+        jRadioButton_CellSrvStat.setBounds(new Rectangle(450, 100, 86, 18));
         jLabel2.setText("OSW/ExaWatcher File Type:");
         jLabel2.setBounds(new Rectangle(10, 100, 145, 15));
 
@@ -128,6 +134,8 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         this.jRadioButton_topStat.setSelected(true);
         buttonGroup_fileType.add(this.jRadioButton_topStat);
         buttonGroup_fileType.add(this.jRadioButton_IoStat);
+        buttonGroup_fileType.add(this.jRadioButton_VmStat);
+        buttonGroup_fileType.add(this.jRadioButton_CellSrvStat);
 
         jScrollPane1.getViewport().add(jTextArea1, null);
         this.add(jButton_testFiles, null);
@@ -139,6 +147,8 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         this.add(jLabel2, null);
         this.add(jRadioButton_IoStat, null);
         this.add(jRadioButton_topStat, null);
+        this.add(jRadioButton_VmStat, null);
+        this.add(jRadioButton_CellSrvStat, null);
         this.add(jButton_selectFile, null);
         this.add(jTextField_fileName, null);
         this.add(jLabel_selectMetrics, null);
@@ -187,7 +197,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         String fileType = "";
         boolean foundErr = false;
         String selectedFile = "";
-        
+
         if (jCheckBox_useTimeFilter.isSelected()) {
             doFilter = true;
         }
@@ -196,16 +206,19 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
             try {
                 selectedFile = _selectedFiles[i].getName();
                 if (jRadioButton_topStat.isSelected()) {
-                    fileType = "TOPSTAT";            
-                    testResults =topStatFileParser.testFile(_selectedFiles[i].getPath(), startTimeD, endTimeD, doFilter);
+                    fileType = "TOPSTAT";
+                    testResults =
+                        topStatFileParser.testFile(_selectedFiles[i].getPath(), startTimeD, endTimeD, doFilter);
                 } else {
-                    fileType = "IOSTAT";            
-                    testResults =ioStatFileParser.testFile(_selectedFiles[i].getPath(), startTimeD, endTimeD, doFilter);
+                    fileType = "IOSTAT";
+                    testResults =
+                        ioStatFileParser.testFile(_selectedFiles[i].getPath(), startTimeD, endTimeD, doFilter);
                 }
                 if (testResults != null) {
                     String startDateTimeS = testResults.getAttribVal("FILE_START_DATETIME");
                     String endDateTimeS = testResults.getAttribVal("FILE_END_DATETIME");
-                    jTextArea1.append(_selectedFiles[i].getName() + " | " + startDateTimeS + " | " + endDateTimeS + "\n");
+                    jTextArea1.append(_selectedFiles[i].getName() + " | " + startDateTimeS + " | " + endDateTimeS +
+                                      "\n");
                     _filteredFileNameList.add(_selectedFiles[i].getName());
                 }
             } catch (Exception ex) {
@@ -213,8 +226,7 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
                 ex.printStackTrace();
                 String msg = "Are you sure this is a ";
                 msg += "OSW " + fileType + " File?:\n" + selectedFile;
-                JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
-                                              ex.getLocalizedMessage() +"\n" + msg, "Error",
+                JOptionPane.showMessageDialog(RootFrame.getFrameRef(), ex.getLocalizedMessage() + "\n" + msg, "Error",
                                               JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -239,20 +251,20 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
 
     public static String getStartFilterDate() {
         String ret = "";
-              
+
         if (jCheckBox_useTimeFilter.isSelected()) {
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-            ret = sdf.format((Date)jSpinner_startTime.getValue());
+            ret = sdf.format((Date) jSpinner_startTime.getValue());
         }
         return ret;
     }
 
     public static String getEndFilterDate() {
         String ret = "";
-              
+
         if (jCheckBox_useTimeFilter.isSelected()) {
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-            ret = sdf.format((Date)jSpinner_endTime.getValue());
+            ret = sdf.format((Date) jSpinner_endTime.getValue());
         }
         return ret;
     }
@@ -261,8 +273,12 @@ public class OSWSelectFilesPanel extends WizardContentBasePanel {
         String ret = "";
         if (jRadioButton_topStat.isSelected()) {
             ret = "TOPSTAT";
-        } else {
-            ret = "IOSTAT"; 
+        } else if (jRadioButton_IoStat.isSelected()) {
+            ret = "IOSTAT";
+        } else if (jRadioButton_VmStat.isSelected()) {
+            ret = "VMSTAT";
+        } else if (jRadioButton_CellSrvStat.isSelected()) {
+            ret = "CELLSRVSTAT";
         }
         return ret;
     }
