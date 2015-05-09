@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.ui.oswchartwizard;
 
 import java.awt.Dimension;
@@ -137,7 +121,7 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         jLabel5.setText("File(s)  Path:");
         jLabel5.setBounds(new Rectangle(6, 160, 90, 15));
 
-        jCheckBox_chartFlash.setText("Chart Exadata Flash ï¿½ Separate Charts for DISK and FLASH  ");
+        jCheckBox_chartFlash.setText("Chart Exadata Flash – Separate Charts for DISK and FLASH  ");
         jCheckBox_chartFlash.setBounds(new Rectangle(30, 200, 410, 20));
         jLabel6.setText("(Use this space for text that will appear on your Report Header, i.e. Machine Name, Date, etc. HTML markup supported.)");
         jLabel6.setBounds(new Rectangle(30, 245, 610, 15));

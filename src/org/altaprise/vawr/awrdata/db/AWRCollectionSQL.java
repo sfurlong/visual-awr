@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.awrdata.db;
 
 public class AWRCollectionSQL {
@@ -714,7 +698,38 @@ public class AWRCollectionSQL {
         
         return sqlString;
     }
-    
+  
+  public static String getSizeOnDiskSQL(long dbId, long startSnapId, long endSnapId) {  
+      String sql = 
+          "    WITH ts_info as ( \n" +
+          "    select dbid, ts#, tsname, max(block_size) block_size \n" +
+          "    from dba_hist_datafile \n" +
+          "    where dbid = " + dbId + " \n" +
+          "    group by dbid, ts#, tsname), \n" +
+          "    -- Get the maximum snaphsot id for each day from dba_hist_snapshot \n" +
+          "    snap_info as ( \n" +
+          "    select dbid,to_char(trunc(end_interval_time,'DD'),'MM/DD/YY') dd, max(s.snap_id) snap_id \n" +
+          "    FROM dba_hist_snapshot s \n" +
+          "    where s.snap_id between " + startSnapId + " and " + endSnapId + " \n" +
+          "    and dbid = " + dbId + " \n" +
+          "    --where s.end_interval_time > to_date(:start_time,'MMDDYYYY') \n" +
+          "    --and s.end_interval_time < to_date(:end_time,'MMDDYYYY') \n" +
+          "    group by dbid,trunc(end_interval_time,'DD')) \n" +
+          "    -- Sum up the sizes of all the tablespaces for the last snapshot of each day \n" +
+          "    select s.snap_id, round(sum(tablespace_size*f.block_size)/1024/1024/1024,2) size_gb \n" +
+          "    from dba_hist_tbspc_space_usage sp, \n" +
+          "    ts_info f, \n" +
+          "    snap_info s \n" +
+          "    WHERE s.dbid = sp.dbid \n" +
+          "    AND s.dbid = " + dbId + " \n" +
+          "     and s.snap_id between " + startSnapId + " and " + endSnapId + " \n" +
+          "    and s.snap_id = sp.snap_id \n" +
+          "    and sp.dbid = f.dbid \n" +
+          "    AND sp.tablespace_id = f.ts# \n" +
+          "    GROUP BY  s.snap_id,s.dd, s.dbid \n" +
+          "    order by  s.snap_id \n";
+      return sql;
+  }
     
     /*
     -- ##############################################################################################
@@ -813,36 +828,5 @@ public class AWRCollectionSQL {
 
     -- ##############################################################################################
 
-
-     
-    REPHEADER PAGE LEFT '~~BEGIN-SIZE-ON-DISK~~'
-    REPFOOTER PAGE LEFT '~~END-SIZE-ON-DISK~~'
-     WITH ts_info as (
-    select dbid, ts#, tsname, max(block_size) block_size
-    from dba_hist_datafile
-    where dbid = &DBID
-    group by dbid, ts#, tsname),
-    -- Get the maximum snaphsot id for each day from dba_hist_snapshot
-    snap_info as (
-    select dbid,to_char(trunc(end_interval_time,'DD'),'MM/DD/YY') dd, max(s.snap_id) snap_id
-    FROM dba_hist_snapshot s
-    where s.snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
-    and dbid = &DBID
-    --where s.end_interval_time > to_date(:start_time,'MMDDYYYY')
-    --and s.end_interval_time < to_date(:end_time,'MMDDYYYY')
-    group by dbid,trunc(end_interval_time,'DD'))
-    -- Sum up the sizes of all the tablespaces for the last snapshot of each day
-    select s.snap_id, round(sum(tablespace_size*f.block_size)/1024/1024/1024,2) size_gb
-    from dba_hist_tbspc_space_usage sp,
-    ts_info f,
-    snap_info s
-    WHERE s.dbid = sp.dbid
-    AND s.dbid = &DBID
-     and s.snap_id between &SNAP_ID_MIN and &SNAP_ID_MAX
-    and s.snap_id = sp.snap_id
-    and sp.dbid = f.dbid
-    AND sp.tablespace_id = f.ts#
-    GROUP BY  s.snap_id,s.dd, s.dbid
-    order by  s.snap_id;     * 
      */
 }

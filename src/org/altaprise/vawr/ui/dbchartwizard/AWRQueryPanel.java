@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.ui.dbchartwizard;
 
 import dai.server.dbService.SQLResolver;
@@ -216,6 +200,15 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             textAreaStatus += "Parsing Top Wait Events Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
+            //Query Storage Size on Disk
+            textAreaStatus += "Running Storage Size On Disk Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+            DBRecSet sizeOnDiskRecSet =
+                    sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getSizeOnDiskSQL(dbId, startSnapId, endSnapId));
+            //Update the Status in the Text Area
+            //AWRData.getInstance().parseTopWaitEventsRecords(sizeOnDiskRecSet);
+            textAreaStatus += "Parsing Storage Size On Disk Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
 
             //Set the Text Area to the AWR Metrics
             String awrDataTextString = AWRData.getInstance().getAWRDataTextString();

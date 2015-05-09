@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.awrdata.file;
 
 
@@ -57,6 +41,80 @@ public class ReadCellSrvStatFile {
         }
     }
 
+    public DBRec testFile(String fileName, Date startDateFilter, Date endDateFilter, boolean doFilter) throws Exception {
+        try {
+            String rec = "";
+            _fileReader = new BufferedReader(new FileReader(fileName));
+            DBRec fileRecSet = null;
+
+            try {
+                //Priming read
+                rec = _fileReader.readLine();
+                Date lastDateTimeRead = null;
+                Date firstDateTimeRead = null;
+                boolean isValidFileFormat = false;
+
+                while (rec != null) {
+                    if (rec.startsWith("===Current Time===")) {
+                        try {
+                            Date dateTimeD = this.parseDateTime(rec);
+
+                            //All we are doing right now is validating that we can find 
+                            //a record that starts with "zzz ***", "zzz <" or "Time:" and the time format validates
+                            isValidFileFormat = true;
+
+                            if (doFilter) {
+                                if (dateTimeD.after(startDateFilter) && dateTimeD.before(endDateFilter)) {
+                                    if (firstDateTimeRead == null) {
+                                        firstDateTimeRead = dateTimeD;
+                                    }
+                                    lastDateTimeRead = dateTimeD;
+                                }
+                            } else {
+                                if (firstDateTimeRead == null) {
+                                    firstDateTimeRead = dateTimeD;
+                                }
+                                lastDateTimeRead = dateTimeD;
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+                    //Read the next record
+                    rec = _fileReader.readLine();
+                }
+
+                if (firstDateTimeRead != null) {
+                    fileRecSet = new DBRec();
+                    fileRecSet.addAttrib(new DBAttributes("FILE_START_DATETIME", firstDateTimeRead.toString()));
+                    fileRecSet.addAttrib(new DBAttributes("FILE_END_DATETIME", lastDateTimeRead.toString()));
+                } else {
+                        //Let's make sure we found at least one valid record regarless of the filter
+                        if (!isValidFileFormat) {
+                            throw new Exception ("Did not find any record descriptors of type: \"zzz ***\", \"zzz <\", or \"Time:\"");
+                        }
+                }
+                
+                return fileRecSet;
+
+            } catch (Exception e) {
+                System.out.println("IOSTAT File Read Error\n" + e.getLocalizedMessage());
+                throw e;
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            throw new Exception("File Not Found: " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            _fileReader.close();
+        }
+    }
+
+
     public void parse(String fileName) throws Exception {
         try {
 
@@ -95,7 +153,8 @@ public class ReadCellSrvStatFile {
                     //Create the record structure
                     dbRec = new DBRec();
                     //Parse the datetime and add the attributes to the dbRec
-                    this.parseDateTime(rec, dbRec);
+                    Date recDateTime = this.parseDateTime(rec);
+                    dbRec.addAttrib(new DBAttributes("DATE", recDateTime));
 
                 } else {
                     if (rec.length() > 60) {
@@ -121,22 +180,21 @@ public class ReadCellSrvStatFile {
     }
 
     //===Current Time===                                      Wed Sep 10 04:09:58 2014
-    private void parseDateTime(String rec, DBRec dbRec) {
-
+    private Date parseDateTime(String rec) {
+        Date recDateTime = null;
         if (rec.length() > 0) {
 
             String recDateTimeS = rec.substring(60, rec.length()).trim();
 
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd hh:mm:ss yyyy");
-                Date recDateTime = dateFormat.parse(recDateTimeS);
-
-                dbRec.addAttrib(new DBAttributes("DATE", recDateTime));
+                recDateTime = dateFormat.parse(recDateTimeS);
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+        return recDateTime;
     }
 
 }

@@ -1,22 +1,5 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.awrdata;
 
-import dai.shared.businessObjs.DBAttributes;
 import dai.shared.businessObjs.DBRec;
 import dai.shared.businessObjs.DBRecSet;
 
@@ -29,22 +12,19 @@ import java.io.Writer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.StringTokenizer;
-
-import org.altaprise.vawr.utils.PropertyFile;
 
 public class AWRData {
 
 
     private List _headerTokens = new ArrayList();
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
+    private LinkedHashMap<String, AWRRecord> _storageSizeOnDiskRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
     private DBRecSet _platformInfo = null; ;
@@ -66,9 +46,11 @@ public class AWRData {
         _dataRecords.clear();
         _activeSessionRecords.clear();
         _topWaitEventsMap.clear();
+        _storageSizeOnDiskRecords.clear();
     }
 
 
+    @SuppressWarnings("oracle.jdeveloper.java.semantic-warning")
     public void dumpData() {
 
         System.out.println("main metric headers");
@@ -108,13 +90,22 @@ public class AWRData {
             System.out.print(awrRec.getCummDBWaitTimePct());
             System.out.println();
         }
+        System.out.println("Storage Size On Disk metrics");
+        for (Map.Entry<String, AWRRecord> entry : _storageSizeOnDiskRecords.entrySet()) {
+            AWRRecord awrRec = entry.getValue();
+            for (int j = 0; j < awrRec.getSize(); j++) {
+                String headerName = getHeaderName(j);
+                String val = awrRec.getVal(headerName);
+                System.out.print(val + ", ");
+            }
+            System.out.println();
+        }
     }
 
     //Parse records read from the DB
     public void parseDataRecords(DBRecSet recSet) {
 
         for (int i = 0; i < recSet.getSize(); i++) {
-            String rec = "";
             String racInstNum = "";
             String snapId = "";
             DBRec dbRec = recSet.getRec(i);
@@ -162,6 +153,7 @@ public class AWRData {
        6673 DB CPU               DB CPU                                                            79.37   1162077955
        6673 User I/O             cell multiblock physical read                                      3.83     56095200
     */
+    @SuppressWarnings("oracle.jdeveloper.java.semantic-warning")
     public void parseTopWaitEventsRecords(DBRecSet recSet) {
         for (int i = 0; i < recSet.getSize(); i++) {
             String waitClass = recSet.getRec(i).getAttribVal("WAIT_CLASS");
@@ -181,6 +173,7 @@ public class AWRData {
                 _topWaitEventsMap.put(eventName, topWaitEventsRec);
             } else {
                 double cummWaitTime = topWaitEventsRec.getCummulativeWaitTime();
+                @SuppressWarnings("oracle.jdeveloper.java.semantic-warning")
                 double cummTotalAllWaitEventsTimeSec = topWaitEventsRec.getCummTotalAllWaitEventsTimeSec();
                 cummTotalAllWaitEventsTimeSec += totalTimeD;
                 cummWaitTime = cummWaitTime + totalTimeD;
@@ -199,6 +192,29 @@ public class AWRData {
         }
     }
 
+    /*
+    SNAP_ID    SIZE_GB
+    ---------- ----------
+      23615    8885.98
+    */
+    public void parseSizeOnDiskRecords(DBRecSet recSet) {
+        for (int i = 0; i < recSet.getSize(); i++) {
+
+            DBRec dbRec = recSet.getRec(i);
+            String snapId = dbRec.getAttribVal("SNAP_ID");
+            String sizeOnDisk = dbRec.getAttribVal("SIZE_GB");
+            AWRRecord awrRec = this._dataRecords.get(snapId + "-1");
+            String dateS = awrRec.getVal("END");
+            String timeS = awrRec.getVal("TIME");
+            AWRRecord storageRec = new AWRRecord();
+            storageRec.putVal("SNAP_ID", snapId);
+            storageRec.putVal("END", dateS);
+            storageRec.putVal("TIME", timeS);
+            storageRec.putVal("SIZE_GB", sizeOnDisk);
+            _storageSizeOnDiskRecords.put(snapId, storageRec);
+        }
+    }
+    
     public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
         AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
         return awrRec;
@@ -384,7 +400,7 @@ public class AWRData {
             StringTokenizer st = new StringTokenizer(rec);
             while (st.hasMoreTokens()) {
                 String tok = st.nextToken();
-                String headerName = (String) getHeaderName(tokenCnt);
+                String headerName = getHeaderName(tokenCnt);
                 awrRec.putVal(headerName.toUpperCase(), tok);
                 if (headerName.equals("SNAP"))
                     snapId = tok;
@@ -447,7 +463,6 @@ public class AWRData {
             FileOutputStream fileOutputStream = new FileOutputStream(outFileName);
             OutputStreamWriter streamWriter = new OutputStreamWriter(fileOutputStream, "utf-8");
             writer = new BufferedWriter(streamWriter);
-            DBRec dbRec = null;
 
             //Write out header fields
             String outRec = "";

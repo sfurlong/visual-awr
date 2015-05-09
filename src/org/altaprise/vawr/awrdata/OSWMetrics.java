@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- * Copyright 2015 Stephen Furlong
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 package org.altaprise.vawr.awrdata;
 
 import java.util.ArrayList;
@@ -76,16 +60,16 @@ public class OSWMetrics {
         //Metric Name, Metric Desc, Chart Raange Desc, Chart Title, Is Chartable
         _cellSrvMetrics.put("Number of hard disk block IO read requests", "");
         _cellSrvMetrics.put("Number of hard disk block IO write requests", "");
-        _cellSrvMetrics.put("Hard disk block IO reads (KB)", "");
-        _cellSrvMetrics.put("Hard disk block IO writes (KB)", "");
         _cellSrvMetrics.put("Number of flash disk block IO read requests", "");
         _cellSrvMetrics.put("Number of flash disk block IO write requests", "");
+        _cellSrvMetrics.put("Hard disk block IO reads (KB)", "");
+        _cellSrvMetrics.put("Hard disk block IO writes (KB)", "");
         _cellSrvMetrics.put("Flash disk block IO reads (KB)", "");
         _cellSrvMetrics.put("Flash disk block IO writes (KB)", "");
         _cellSrvMetrics.put("Number of disk IO errors", "");
-        _cellSrvMetrics.put("Number of latency threshold warnings during job", "");
-        _cellSrvMetrics.put("Number of latency threshold warnings by checker", "");
-        _cellSrvMetrics.put("Number of latency threshold warnings for smart IO", "");
+        //_cellSrvMetrics.put("Number of latency threshold warnings during job", "");
+        //_cellSrvMetrics.put("Number of latency threshold warnings by checker", "");
+        //_cellSrvMetrics.put("Number of latency threshold warnings for smart IO", "");
         //_cellSrvMetrics.put("Number of latency threshold warnings for redo log writes", "");
         _cellSrvMetrics.put("Current read block IO to be issued (KB)", "");
         _cellSrvMetrics.put("Total read block IO to be issued (KB)", "");
@@ -102,6 +86,7 @@ public class OSWMetrics {
         _cellSrvMetrics.put("Current block IO being populated in flash (KB)", "");
         _cellSrvMetrics.put("Total block IO KB populated in flash (KB)", "");
         //_cellSrvMetrics.put("== Memory related stats ==", "");
+        /*
         _cellSrvMetrics.put("SGA heap used - kgh statistics (KB)", "");
         _cellSrvMetrics.put("SGA heap free - cellsrv statistics (KB)", "");
         _cellSrvMetrics.put("OS memory allocated to SGA (KB)", "");
@@ -132,21 +117,26 @@ public class OSWMetrics {
         _cellSrvMetrics.put("Dynamic buffer allocation failures due to low mem", "");
         _cellSrvMetrics.put("Dynamic buffer allocated size (KB)", "");
         _cellSrvMetrics.put("Dynamic buffer allocation hwm (KB)", "");
+        */
         //_cellSrvMetrics.put("== Execution related stats ==", "");
+        /*
         _cellSrvMetrics.put("Incarnation number", "");
         _cellSrvMetrics.put("Number of module version failures", "");
         _cellSrvMetrics.put("Number of threads working", "");
         _cellSrvMetrics.put("Number of threads waiting for network", "");
         _cellSrvMetrics.put("Number of threads waiting for resource", "");
         _cellSrvMetrics.put("Number of threads waiting for a mutex", "");
+        */
         //_cellSrvMetrics.put("== Network related stats ==", "");
         _cellSrvMetrics.put("Total bytes received from the network", "");
         _cellSrvMetrics.put("Total bytes transmitted to the network", "");
         _cellSrvMetrics.put("Total bytes retransmitted to the network", "");
+        /*
         _cellSrvMetrics.put("Number of active sendports", "");
         _cellSrvMetrics.put("Hwm of active sendports", "");
         _cellSrvMetrics.put("Number of active remote open infos", "");
         _cellSrvMetrics.put("HWM of remote open infos", "");
+        */
         //_cellSrvMetrics.put("== SmartIO related stats ==", "");
         _cellSrvMetrics.put("Number of active smart IO sessions", "");
         _cellSrvMetrics.put("High water mark of smart IO sessions", "");
@@ -186,11 +176,14 @@ public class OSWMetrics {
         _cellSrvMetrics.put("Number of times smart IO buffer reserve failures", "");
         _cellSrvMetrics.put("Number of times smart IO request misses", "");
         //_cellSrvMetrics.put("Number of times IO for smart IO not allowed to be issued", "");
+        /*
         _cellSrvMetrics.put("Number of times smart IO prefetch limit was reached", "");
         _cellSrvMetrics.put("Number of times smart scan used unoptimized mode", "");
         _cellSrvMetrics.put("Number of times smart fcre used unoptimized mode", "");
         _cellSrvMetrics.put("Number of times smart backup used unoptimized mode", "");
+        */
         //_cellSrvMetrics.put("== FlashCache related stats ==", "");
+        /*
         _cellSrvMetrics.put("Number of read hits", "");
         _cellSrvMetrics.put("Read on flashcache hit(KB)", "");
         _cellSrvMetrics.put("Number of keep read hits", "");
@@ -228,39 +221,44 @@ public class OSWMetrics {
         _cellSrvMetrics.put("Total size for disk writer coalesced writes(KB)", "");
         _cellSrvMetrics.put("Number of large read rejections", "");
         _cellSrvMetrics.put("Total size for rejected large read IOs(KB)", "");
+        */
         //_cellSrvMetrics.put("Number of scan bytes attempted to read from cache(KB)", "");
         _cellSrvMetrics.put("Number of SCAN bytes read from cache(KB)", "");
         _cellSrvMetrics.put("Number of partial cache hits for SCAN IO", "");
         //_cellSrvMetrics.put("Number of no cache hit and no victim hdrs for SCAN IO", "");
-        _cellSrvMetrics.put("Number of failed victim searches for SCAN IO", "");
+        //_cellSrvMetrics.put("Number of failed victim searches for SCAN IO", "");
         //_cellSrvMetrics.put("Number of cache lines returned due to partial SCAN IO", "");
-        _cellSrvMetrics.put("Number of cache lines evicted due to partial SCAN IO", "");
+        //_cellSrvMetrics.put("Number of cache lines evicted due to partial SCAN IO", "");
         //_cellSrvMetrics.put("Number of cache lines initialized by sympathy caching", "");
         _cellSrvMetrics.put("Number of DW replacements during SCAN IO", "");
         _cellSrvMetrics.put("Number of OLTP replacements during SCAN IO", "");
         _cellSrvMetrics.put("Number of SELF replacements during SCAN IO", "");
         _cellSrvMetrics.put("Number of zero hit replacements during SCAN IO", "");
         //_cellSrvMetrics.put("Number of free cache line replacements during SCAN IO", "");
-        _cellSrvMetrics.put("Number of times touch count cooling occurred", "");
+        //_cellSrvMetrics.put("Number of times touch count cooling occurred", "");
         //_cellSrvMetrics.put("Number of IOs failed to populate FC due to throttling", "");
+        /*
         _cellSrvMetrics.put("Cachesize(KB)", "");
         _cellSrvMetrics.put("Keepsize(KB)", "");
         _cellSrvMetrics.put("OLTPsize(KB)", "");
         _cellSrvMetrics.put("Number of cache headers with valid data", "");
         _cellSrvMetrics.put("Number of attempts to get a cacheline from lru", "");
+        */
         //_cellSrvMetrics.put("Number of failed attempts to get a cacheline from lru", "");
+        /*
         _cellSrvMetrics.put("Number of flash cache IO errors", "");
         _cellSrvMetrics.put("Size of eviction from flash cache (KB)", "");
         _cellSrvMetrics.put("Number of outstanding large flash IOs", "");
+        */
         //_cellSrvMetrics.put("== FFI related stats ==", "");
-        _cellSrvMetrics.put("number of reads straddling consecutive FFI regions", "");
-        _cellSrvMetrics.put("number of writes straddling consecutive FFI regions", "");
+        //_cellSrvMetrics.put("number of reads straddling consecutive FFI regions", "");
+        //_cellSrvMetrics.put("number of writes straddling consecutive FFI regions", "");
         //_cellSrvMetrics.put("number of writes which must block all other writes in 4MB region", "");
-        _cellSrvMetrics.put("number of FFIWriteJob waited for pin", "");
-        _cellSrvMetrics.put("number of FFIRemoveJob waited for pin", "");
-        _cellSrvMetrics.put("number of FFIFlushJob waited for pin", "");
-        _cellSrvMetrics.put("number of FFIJob waited for pin", "");
-        _cellSrvMetrics.put("number of regions initialized by FFI", "");
+        //_cellSrvMetrics.put("number of FFIWriteJob waited for pin", "");
+        //_cellSrvMetrics.put("number of FFIRemoveJob waited for pin", "");
+        //_cellSrvMetrics.put("number of FFIFlushJob waited for pin", "");
+        //_cellSrvMetrics.put("number of FFIJob waited for pin", "");
+        //_cellSrvMetrics.put("number of regions initialized by FFI", "");
         //_cellSrvMetrics.put("number of regions initialized by FFI, but later flushed to disk", "");
 
     }
