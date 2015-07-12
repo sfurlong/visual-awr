@@ -1,10 +1,10 @@
 @echo off
-rem ***** Builds the MicroERP project *****
+rem ***** Builds the VisualAWR project *****
 rem
 rem   Author:         Stephen Furlong
-rem   Last updated:   March 19, 2003
+rem   Last updated:   May 8, 2015
 rem
-rem   This script starts building the MicroERP packages, using Jakarta-ANT as
+rem   This script starts building the Visual AWR packages, using Jakarta-ANT as
 rem   the build tool.
 rem
 rem   The script expects the following environment variables to be set prior
