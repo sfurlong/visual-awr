@@ -121,7 +121,7 @@ public class OSWSelectChartPanel extends WizardContentBasePanel {
         jLabel5.setText("File(s)  Path:");
         jLabel5.setBounds(new Rectangle(6, 160, 90, 15));
 
-        jCheckBox_chartFlash.setText("Chart Exadata Flash – Separate Charts for DISK and FLASH  ");
+        jCheckBox_chartFlash.setText("Chart Exadata Flash - Separate Charts for DISK and FLASH  ");
         jCheckBox_chartFlash.setBounds(new Rectangle(30, 200, 410, 20));
         jLabel6.setText("(Use this space for text that will appear on your Report Header, i.e. Machine Name, Date, etc. HTML markup supported.)");
         jLabel6.setBounds(new Rectangle(30, 245, 610, 15));

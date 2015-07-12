@@ -56,7 +56,7 @@ public class account_detailObj extends BusinessObject
 	{
 		//Initialize some of the attributes that should have default values.
 		SessionMetaData sessionMeta = null;
-		sessionMeta = sessionMeta.getInstance();
+		sessionMeta = SessionMetaData.getInstance();
 
 		set_locality(sessionMeta.getLocality());
 	}
