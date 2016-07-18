@@ -118,7 +118,7 @@ public class AWRData {
                 if (i == 0) {
                     this.addHeaderName(dbFieldName);
                 }
-                
+
                 //Check to see if this is the header.  If so, add another header field for time.
                 //The END field value has the format: "14/06/28 21:55"
                 //we need to break it up into two fields END and TIME
@@ -214,7 +214,7 @@ public class AWRData {
             _storageSizeOnDiskRecords.put(snapId, storageRec);
         }
     }
-    
+
     public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
         AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
         return awrRec;
@@ -293,7 +293,7 @@ public class AWRData {
     public String getPlatformInfoHTML() {
 
         String ret = "<table>\n";
-        for (int i = 0; i < _platformInfo.getSize(); i++) {
+        for (int i = 0; _platformInfo != null && i < _platformInfo.getSize(); i++) {
             DBRec dbRec = _platformInfo.getRec(i);
             ret += "<tr>\n";
             ret += "<td>\n";
@@ -314,25 +314,46 @@ public class AWRData {
         String ret = "<table border=\"1\" font size=\"1\">";
         ret += "<tr>";
         ret += "<td>";
-        ret += "<b>CHART_DATE</b>";
+        ret += "<b>Chart Date</b>";
         ret += "</td>";
         ret += "<td>";
         ret += Calendar.getInstance().getTime().toString();
         ret += "</td>";
         ret += "</tr>";
-        for (int i = 0; i < _platformInfo.getSize(); i++) {
+        for (int i = 0; _platformInfo != null && i < _platformInfo.getSize(); i++) {
             DBRec dbRec = _platformInfo.getRec(i);
             String name = dbRec.getAttrib(0).getName();
             String val = dbRec.getAttrib(0).getValue();
-            if (name.equals("DB_NAME") || name.equals("DBID") || name.equals("INSTNANCES") || name.equals("HOSTS")) {
-                ret += "<tr>";
-                ret += "<td>";
-                ret += "<b>" + name + "</b>";
-                ret += "</td>";
-                ret += "<td>";
-                ret += val;
-                ret += "</td>";
-                ret += "</tr>";
+
+            switch (name) {
+            case "DB_NAME":
+                ret += "<tr><td><b>Database Name</b></td><td>" + dbRec.getAttribVal("DB_NAME") + "</td></tr>";
+                break;
+            case "INSTANCES":
+                ret += "<tr><td><b>Instance(host) Count</b></td><td>" + dbRec.getAttribVal("INSTANCES") + "</td></tr>";
+                break;
+            case "HOSTS":
+                ret += "<tr><td><b>Hosts</b></td><td>" + dbRec.getAttribVal("HOSTS") + "</td></tr>";
+                break;
+            case "NUM_CPUS":
+                ret += "<tr><td><b>CPUs(threads)/host</b></td><td>" + dbRec.getAttribVal("NUM_CPUS") + "</td></tr>";
+                break;
+            case "NUM_CPU_CORES":
+                ret += "<tr><td><b>CPU Cores/host</b></td><td>" + dbRec.getAttribVal("NUM_CPU_CORES") + "</td></tr>";
+                break;
+            case "NUM_CPU_SOCKETS":
+                ret +=
+                    "<tr><td><b>CPU Sockets/host</b></td><td>" + dbRec.getAttribVal("NUM_CPU_SOCKETS") + "</td></tr>";
+                break;
+            case "PHYSICAL_MEMORY_GB":
+                ret +=
+                    "<tr><td><b>Physical Memory/host</b></td><td>" + dbRec.getAttribVal("PHYSICAL_MEMORY_GB") +
+                    "</td></tr>";
+                break;
+            default:
+//                ret += "<tr><td><b>" + name + "</b></td><td>" + val + "</td></tr>";
+                break;
+
             }
         }
         ret += "</table>";
