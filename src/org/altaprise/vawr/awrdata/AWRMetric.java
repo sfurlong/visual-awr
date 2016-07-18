@@ -10,6 +10,7 @@ public class AWRMetric {
     private String awrUniqueOracleMetricName;
     private String metricChartTitle;
     private boolean _isKeyMetric = false;
+    private String _awrMetricDescription;
 
     public AWRMetric(String awrMinerName, String awrOracleName,
                      String metricUnit, String chartTitle, boolean isKeyMetric) {
@@ -68,6 +69,14 @@ public class AWRMetric {
         metricChartTitle = awrOracleName;
     }
 
+    public void setAWRMetricDescription(String desc) {
+        _awrMetricDescription = desc;
+    }
+
+    public String getAWRMetricDescription() {
+        return this._awrMetricDescription;    
+    }
+    
     public void setAWRMinerMetricName(String metricName) {
         this.awrMinerMetricName = metricName;
     }
