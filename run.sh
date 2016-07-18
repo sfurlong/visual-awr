@@ -1,7 +1,7 @@
 #!/bin/bash
 APP_HOME=.; export APP_HOME
 #JAVA_HOME=/root/jre1.7.0_67; export JAVA_HOME
-JAVA_OPTS="-Xms64M -Xmx256M"
+JAVA_OPTS="-Xms64M -Xmx512M"
 #JAVA_OPTS=$JAVA_OPTS -DDEBUG 
 export JAVA_OPTS
 
