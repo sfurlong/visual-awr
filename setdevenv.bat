@@ -5,9 +5,9 @@ REM used on Win32 platforms only.
 
 
 set APP_HOME=.
-set JAVA_HOME=D:\oracle\Java\jdk1.7.0_40
+set JAVA_HOME=D:\oracle\jdk1.8.0_71
 set JAVA_OPTS=-Xms64M -Xmx256M
-set ANT_HOME=D:\oracle\Middleware11117\jdeveloper\ant
+set ANT_HOME=D:\DEV\apache-ant-1.9.7
 REM ###########################################
 
 
