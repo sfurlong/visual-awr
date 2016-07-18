@@ -82,9 +82,9 @@ public class ChartFilePanel extends JPanel {
         jScrollPane_osInfo.setMinimumSize(new Dimension(48, 200));
         jScrollPane_osInfo.setPreferredSize(new Dimension(48, 200));
 
-        jLabel1.setBounds(new Rectangle(35, 185, 190, 15));
+        jLabel1.setBounds(new Rectangle(35, 185, 325, 15));
 
-        jLabel1.setText("Platform Details Output:");
+        jLabel1.setText("Platform Details Output(CPU & Memory values are per host):");
         jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));
         jPanel_contentPanel.setBounds(new Rectangle(20, 5, 400, 30));
         jPanel_contentPanel.setMinimumSize(new Dimension(48, 200));
