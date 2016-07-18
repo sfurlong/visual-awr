@@ -29,8 +29,8 @@ public class TestPLSQL {
         Connection c = null;
         try {
             DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
-            c = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.56.21:1521/flavia.mlg.oracle.com", "system",
-                                            "oracle");
+            c = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.56.190:1521/ahuprod.sainath.com", "system",
+                                            "welcome1");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -45,7 +45,7 @@ public class TestPLSQL {
         java.util.Date hireDate = Calendar.getInstance().getTime();
         java.sql.Date hireDateSQL = new java.sql.Date(hireDate.getTime());
 
-        String sqlStmt = AWRCollectionSQL.getOSStatistics(1836093013);
+        String sqlStmt = AWRCollectionSQL.getOSStatistics(1615024996, 1, 1);
         try {
 
             Statement dbStmt = c.createStatement();
