@@ -6,7 +6,7 @@ REM ####  SET THESE TO YOUR WIN32 ENV SETTINGS
 REM ###########################################
 set APP_HOME=.
 REM set JAVA_HOME=D:\oracle\Java\jdk1.7.0_40
-set JAVA_OPTS=-Xms64M -Xmx256M
+set JAVA_OPTS=-Xms64M -Xmx512M
 REM set JAVA_OPTS=%JAVA_OPTS% -DDEBUG
 REM ###########################################
 
