@@ -158,7 +158,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             long endSnapId =
                 Long.parseLong(this.jTextField_endSnapId.getText());
             
-            //Get the AWR Main Metrics
+            //------------------Get the AWR Main Metrics
             this.textArea_awrData.setText("");
             textAreaStatus += "Running AWR Main Metrics Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
@@ -170,7 +170,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             this.textArea_awrData.setText(textAreaStatus);
             AWRData.getInstance().parseDataRecords(awrRecSetData);
 
-            //Query AWR Memory Metrics
+            //------------------Query AWR Memory Metrics
             textAreaStatus += "Running AWR Memory Metrics Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
             DBRecSet awrMemoryRecSetData =
@@ -180,7 +180,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             this.textArea_awrData.setText(textAreaStatus);
             AWRData.getInstance().parseMemoryDataRecords(awrMemoryRecSetData);
 
-            //Query AverageActive Sessions
+            //------------------Query AverageActive Sessions
             textAreaStatus += "Running AWR Avg Active Sessions Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
             DBRecSet avgActiveSessionRecSetData =
@@ -190,7 +190,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             textAreaStatus += "Parsing Average Active Session Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
-            //Query Top Wait Events
+            //------------------Query Top Wait Events
             textAreaStatus += "Running Top Wait Events Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
             DBRecSet topWaitEventsRecSet =
@@ -200,7 +200,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             textAreaStatus += "Parsing Top Wait Events Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
-            //Query Storage Size on Disk
+            //------------------Query Storage Size on Disk
             textAreaStatus += "Running Storage Size On Disk Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
             DBRecSet sizeOnDiskRecSet =
@@ -210,7 +210,18 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             textAreaStatus += "Parsing Storage Size On Disk Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
-            //Set the Text Area to the AWR Metrics
+            //------------------Query OS Statistics
+            textAreaStatus += "Running OS Stats Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+            DBRecSet osStatsRecSet =
+                    sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getOSStatistics(dbId, startSnapId, endSnapId));
+            System.out.println(AWRCollectionSQL.getOSStatistics(dbId, startSnapId, endSnapId));
+            //Update the Status in the Text Area
+            AWRData.getInstance().parsePlatformInfoRecords(osStatsRecSet);
+            textAreaStatus += "Parsing OS Stats Query....\n";
+            this.textArea_awrData.setText(textAreaStatus);
+
+            //------------------Set the Text Area to the AWR Metrics
             String awrDataTextString = AWRData.getInstance().getAWRDataTextString();
             this.textArea_awrData.setText(awrDataTextString);
 
