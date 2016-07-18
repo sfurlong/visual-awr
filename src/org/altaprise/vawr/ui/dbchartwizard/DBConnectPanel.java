@@ -115,6 +115,7 @@ public class DBConnectPanel extends WizardContentBasePanel {
         
         String dbURL = "jdbc:oracle:thin:@"; //@192.168.1.7:1521:orcl"
         String dbDriverName = "oracle.jdbc.driver.OracleDriver";
+        String dbUserId = "";
                
         dbconnect dbConn = dbconnect.getInstance();
 
@@ -125,12 +126,17 @@ public class DBConnectPanel extends WizardContentBasePanel {
         } else {
             dbURL += dbProps.getHostName() + ":" + dbProps.getPort() + "/" + dbProps.getServiceName();
         }
+        if (dbProps.getUserRole() != null && dbProps.getUserRole().trim().length() > 0) {
+            dbUserId = dbProps.getUId() + " as " + dbProps.getUserRole();
+        } else {
+            dbUserId = dbProps.getUId();
+        }
         
         System.out.println(dbURL);
         String dbConnectResult = null;
         try {
             dbConnectResult = dbConn.connectToDB(dbURL,
-                               dbDriverName, dbProps.getUId(),
+                               dbDriverName, dbUserId,
                                dbProps.getPwd());
 
             
