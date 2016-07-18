@@ -120,7 +120,7 @@ public class ChartPanel extends WizardContentBasePanel {
         } else if (AWRData.getInstance().awrMetricExists(awrMetricName)) {
             //SetCursor
             RootFrame.startWaitCursor();
-
+            
             if (awrMetricName.equals("SGA_PGA_TOT")) {
                 //Get the memory Data
                 new AWRMemoryTimeSeriesChart(awrMetricName, this.jTextArea_reportHeader.getText());
@@ -129,7 +129,10 @@ public class ChartPanel extends WizardContentBasePanel {
             } else if (awrMetricName.equals("TOP_N_TIMED_EVENTS")) {
                 new TopWaitEventsBarChart(awrMetricName);
             } else {
+                String chartHeaderHTML = AWRData.getInstance().getChartHeaderHTML();
                 new AWRTimeSeriesChart(awrMetricName, this.jTextArea_reportHeader.getText());
+                //Need to fix the query for OS Stats for Chart header.
+                //new AWRTimeSeriesChart(awrMetricName, chartHeaderHTML);
             }    
             
             //SetCursor
