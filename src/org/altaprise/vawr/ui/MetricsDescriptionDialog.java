@@ -2,7 +2,6 @@
 package org.altaprise.vawr.ui;
 
 import java.awt.Dimension;
-
 import java.awt.Toolkit;
 
 import java.util.ArrayList;
@@ -21,23 +20,36 @@ public class MetricsDescriptionDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         populateMetricDescriptions();
-        this.centerDialog();        
+        this.centerDialog();
     }
 
     private void populateMetricDescriptions() {
         String htmlString = "";
-        
+
         ArrayList<AWRMetric> metricDetails = AWRMetrics.getMetricDetails();
-        htmlString += "<style type=\'text/css\'> td{font-family:Arial; color:blue; font-size:11pt;} th{font-family:Arial; color:black; font-size:12pt;} </style> ";
+        htmlString +=
+            "<style type=\'text/css\'> td{font-family:Arial; color:blue; font-size:11pt;} th{font-family:Arial; color:black; font-size:12pt;} </style> ";
         htmlString += "<center><h1>Explanation of AWR Metrics*</h1></center>\n";
         htmlString += "<table border=\"1\" font size=\"1\">\n";
         htmlString += "<tr>";
-        htmlString += "<th>Oracle AWR Metric ID*</th><th>Oracle AWR Metric Name*</th><th>AWR Metric Unit*</th><th>AWRMiner Metric Name</th><th>ChartTitle</th>";
+        htmlString +=
+            "<th>Oracle AWR Metric ID*</th><th>Oracle AWR Metric Name*</th><th>AWR Metric Unit*</th><th>AWRMiner Metric Name</th><th>VisualAWR Chart Title</th>";
         htmlString += "</tr>";
-        
-        for (int i=0; i<metricDetails.size(); i++) {
-    //            htmlString += "<tr bgcolor=\"#99FF99\">\n";
-            htmlString += "<tr>\n";
+
+        for (int i = 0; i < metricDetails.size(); i++) {
+            if (metricDetails.get(i).getAwrOracleMetricId().equals("2092") ||
+                metricDetails.get(i).getAwrOracleMetricId().equals("2100") ||
+                metricDetails.get(i).getAwrOracleMetricId().equals("2057") ||
+                metricDetails.get(i).getAwrOracleMetricId().equals("2093") ||
+                metricDetails.get(i).getAwrOracleMetricId().equals("2124") ||
+                metricDetails.get(i).getAWROracleMetricName().equals("Top N Timed Events for Snapshot Range") ||
+                metricDetails.get(i).getAWROracleMetricName().equals("Avg Active Session By Wait Type") ||
+                metricDetails.get(i).getAWROracleMetricName().equals("Memory Utilization")) {
+
+                htmlString += "<tr bgcolor=\"#99FF99\">\n";
+            } else {
+                htmlString += "<tr>\n";
+            }
             htmlString += "<td>\n";
             htmlString += metricDetails.get(i).getAwrOracleMetricId();
             htmlString += "</td>\n";
@@ -59,8 +71,9 @@ public class MetricsDescriptionDialog extends javax.swing.JDialog {
         //htmlString += "<style type=\'text/css\'> font-family:Arial; color:black; font-size:11pt; </style> ";
         htmlString += "<br>";
         htmlString += "*These metric attributes are defined in Oracle system view V$METRICNAME<br>";
-        htmlString += "For more info, see http://docs.oracle.com/cd/E16655_01/server.121/e17615/refrn30336.htm#REFRN30336";
-        
+        htmlString +=
+            "For more info, see http://docs.oracle.com/cd/E16655_01/server.121/e17615/refrn30336.htm#REFRN30336";
+
         _metricDescGrid.setContentType("text/html");
         _metricDescGrid.setText(htmlString);
         _metricDescGrid.setCaretPosition(1);
@@ -108,10 +121,10 @@ public class MetricsDescriptionDialog extends javax.swing.JDialog {
         if (frameSize.width > screenSize.width) {
             frameSize.width = screenSize.width;
         }
-        this.setLocation(screenSize.width/2 - frameSize.width/2,
-                          screenSize.height/2 - frameSize.height/2);
+        this.setLocation(screenSize.width / 2 - frameSize.width / 2, screenSize.height / 2 - frameSize.height / 2);
 
     }
+
     /**
      * @param args the command line arguments
      */
