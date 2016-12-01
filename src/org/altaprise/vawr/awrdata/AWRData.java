@@ -347,7 +347,7 @@ public class AWRData {
                 break;
             case "PHYSICAL_MEMORY_GB":
                 ret +=
-                    "<tr><td><b>Physical Memory/host</b></td><td>" + dbRec.getAttribVal("PHYSICAL_MEMORY_GB") +
+                    "<tr><td><b>Physical Memory/host(GB)</b></td><td>" + dbRec.getAttribVal("PHYSICAL_MEMORY_GB") +
                     "</td></tr>";
                 break;
             default:
