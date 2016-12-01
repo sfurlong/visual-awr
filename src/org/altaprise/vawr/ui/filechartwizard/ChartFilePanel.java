@@ -1,4 +1,4 @@
-package org.altaprise.vawr.ui;
+package org.altaprise.vawr.ui.filechartwizard;
 
 import dai.shared.businessObjs.DBRecSet;
 
@@ -26,6 +26,7 @@ import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
 import org.altaprise.vawr.charts.TopWaitEventsBarChart;
+import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 public class ChartFilePanel extends JPanel {
