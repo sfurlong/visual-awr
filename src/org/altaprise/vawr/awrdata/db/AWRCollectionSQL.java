@@ -590,7 +590,7 @@ public class AWRCollectionSQL {
         return sqlString;
     }
     
-    public static String getOSStatistics(long dbId) {
+    public static String getOSStatistics(long dbId, long startSnapId, long endSnapId) {
         
         String sqlString = 
             " DECLARE \n" +
@@ -609,7 +609,7 @@ public class AWRCollectionSQL {
             "               select min(instance_number) inst_num \n" +
             "                 from dba_hist_snapshot \n" +
             "                 where dbid = " + dbId + " \n" +
-            "                       and snap_id BETWEEN to_number(&SNAP_ID_MIN) and to_number(&SNAP_ID_MAX)) \n" +
+            "                       and snap_id BETWEEN to_number(" + startSnapId + ") and to_number(" + endSnapId + ")) \n" +
             "       SELECT  \n" +
             "                       CASE WHEN stat_name = 'PHYSICAL_MEMORY_BYTES' THEN 'PHYSICAL_MEMORY_GB' ELSE stat_name END stat_name, \n" +
             "                       CASE WHEN stat_name IN ('PHYSICAL_MEMORY_BYTES') THEN round(VALUE/1024/1024/1024,2) ELSE VALUE END stat_value \n" +
@@ -664,7 +664,7 @@ public class AWRCollectionSQL {
             "                            FROM dba_hist_database_instance i,dba_hist_snapshot s \n" +
             "                               WHERE i.dbid = s.dbid \n" +
             "                                 and i.dbid = " + dbId + " \n" +
-            "                                 AND s.snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX) \n" +
+            "                                 AND s.snap_id BETWEEN " + startSnapId + " AND " + endSnapId + ") \n" +
             "     loop \n" +
             "         dbms_output.put_line(rpad('INSTANCES',l_pad_length)||' '||c3.instances); \n" +
             "     end loop; --c3            \n" +
@@ -675,12 +675,10 @@ public class AWRCollectionSQL {
             "                               WHERE i.dbid = s.dbid \n" +
             "                                 and i.dbid = " + dbId + " \n" +
             "                   and s.startup_time = i.startup_time \n" +
-            "                                 AND s.snap_id BETWEEN &SNAP_ID_MIN AND &SNAP_ID_MAX \n" +
+            "                                 AND s.snap_id BETWEEN " + startSnapId + " AND " + endSnapId + " \n" +
             "                           order by 1) \n" +
             "     loop \n" +
-            "               if '&CAPTURE_HOST_NAMES' = 'YES' then \n" +
-            "                       l_hosts := l_hosts || c4.host_name ||',';        \n" +
-            "               end if; \n" +
+            "           l_hosts := l_hosts || c4.host_name ||',';        \n" +
             "       end loop; --c4 \n" +
             "       l_hosts := rtrim(l_hosts,','); \n" +
             "       dbms_output.put_line(rpad('HOSTS',l_pad_length)||' '||l_hosts); \n" +
@@ -692,7 +690,6 @@ public class AWRCollectionSQL {
                     "  \n" +
                     "  \n" +
                     "  \n" +
-            "       dbms_output.put_line(rpad('AWR_MINER_VER',l_pad_length)||' &AWR_MINER_VER'); \n" +
             "       dbms_output.put_line('~~END-OS-INFORMATION~~'); \n" +
             " END; \n";
         
@@ -733,7 +730,6 @@ public class AWRCollectionSQL {
     
     /*
     -- ##############################################################################################
-
 
     REPHEADER PAGE LEFT '~~BEGIN-MEMORY-SGA-ADVICE~~'
     REPFOOTER PAGE LEFT '~~END-MEMORY-SGA-ADVICE~~'
