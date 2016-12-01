@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
 import org.altaprise.vawr.ui.dbchartwizard.DBWizardRootPanel;
+import org.altaprise.vawr.ui.filechartwizard.ChartFilePanel;
 import org.altaprise.vawr.ui.oswchartwizard.OSWWizardRootPanel;
 import org.altaprise.vawr.ui.storagechartwizard.StorageWizardRootPanel;
 
