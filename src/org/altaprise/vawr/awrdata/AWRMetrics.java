@@ -80,7 +80,10 @@ public class AWRMetrics {
     
     private void init() {
         //Metric Name, Metric Desc, Chart Raange Desc, Chart Title, Is Chartable
-        _awrMetrics.put("OS_CPU", new AWRMetric("OS_CPU", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057"));
+        AWRMetric tempAWRMetric;
+        tempAWRMetric = new AWRMetric("OS_CPU", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "Average");
+        tempAWRMetric.setAWRMetricDescription("Average Host CPU Utilization %.  Average of \"Host CPU Utilization (%)\" metrics over each interval.");
+        _awrMetrics.put("OS_CPU", tempAWRMetric);
         _awrMetrics.put("OS_CPU_MAX", new AWRMetric("OS_CPU_MAX", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "MAX"));
         _awrMetrics.put("OS_CPU_SD", new AWRMetric("OS_CPU_SD", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "SD"));
         _awrMetrics.put("DB_WAIT_RATIO", new AWRMetric("DB_WAIT_RATIO", "Database Wait Time Ratio", "% Wait/DB_Time", "2107"));
