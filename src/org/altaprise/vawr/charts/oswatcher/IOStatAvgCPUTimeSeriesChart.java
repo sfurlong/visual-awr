@@ -1,4 +1,4 @@
-package org.altaprise.vawr.charts;
+package org.altaprise.vawr.charts.oswatcher;
 
 import dai.shared.businessObjs.DBRec;
 

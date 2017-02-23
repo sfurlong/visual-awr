@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.awt.event.ActionEvent;
 
 
+import java.io.File;
+
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -22,7 +24,9 @@ import javax.swing.border.EtchedBorder;
 import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.file.ReadAWRMinerFile;
+import org.altaprise.vawr.charts.AWRIOPSTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
+import org.altaprise.vawr.charts.AWRMetricSummaryChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
 import org.altaprise.vawr.charts.TopWaitEventsBarChart;
@@ -44,6 +48,7 @@ public class ChartFilePanel extends JPanel {
     private ReadAWRMinerFile _awrParser = null;
     private JLabel jLabel1 = new JLabel("Platform Details:");
     private JSeparator jSeparator1 = new JSeparator();
+    private JButton jButton_export = new JButton();
 
     /**The default constructor for form
      */
@@ -87,8 +92,16 @@ public class ChartFilePanel extends JPanel {
 
         jLabel1.setText("Platform Details Output(CPU & Memory values are per host):");
         jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));
+        jButton_export.setText("Export Metric");
+        jButton_export.setBounds(new Rectangle(445, 110, 90, 20));
+        jButton_export.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jButton_export_actionPerformed(e);
+            }
+        });
         jPanel_contentPanel.setBounds(new Rectangle(20, 5, 400, 30));
         jPanel_contentPanel.setMinimumSize(new Dimension(48, 200));
+        jPanel_contentPanel.add(jButton_export, null);
         jPanel_contentPanel.add(jSeparator1, null);
         jPanel_contentPanel.add(jLabel1, null);
         jPanel_contentPanel.add(jComboBox_metricName, null);
@@ -170,13 +183,17 @@ public class ChartFilePanel extends JPanel {
             this.jTextArea_osInfo.setText(AWRData.getInstance().getPlatformInfoHTML());
             this.jTextArea_osInfo.setCaretPosition(0);
 
-            if (AWRData.getInstance().awrMetricExists(metricName)) {
+            if (AWRData.getInstance().awrMetricExists(metricName)|| metricName.equals("SUMMARY")) {
                 if (metricName.equals("SGA_PGA_TOT")) {
                     new AWRMemoryTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("AVG_ACTIVE_SESS_WAITS")) {
                     new AvgActiveSessionChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("TOP_N_TIMED_EVENTS")) {
-                        new TopWaitEventsBarChart(metricName);
+                    new TopWaitEventsBarChart(metricName);
+                } else if (metricName.equals("WRITE_IOPS") || metricName.equals("READ_IOPS")) {
+                    new AWRIOPSTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
+                } else if (metricName.equals("SUMMARY")) {
+                    new AWRMetricSummaryChart(metricName);
                 } else {
                     new AWRTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 }
@@ -209,4 +226,49 @@ public class ChartFilePanel extends JPanel {
             jComboBox_metricName.addItem(metricNames.get(i));
         }
     }
+
+    private void jButton_export_actionPerformed(ActionEvent e) {
+        //SetCursor
+        RootFrame.startWaitCursor();
+        
+        try {
+            //Do an Export
+            if (AWRData.getInstance().getAWRDataRecordCount() > 0) {
+                //Get the file name to export
+                String fileName = getExportFileName();
+                
+                //Export it.
+                if (fileName != null && fileName.length() > 0) {
+                    AWRData.getInstance().exportAWRData(fileName);
+                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "File Saved.  " + fileName, "Status",
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
+                                              "No AWR records found. Do Query First", "Error",
+                                              JOptionPane.ERROR_MESSAGE);
+            }        
+        } catch (Exception ex) {
+            daiBeans.daiDetailInfoDialog dialog =
+                new daiBeans.daiDetailInfoDialog(RootFrame.getFrameRef(), "Error", true,
+                                                 ex.getLocalizedMessage());
+            ex.printStackTrace();
+        } finally {
+            //SetCursor
+            RootFrame.stopWaitCursor();
+        }
+    }
+    
+    private String getExportFileName() {
+        String fileName = "";
+        JFileChooser FC = new JFileChooser(System.getProperty("user.dir"));
+        int ret = FC.showSaveDialog(RootFrame.getFrameRef());
+
+        if (ret == FC.APPROVE_OPTION) {
+            File f = FC.getSelectedFile();
+            fileName = f.getAbsolutePath();
+        }
+        return fileName;
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.altaprise.vawr.charts;
+package org.altaprise.vawr.charts.oswatcher;
 
 import dai.shared.businessObjs.DBRec;
 import dai.shared.businessObjs.DBRecSet;
@@ -22,6 +22,7 @@ import org.altaprise.vawr.awrdata.AWRRecord;
 
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.OSWMetrics;
+import org.altaprise.vawr.charts.RootChartFrame;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 import org.jfree.chart.ChartPanel;

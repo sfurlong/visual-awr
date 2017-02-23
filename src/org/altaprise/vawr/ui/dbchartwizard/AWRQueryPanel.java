@@ -206,7 +206,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             DBRecSet sizeOnDiskRecSet =
                     sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getSizeOnDiskSQL(dbId, startSnapId, endSnapId));
             //Update the Status in the Text Area
-            //AWRData.getInstance().parseTopWaitEventsRecords(sizeOnDiskRecSet);
+            AWRData.getInstance().parseSizeOnDiskRecords(sizeOnDiskRecSet);
             textAreaStatus += "Parsing Storage Size On Disk Query....\n";
             this.textArea_awrData.setText(textAreaStatus);
 
@@ -215,7 +215,7 @@ public class AWRQueryPanel extends WizardContentBasePanel {
             this.textArea_awrData.setText(textAreaStatus);
             DBRecSet osStatsRecSet =
                     sqlResolver.executeDynamicSQL(dbconnect.getInstance(), AWRCollectionSQL.getOSStatistics(dbId, startSnapId, endSnapId));
-            System.out.println(AWRCollectionSQL.getOSStatistics(dbId, startSnapId, endSnapId));
+            //System.out.println(AWRCollectionSQL.getOSStatistics(dbId, startSnapId, endSnapId));
             //Update the Status in the Text Area
             AWRData.getInstance().parsePlatformInfoRecords(osStatsRecSet);
             textAreaStatus += "Parsing OS Stats Query....\n";

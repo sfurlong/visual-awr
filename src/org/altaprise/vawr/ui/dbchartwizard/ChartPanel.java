@@ -26,9 +26,11 @@ import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
+import org.altaprise.vawr.charts.SizeOnDiskChart;
 import org.altaprise.vawr.charts.TopWaitEventsBarChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
+import org.altaprise.vawr.utils.SessionMetaData;
 
 public class ChartPanel extends WizardContentBasePanel {
     JComboBox jComboBox_metrics = new JComboBox();
@@ -108,6 +110,10 @@ public class ChartPanel extends WizardContentBasePanel {
         String oracleMetricName = (String) jComboBox_metrics.getSelectedItem();
         //Convert to AWRMiner metric name
         String awrMetricName = AWRMetrics.getAWRMinerMetricName(oracleMetricName);
+        
+        if (SessionMetaData.getInstance().debugOn()) {
+            AWRData.getInstance().dumpData();
+        }
 
         if (AWRData.getInstance().getAWRDataRecordCount() <= 0) {
             JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "No AWR Data Found.", "Error",
@@ -128,6 +134,8 @@ public class ChartPanel extends WizardContentBasePanel {
                 new AvgActiveSessionChart(awrMetricName, this.jTextArea_reportHeader.getText());
             } else if (awrMetricName.equals("TOP_N_TIMED_EVENTS")) {
                 new TopWaitEventsBarChart(awrMetricName);
+            } else if (awrMetricName.equals("SIZE_GB")) {
+                new SizeOnDiskChart(awrMetricName, this.jTextArea_reportHeader.getText());
             } else {
                 String chartHeaderHTML = AWRData.getInstance().getChartHeaderHTML();
                 new AWRTimeSeriesChart(awrMetricName, this.jTextArea_reportHeader.getText());
