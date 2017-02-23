@@ -30,7 +30,7 @@ import javax.swing.border.EtchedBorder;
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.file.ReadCellSrvStatFile;
 import org.altaprise.vawr.awrdata.file.ReadTopStatFile;
-import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.TopStatTimeSeriesChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 import org.altaprise.vawr.utils.SessionMetaData;
@@ -42,9 +42,9 @@ import java.awt.Font;
 import java.util.Calendar;
 
 import org.altaprise.vawr.awrdata.file.ReadIOStatFile;
-import org.altaprise.vawr.charts.CellSrvStatChart;
-import org.altaprise.vawr.charts.IOStatTimeSeriesChart;
-import org.altaprise.vawr.charts.VMStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.CellSrvStatChart;
+import org.altaprise.vawr.charts.oswatcher.IOStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.VMStatTimeSeriesChart;
 
 public class OSWSelectChartPanel extends WizardContentBasePanel {
     private JButton jButton_chartMetric = new JButton("Chart Dataset");

@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.OSWMetrics;
-import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.TopStatTimeSeriesChart;
 
 
 public class ReadCellSrvStatFile {

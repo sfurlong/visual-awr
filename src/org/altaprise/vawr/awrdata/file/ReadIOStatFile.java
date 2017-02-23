@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.OSWRecord;
-import org.altaprise.vawr.charts.IOStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.IOStatTimeSeriesChart;
 
 
 public class ReadIOStatFile {

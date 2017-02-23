@@ -41,7 +41,7 @@ import org.altaprise.vawr.awrdata.OSWData;
 import org.altaprise.vawr.awrdata.file.ReadCellSrvStatFile;
 import org.altaprise.vawr.awrdata.file.ReadIOStatFile;
 import org.altaprise.vawr.awrdata.file.ReadTopStatFile;
-import org.altaprise.vawr.charts.TopStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.TopStatTimeSeriesChart;
 import org.altaprise.vawr.ui.RootFrame;
 import org.altaprise.vawr.ui.common.WizardContentBasePanel;
 import org.altaprise.vawr.utils.SessionMetaData;

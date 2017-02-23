@@ -65,7 +65,7 @@ import org.jfree.ui.RectangleInsets;
 
 import sun.awt.image.BufferedImageGraphicsConfig;
 
-abstract class RootChartFrame extends JFrame implements Printable {
+abstract public class RootChartFrame extends JFrame implements Printable {
 
     private JMenuBar menubarFrame = new JMenuBar();
     private JMenu menuFile = new JMenu();
@@ -87,17 +87,8 @@ abstract class RootChartFrame extends JFrame implements Printable {
 
         //Setup the Header Text Panel
         THE_ROOT_CONTENT_PANEL.setLayout(new BoxLayout(THE_ROOT_CONTENT_PANEL, BoxLayout.Y_AXIS));
-        _headerTextPane.setContentType("text/html");
-        _headerTextPane.setEditable(false);
 
-        int numHeaderLines = countLines(chartHeaderText);
-        System.out.println("num header lines: " + numHeaderLines);
-
-        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
-        _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
-        THE_HEADER_TEXT_PANEL.add(_headerTextPane);
-        THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
-
+        this.setChartHeaderText(chartHeaderText);
 
         menuFile.setText("File");
         itemFilePrint.setText("Print");
@@ -122,7 +113,7 @@ abstract class RootChartFrame extends JFrame implements Printable {
         menubarFrame.add(menuFile);
 
     }
-
+    
     public abstract JPanel getChartPanel();
 
     private static final long serialVersionUID = 1L;
@@ -132,6 +123,19 @@ abstract class RootChartFrame extends JFrame implements Printable {
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
     }
 
+
+    protected void setChartHeaderText(String chartHeaderText) {
+        _headerTextPane.setContentType("text/html");
+        _headerTextPane.setEditable(false);
+
+        int numHeaderLines = countLines(chartHeaderText);
+        System.out.println("num header lines: " + numHeaderLines);
+
+        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
+        _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
+        THE_HEADER_TEXT_PANEL.add(_headerTextPane);
+        THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
+    }
 
     /**
      * Creates a panel for the demo (used by SuperDemo.java).
@@ -242,8 +246,8 @@ abstract class RootChartFrame extends JFrame implements Printable {
         return chart;
 
     }
-
-    private static int countLines(String str) {
+    
+    protected static int countLines(String str) {
         int ret = 0;
         if (str != null) {
             String[] lines = str.split("\r\n|\r|\n|/tr");

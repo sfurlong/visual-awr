@@ -26,6 +26,7 @@ public class ReadAWRMinerFile {
         try {
             _fileReader = new BufferedReader(new FileReader(fileName));
             readMachineInfo();
+            readDbSizeOnDiskData();
             readMainMetrics();
             readAverageActiveSessions();
             readIOWaitMetrics();
@@ -455,6 +456,78 @@ public class ReadAWRMinerFile {
         }
     }
 
+/*
+    ~~BEGIN-SIZE-ON-DISK~~
+
+       SNAP_ID    SIZE_GB
+    ---------- ----------
+         81459    1190.36
+
+    ~~END-SIZE-ON-DISK~~
+*/
+    private void readDbSizeOnDiskData() throws Exception {
+        String rec = "";
+        DBRecSet dbSizeRecSet = new DBRecSet();
+
+        try {
+            //Priming read
+            rec = _fileReader.readLine();
+            int recCount = 0;
+            boolean mainMetricsFound = false;
+
+            while (rec != null && !mainMetricsFound) {
+                if (rec.equals("~~BEGIN-SIZE-ON-DISK~~")) {
+                    mainMetricsFound = true;
+                    rec = _fileReader.readLine();
+                } else
+                    //Read the next record
+                    rec = _fileReader.readLine();
+            }
+            boolean endDbSizeMetricsFound = false;
+            while (rec != null && mainMetricsFound && !endDbSizeMetricsFound) {
+                rec = rec.trim();
+
+                //Skip comment lines.
+                if (rec.length() > 0) {
+                    recCount++;
+                    //System.out.println(rec);
+
+
+                    if (recCount == 1) {
+                        //Skip the headers
+                        //Do Nothing
+
+
+
+                    } else if (recCount == 2) {
+                        //Skip the row in the file that contains the dashes.
+                        //Do nothing
+
+
+
+                    } else {
+                        if (rec.equals("~~END-SIZE-ON-DISK~~")) {
+                            endDbSizeMetricsFound = true;
+                        } else {
+                            //Parse the data rows
+                            DBRec dbSizeDBRec = this.createDbSizeDataDBRec(rec);
+                            dbSizeRecSet.addRec(dbSizeDBRec);
+                        }
+                    }
+                }
+                //Read the next record
+                rec = _fileReader.readLine();
+            }
+
+            AWRData.getInstance().parseSizeOnDiskRecords(dbSizeRecSet);
+
+        } catch (Exception e) {
+            System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     /*
     SELECT snap_id, " +
             " instance_number, " +
@@ -501,6 +574,42 @@ public class ReadAWRMinerFile {
             }
         }
         return memDBRec;
+    }
+
+/*
+ * 
+ * ~~BEGIN-SIZE-ON-DISK~~
+
+   SNAP_ID    SIZE_GB
+---------- ----------
+     81459    1190.36
+ * */
+    private DBRec createDbSizeDataDBRec(String rec) {
+
+        int tokCnt = 0;
+        DBRec sizeDBRec = new DBRec();
+
+        if (rec.length() > 0) {
+
+            StringTokenizer st = new StringTokenizer(rec);
+            while (st.hasMoreTokens()) {
+                String tok = st.nextToken();
+                tokCnt++;
+                DBAttributes dbAttribs = null;
+                switch (tokCnt) {
+                case 1:
+                    tokCnt = 1;
+                    dbAttribs = new DBAttributes("SNAP_ID", tok);
+                    break;
+                case 2:
+                    tokCnt = 2;
+                    dbAttribs = new DBAttributes("SIZE_GB", tok);
+                    break;
+                }
+                sizeDBRec.addAttrib(dbAttribs);
+            }
+        }
+        return sizeDBRec;
     }
 
     /*

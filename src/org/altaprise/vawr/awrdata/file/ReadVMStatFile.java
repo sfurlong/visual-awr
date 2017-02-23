@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.altaprise.vawr.awrdata.OSWData;
-import org.altaprise.vawr.charts.VMStatTimeSeriesChart;
+import org.altaprise.vawr.charts.oswatcher.VMStatTimeSeriesChart;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 
