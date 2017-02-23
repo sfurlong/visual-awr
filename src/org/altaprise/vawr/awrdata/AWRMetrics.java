@@ -83,6 +83,7 @@ public class AWRMetrics {
         AWRMetric tempAWRMetric;
         tempAWRMetric = new AWRMetric("OS_CPU", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "Average");
         tempAWRMetric.setAWRMetricDescription("Average Host CPU Utilization %.  Average of \"Host CPU Utilization (%)\" metrics over each interval.");
+        _awrMetrics.put("SUMMARY", new AWRMetric("SUMMARY", "Summary Report for Snapshot Range", "", ""));
         _awrMetrics.put("OS_CPU", tempAWRMetric);
         _awrMetrics.put("OS_CPU_MAX", new AWRMetric("OS_CPU_MAX", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "MAX"));
         _awrMetrics.put("OS_CPU_SD", new AWRMetric("OS_CPU_SD", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "SD"));
@@ -132,6 +133,7 @@ public class AWRMetrics {
         _awrMetrics.put("SGA_PGA_TOT", new AWRMetric("SGA_PGA_TOT", "Memory Utilization", "GB", ""));
         _awrMetrics.put("AVG_ACTIVE_SESS_WAITS", new AWRMetric("AVG_ACTIVE_SESS_WAITS", "Avg Active Session By Wait Type", "", ""));
         _awrMetrics.put("TOP_N_TIMED_EVENTS", new AWRMetric("TOP_N_TIMED_EVENTS", "Top N Timed Events for Snapshot Range", "", ""));
+        _awrMetrics.put("SIZE_GB", new AWRMetric("SIZE_GB", "DB Size On Disk for Snapshot Range", "", ""));
         
         //Create the a map of AWRMiner Names to Oracle AWR Names
         for (Object key : _awrMetrics.keySet()) {

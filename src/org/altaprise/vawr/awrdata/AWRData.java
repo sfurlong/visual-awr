@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,10 +25,11 @@ public class AWRData {
 
     private List _headerTokens = new ArrayList();
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
-    private LinkedHashMap<String, AWRRecord> _storageSizeOnDiskRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
+    private LinkedHashMap<String, AWRRecord> _sizeOnDiskRecords = new LinkedHashMap<String, AWRRecord>();
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
-    private DBRecSet _platformInfo = null; ;
+    private HashMap<String, DBRec> _platformInfo = new HashMap<String, DBRec>();
+    private int _numRACInstances = 0;
 
     private static AWRData _theInstance = null;
 
@@ -46,7 +48,6 @@ public class AWRData {
         _dataRecords.clear();
         _activeSessionRecords.clear();
         _topWaitEventsMap.clear();
-        _storageSizeOnDiskRecords.clear();
     }
 
 
@@ -90,15 +91,14 @@ public class AWRData {
             System.out.print(awrRec.getCummDBWaitTimePct());
             System.out.println();
         }
-        System.out.println("Storage Size On Disk metrics");
-        for (Map.Entry<String, AWRRecord> entry : _storageSizeOnDiskRecords.entrySet()) {
+        System.out.println("Size On Disk Data");
+        for (Map.Entry<String, AWRRecord> entry : _sizeOnDiskRecords.entrySet()) {
             AWRRecord awrRec = entry.getValue();
             for (int j = 0; j < awrRec.getSize(); j++) {
-                String headerName = getHeaderName(j);
-                String val = awrRec.getVal(headerName);
-                System.out.print(val + ", ");
+                String snapId = awrRec.getSnapId();
+                String val = awrRec.getVal("SIZE_GB");
+                System.out.println("snapId/val: " + snapId + "/" + val);
             }
-            System.out.println();
         }
     }
 
@@ -203,15 +203,11 @@ public class AWRData {
             DBRec dbRec = recSet.getRec(i);
             String snapId = dbRec.getAttribVal("SNAP_ID");
             String sizeOnDisk = dbRec.getAttribVal("SIZE_GB");
-            AWRRecord awrRec = this._dataRecords.get(snapId + "-1");
-            String dateS = awrRec.getVal("END");
-            String timeS = awrRec.getVal("TIME");
+            //AWRRecord awrRec = this._dataRecords.get(snapId + "-1");
             AWRRecord storageRec = new AWRRecord();
             storageRec.putVal("SNAP_ID", snapId);
-            storageRec.putVal("END", dateS);
-            storageRec.putVal("TIME", timeS);
             storageRec.putVal("SIZE_GB", sizeOnDisk);
-            _storageSizeOnDiskRecords.put(snapId, storageRec);
+            _sizeOnDiskRecords.put(snapId, storageRec);
         }
     }
 
@@ -283,18 +279,28 @@ public class AWRData {
     }
 
     public void parsePlatformInfoRecords(DBRecSet recSet) {
-        _platformInfo = recSet;
+        
+        for (int i = 0; recSet != null && i < recSet.getSize(); i++) {
+            DBRec dbRec = recSet.getRec(i);
+            String name = dbRec.getAttrib(0).getName();
+
+            _platformInfo.put(name, dbRec);
+        }
     }
 
     public DBRecSet getPlatformInfoRecs() {
-        return _platformInfo;
+        DBRecSet ret = new DBRecSet();
+        Iterator it = this._platformInfo.entrySet().iterator();
+        while (it.hasNext()) {
+            ret.addRec((DBRec)it.next());
+        }
+        return ret;
     }
 
     public String getPlatformInfoHTML() {
-
         String ret = "<table>\n";
-        for (int i = 0; _platformInfo != null && i < _platformInfo.getSize(); i++) {
-            DBRec dbRec = _platformInfo.getRec(i);
+        for (Map.Entry<String, DBRec> entry : this._platformInfo.entrySet()) {
+            DBRec dbRec = entry.getValue();
             ret += "<tr>\n";
             ret += "<td>\n";
             ret += dbRec.getAttrib(0).getName();
@@ -303,10 +309,8 @@ public class AWRData {
             ret += dbRec.getAttrib(0).getValue();
             ret += "</td>\n";
             ret += "</tr>\n";
-        }
-        ret += "</table>\n";
-
-        return ret;
+       }
+       ret += "</table>\n";        return ret;
     }
 
     public String getChartHeaderHTML() {
@@ -320,10 +324,10 @@ public class AWRData {
         ret += Calendar.getInstance().getTime().toString();
         ret += "</td>";
         ret += "</tr>";
-        for (int i = 0; _platformInfo != null && i < _platformInfo.getSize(); i++) {
-            DBRec dbRec = _platformInfo.getRec(i);
+
+        for (Map.Entry<String, DBRec> entry : this._platformInfo.entrySet()) {
+            DBRec dbRec = entry.getValue();
             String name = dbRec.getAttrib(0).getName();
-            String val = dbRec.getAttrib(0).getValue();
 
             switch (name) {
             case "DB_NAME":
@@ -405,6 +409,10 @@ public class AWRData {
         return new ArrayList<AWRRecord>(_activeSessionRecords.values());
     }
 
+    public ArrayList<AWRRecord> getSizeOnDiskRecordArray() {
+        return new ArrayList<AWRRecord>(_sizeOnDiskRecords.values());
+    }
+
     public ArrayList<TopWaitEventsRecord> getTopWaitEventsRecordArray() {
         return new ArrayList<TopWaitEventsRecord>(this._topWaitEventsMap.values());
     }
@@ -467,16 +475,29 @@ public class AWRData {
     }
 
     public int getNumRACInstances() {
-        int numRacInst = 0;
-        for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
-            AWRRecord awrRec = entry.getValue();
-            if (awrRec.getInst() > numRacInst) {
-                numRacInst = awrRec.getInst();
+        if (this._numRACInstances == 0) {
+            int numRacInst = 0;
+            for (Map.Entry<String, AWRRecord> entry : _dataRecords.entrySet()) {
+                AWRRecord awrRec = entry.getValue();
+                if (awrRec.getInst() > numRacInst) {
+                    numRacInst = awrRec.getInst();
+                }
             }
+            this._numRACInstances = numRacInst;
         }
-        return numRacInst;
+        return this._numRACInstances;
     }
 
+    public double getMetricSumForSnapshotId(String snapId, String awrMetricName) {
+        double metricSum = 0;
+        for (int i=1; i<=this._numRACInstances; i++) {
+            AWRRecord awrRec = this.getAWRRecordByKey(snapId, Integer.toString(i));   
+            String metricValS = awrRec.getVal(awrMetricName);
+            metricSum = metricSum + Double.parseDouble(metricValS);
+        }
+        return metricSum;
+    }
+    
     public void exportAWRData(String outFileName) throws Exception {
         Writer writer = null;
 
@@ -528,6 +549,13 @@ public class AWRData {
                 }
             }
         }
+    }
 
+    public String getPlatformInfoAttribute(String infoName) {
+        String ret = "";
+        DBRec dbRec = this._platformInfo.get(infoName);
+        if (dbRec != null) ret = dbRec.getAttrib(0).getValue();
+        
+        return ret;
     }
 }
