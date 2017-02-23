@@ -17,7 +17,7 @@ public class RootFrame extends JFrame {
     private JMenuItem itemHelpAWR = new JMenuItem();
     private JMenuItem itemHelpOSW = new JMenuItem();
     private JMenuItem itemHelpAbout = new JMenuItem();
-    private static String VAWR_VERSION="v02g";
+    private static String VAWR_VERSION="v02h";
     private String aboutMessage =
         "Visual AWR" + "\n" + "Stephen Furlong 2014" + "\n" + "Version " + VAWR_VERSION +"\n" +
         "For latest news and versions: http://visualawr.blogspot.com";

@@ -1,4 +1,4 @@
-package org.altaprise.vawr.charts;
+package org.altaprise.vawr.charts.oswatcher;
 
 import dai.shared.businessObjs.DBRec;
 import java.awt.BorderLayout;
@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.swing.JPanel;
 
 import org.altaprise.vawr.awrdata.OSWData;
+import org.altaprise.vawr.charts.RootChartFrame;
 import org.altaprise.vawr.utils.SessionMetaData;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

@@ -248,14 +248,14 @@
             <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser -DDEBUG"/>
             <value n="name" v="Debug"/>
             <url n="runDirectoryURL" path="."/>
-            <value n="targetURL"/>
+            <url n="targetURL" path="src/org/altaprise/vawr/ui/RootFrame.java"/>
          </hash>
          <hash n="Default">
             <value n="custom" v="false"/>
             <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser"/>
             <value n="name" v="Default"/>
             <url n="runDirectoryURL" path="."/>
-            <value n="targetURL"/>
+            <url n="targetURL" path="src/org/altaprise/vawr/ui/RootFrame.java"/>
          </hash>
       </hash>
       <list n="runConfigurationList">
