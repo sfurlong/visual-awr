@@ -84,13 +84,14 @@ public class AWRMetricSummaryChart extends RootChartFrame {
     }
 
     protected void setChartHeaderText(String chartHeaderText) {
+        int SIZE_OF_HEADER_TEXT = 300;
         _headerTextPane.setContentType("text/html");
         _headerTextPane.setEditable(false);
 
         int numHeaderLines = countLines(chartHeaderText);
         System.out.println("num header lines: " + numHeaderLines);
 
-        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * (numHeaderLines+50)));
+        _headerTextPane.setPreferredSize(new java.awt.Dimension(800, (30 * (numHeaderLines))+SIZE_OF_HEADER_TEXT));
         _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
         THE_HEADER_TEXT_PANEL.add(_headerTextPane);
         THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
