@@ -75,6 +75,9 @@
         <include name="vawr-utils.jar"/>
         <include name="*.gif"/>
       </fileset>
+      <fileset dir="${build.root.dir}/docs">
+        <include name="awr_miner.sql"/>
+      </fileset>
     </copy>
 
     <!-- Obfiscate --> 
@@ -111,15 +114,15 @@
       </fileset>
     </copy>
 
-    <zip destfile="${build.root.dir}/dist/visual-awr-${visual-awr.version.num}.zip"
-         basedir="${build.root.dir}/dist/" excludes="jdk/**, *.zip"/>
+    <zip destfile="./dist/visual-awr-${visual-awr.version.num}.zip"
+         basedir="./dist/" excludes="jdk/**, *.zip"/>
 
   </target>
   
   <!-- TARGET OBFUSCATE -->
   <target name="obfuscate" description="Obfuscate the code">
   <taskdef resource="proguard/ant/task.properties"
-           classpath="${build.root.dir}/lib/proguard.jar" />
+           classpath="./lib/proguard.jar" />
   
   
   <proguard>
