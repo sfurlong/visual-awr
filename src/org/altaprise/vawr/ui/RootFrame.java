@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
+import org.altaprise.vawr.utils.PropertyFile;
+
 public class RootFrame extends JFrame {
     private GridLayout gridLayout = new GridLayout();
     private JMenuBar menubarFrame = new JMenuBar();
