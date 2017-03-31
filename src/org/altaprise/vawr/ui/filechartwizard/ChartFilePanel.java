@@ -29,8 +29,10 @@ import org.altaprise.vawr.charts.AWRMemoryTimeSeriesChart;
 import org.altaprise.vawr.charts.AWRMetricSummaryChart;
 import org.altaprise.vawr.charts.AWRTimeSeriesChart;
 import org.altaprise.vawr.charts.AvgActiveSessionChart;
+import org.altaprise.vawr.charts.SizeOnDiskChart;
 import org.altaprise.vawr.charts.TopWaitEventsBarChart;
 import org.altaprise.vawr.ui.RootFrame;
+import org.altaprise.vawr.utils.PropertyFile;
 import org.altaprise.vawr.utils.SessionMetaData;
 
 public class ChartFilePanel extends JPanel {
@@ -92,8 +94,8 @@ public class ChartFilePanel extends JPanel {
 
         jLabel1.setText("Platform Details Output(CPU & Memory values are per host):");
         jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));
-        jButton_export.setText("Export Metric");
-        jButton_export.setBounds(new Rectangle(445, 110, 90, 20));
+        jButton_export.setText("Export Metrics");
+        jButton_export.setBounds(new Rectangle(445, 110, 130, 20));
         jButton_export.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 jButton_export_actionPerformed(e);
@@ -139,8 +141,9 @@ public class ChartFilePanel extends JPanel {
     }
 
     private void jButton_selectFile_actionPerformed(ActionEvent e) {
-
+        String lastPath = PropertyFile.getInstance().getLastFilePath();
         String appHome = System.getProperty("user.dir");
+        if (lastPath != null && lastPath.trim().length() > 0) appHome = lastPath;
         JFileChooser chooser = new JFileChooser(appHome);
         //FileNameExtensionFilter filter = new FileNameExtensionFilter(
         //    "JPG & GIF Images", "jpg", "gif");
@@ -149,8 +152,11 @@ public class ChartFilePanel extends JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             String fileName = chooser.getSelectedFile().getName();
             String filePath = chooser.getSelectedFile().getPath();
-            System.out.println("You chose to open this file: " + filePath);
             this.jTextField_fileName.setText(filePath);
+            String justPath = chooser.getCurrentDirectory().getPath();
+            System.out.println("You chose to open this file: " + filePath + "/"+justPath);
+            PropertyFile.getInstance().setLastFilePath(justPath);
+            PropertyFile.getInstance().serializeIt();
         }
 
     }
@@ -194,6 +200,8 @@ public class ChartFilePanel extends JPanel {
                     new AWRIOPSTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("SUMMARY")) {
                     new AWRMetricSummaryChart(metricName);
+                } else if (metricName.equals("SIZE_GB")) {
+                    new SizeOnDiskChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else {
                     new AWRTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 }
