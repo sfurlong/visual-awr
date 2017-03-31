@@ -27,7 +27,6 @@ import org.jfree.data.time.TimeSeriesCollection;
 public class AWRIOPSTimeSeriesChart extends RootChartFrame {
 
     private BorderLayout borderLayout = new BorderLayout();
-    private static int _totalNumRacInstances = 0;
 
     public AWRIOPSTimeSeriesChart() {
 
@@ -39,10 +38,11 @@ public class AWRIOPSTimeSeriesChart extends RootChartFrame {
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
 
+        int totalNumRacInstances = 0;
 
-        _totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
+        totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
 
-        for (int i = 0; i < _totalNumRacInstances; i++) {
+        for (int i = 0; i < totalNumRacInstances; i++) {
 
             int racInstNum = i + 1;
 
@@ -56,7 +56,7 @@ public class AWRIOPSTimeSeriesChart extends RootChartFrame {
 
             THE_ROOT_CONTENT_PANEL.add(chartPanel);
         }
-        TimeSeriesCollection xyDataset = createTotIOPSDataset(metricName);
+        TimeSeriesCollection xyDataset = AWRTimeSeriesChart.createMetricSumDataset(metricName);
 
         JFreeChart chart = createChart(xyDataset, metricName, 0, metricName + " - Sum All Nodes", "");
         XYPlot plot = (XYPlot) chart.getPlot();
@@ -67,7 +67,7 @@ public class AWRIOPSTimeSeriesChart extends RootChartFrame {
         THE_ROOT_CONTENT_PANEL.add(chartPanel);
 
         //Size of Y should be 200 (for header) + 260 * numCharts)
-        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*(_totalNumRacInstances+1))));
+        THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*(totalNumRacInstances+1))));
         add(THE_SCROLL_PANE, BorderLayout.CENTER);
 
         this.setVisible(true);
@@ -135,80 +135,6 @@ public class AWRIOPSTimeSeriesChart extends RootChartFrame {
         xyDataset.addSeries(mav);
 
         return xyDataset;
-    }
-
-
-    public static TimeSeriesCollection createTotIOPSDataset(String awrMetric) {
-
-        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
-        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
-        //we will use s2 for the sum of each node per snapshot
-        TimeSeries s2 = new TimeSeries(metricLabel);
-
-        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
-        Iterator iter = snapshotIds.iterator();
-        while (iter.hasNext()) {
-            String snapshotId = (String) iter.next();
-            String metricValS = "0.0";
-            Date snapshotDate = null;
-
-            try {
-
-                snapshotDate = AWRIOPSTimeSeriesChart.getMissingSnapshotDate(snapshotId);
-                if (snapshotDate == null) {
-                    throw new Exception("Could not find the snapshot date to plot.");
-                }
-                double metricValSum = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, awrMetric);
-
-                if (SessionMetaData.getInstance().debugOn()) {
-                    System.out.println("TRACE: Adding date/SnapId/val: " + snapshotDate.toString() + "/" +
-                                       snapshotId + "/" + "/" + metricValSum );
-                }
-
-
-
-                s2.add(new Minute(snapshotDate), metricValSum);
-
-            } catch (org.jfree.data.general.SeriesException se) {
-                System.out.println("Error plotting SnapShot: " + snapshotId + ", " +
-                                   snapshotDate.toString());
-                System.out.println(se.getLocalizedMessage());
-                if (SessionMetaData.getInstance().debugOn()) {
-                    //se.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + 
-                                   snapshotDate.toString());
-                e.printStackTrace();
-            }
-        }
-
-        xyDataset.addSeries(s2);
-
-        final TimeSeries mav =
-            MovingAverage.createMovingAverage(s2, "Moving Average", s2.getItemCount(), s2.getItemCount());
-
-        xyDataset.addSeries(mav);
-
-        return xyDataset;
-    }
-
-    
-    private static Date getMissingSnapshotDate(String snapId) {
-        boolean found = false;
-        int idx = 0;
-        Date snapDate = null;
-        while (!found && idx <= _totalNumRacInstances) {
-            idx++;
-            String instNumS = Integer.toString(idx);
-            AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapId, instNumS);
-            if (awrRec != null) {
-                snapDate = awrRec.getSnapShotDateTime();
-                found = true;
-            }
-        }
-        return snapDate;
     }
 
 }
