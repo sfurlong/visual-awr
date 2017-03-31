@@ -85,7 +85,7 @@ public class AWRTimeSeriesChart extends RootChartFrame {
                     snapshotDate = awrRec.getSnapShotDateTime();
                 } else {
                     //How do we get the snapshot Id?
-                    snapshotDate = this.getMissingSnapshotDate(snapshotId);
+                    snapshotDate = getMissingSnapshotDate(snapshotId);
                     if (snapshotDate == null) {
                         throw new Exception("Could not find the snapshot date to plot.");
                     }
@@ -124,21 +124,117 @@ public class AWRTimeSeriesChart extends RootChartFrame {
         return xyDataset;
     }
 
+    public static TimeSeriesCollection createMetricMaxDataset(String awrMetric) {
 
-    private Date getMissingSnapshotDate(String snapId) {
-        boolean found = false;
-        int idx = 0;
-        Date snapDate = null;
-        while (!found && idx <= _totalNumRacInstances) {
-            idx++;
-            String instNumS = Integer.toString(idx);
-            AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapId, instNumS);
-            if (awrRec != null) {
-                snapDate = awrRec.getSnapShotDateTime();
-                found = true;
+        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
+        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
+        //we will use s2 for the sum of each node per snapshot
+        TimeSeries s2 = new TimeSeries(metricLabel);
+
+        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
+        Iterator iter = snapshotIds.iterator();
+        while (iter.hasNext()) {
+            String snapshotId = (String) iter.next();
+            Date snapshotDate = null;
+
+            try {
+
+                snapshotDate = AWRIOPSTimeSeriesChart.getMissingSnapshotDate(snapshotId);
+                if (snapshotDate == null) {
+                    throw new Exception("Could not find the snapshot date to plot.");
+                }
+                double metricValSum = AWRData.getInstance().getMetricMaxForSnapshotId(snapshotId, awrMetric);
+
+                if (SessionMetaData.getInstance().debugOn()) {
+                    System.out.println("TRACE: Adding date/SnapId/val: " + snapshotDate.toString() + "/" +
+                                       snapshotId + "/" + "/" + metricValSum );
+                }
+
+                s2.add(new Minute(snapshotDate), metricValSum);
+
+            } catch (org.jfree.data.general.SeriesException se) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", " +
+                                   snapshotDate.toString());
+                System.out.println(se.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    //se.printStackTrace();
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + 
+                                   snapshotDate.toString());
+                e.printStackTrace();
             }
         }
-        return snapDate;
+
+        xyDataset.addSeries(s2);
+
+        if (s2.getItemCount() > 0) {
+            final TimeSeries mav =
+                MovingAverage.createMovingAverage(s2, "Moving Average", s2.getItemCount(), s2.getItemCount());
+
+            xyDataset.addSeries(mav);
+        }
+        
+        return xyDataset;
+    }
+
+    public static TimeSeriesCollection createMetricSumDataset(String awrMetric) {
+
+        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
+        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
+        //we will use s2 for the sum of each node per snapshot
+        TimeSeries s2 = new TimeSeries(metricLabel);
+
+        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
+        Iterator iter = snapshotIds.iterator();
+        while (iter.hasNext()) {
+            String snapshotId = (String) iter.next();
+            String metricValS = "0.0";
+            Date snapshotDate = null;
+
+            try {
+
+                snapshotDate = AWRIOPSTimeSeriesChart.getMissingSnapshotDate(snapshotId);
+                if (snapshotDate == null) {
+                    throw new Exception("Could not find the snapshot date to plot.");
+                }
+                double metricValSum = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, awrMetric);
+
+                if (SessionMetaData.getInstance().debugOn()) {
+                    System.out.println("TRACE: Adding date/SnapId/val: " + snapshotDate.toString() + "/" +
+                                       snapshotId + "/" + "/" + metricValSum );
+                }
+
+
+
+                s2.add(new Minute(snapshotDate), metricValSum);
+
+            } catch (org.jfree.data.general.SeriesException se) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", " +
+                                   snapshotDate.toString());
+                System.out.println(se.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    //se.printStackTrace();
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + 
+                                   snapshotDate.toString());
+                e.printStackTrace();
+            }
+        }
+
+        xyDataset.addSeries(s2);
+
+        if (s2.getItemCount() > 0) {
+            final TimeSeries mav =
+                MovingAverage.createMovingAverage(s2, "Moving Average", s2.getItemCount(), s2.getItemCount());
+
+            xyDataset.addSeries(mav);
+        }
+
+        return xyDataset;
     }
 
 }
