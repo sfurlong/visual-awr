@@ -97,6 +97,10 @@ public class SizeOnDiskChart extends RootChartFrame {
      * @return The dataset.
      */
     protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
+        return createSizeOnDiskDataset();
+    }
+
+    public static TimeSeriesCollection createSizeOnDiskDataset() {
 
         TimeSeriesCollection xyDataset = new TimeSeriesCollection();
 
@@ -109,14 +113,14 @@ public class SizeOnDiskChart extends RootChartFrame {
 
         for (int i = 0; i < sizeOnDiskRecs.size(); i++) {
             try {
-//                ArrayList<AvgActiveSessRecord> avgActiveSessRec = sizeOnDiskRecs.get(i).getSnapId()eSessData();
                 snapId = sizeOnDiskRecs.get(i).getVal("SNAP_ID");
+                sizeOnDiskValS = sizeOnDiskRecs.get(i).getVal("SIZE_GB");
                 
-                //Get the snapshot datetime
-                Date snapShotDate = AWRData.getInstance().getAWRRecordByKey(snapId, racInst).getSnapShotDateTime();
+                //Get the snapshot datetime.  RAC Instance is hardcoded to "1"
+                Date snapShotDate = AWRData.getInstance().getAWRRecordByKey(snapId, "1").getSnapShotDateTime();
 
                 if (sizeOnDiskRecs.size() > 0) {
-                    s1.add(new Minute(snapShotDate), Double.parseDouble(sizeOnDiskRecs.get(0).getVal("SIZE_GB")));
+                    s1.add(new Minute(snapShotDate), Double.parseDouble(sizeOnDiskValS));
                 } else {
                     System.out.println("No Size-On-Disk Data in file for SnapId: " + snapId);
                 }
