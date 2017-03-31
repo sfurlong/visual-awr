@@ -48,6 +48,9 @@ public class AWRData {
         _dataRecords.clear();
         _activeSessionRecords.clear();
         _topWaitEventsMap.clear();
+        _sizeOnDiskRecords.clear();
+        _platformInfo.clear();
+        _numRACInstances = 0;
     }
 
 
@@ -264,17 +267,20 @@ public class AWRData {
             String sga = dbRec.getAttribVal("SGA");
             String pga = dbRec.getAttribVal("PGA");
             String memTot = dbRec.getAttribVal("SGA_PGA_TOT");
-
+            
             AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
-            //Only add the headers for the first record
-            if (i == 0) {
-                this.addHeaderName("SGA");
-                this.addHeaderName("PGA");
-                this.addHeaderName("SGA_PGA_TOT");
+            //Check for Null.  Some files don't have all the snapshot IDs for memory records.
+            if (awrRec != null) {
+                //Only add the headers for the first record
+                if (i == 0) {
+                    this.addHeaderName("SGA");
+                    this.addHeaderName("PGA");
+                    this.addHeaderName("SGA_PGA_TOT");
+                }
+                awrRec.putVal("SGA", sga);
+                awrRec.putVal("PGA", pga);
+                awrRec.putVal("SGA_PGA_TOT", memTot);
             }
-            awrRec.putVal("SGA", sga);
-            awrRec.putVal("PGA", pga);
-            awrRec.putVal("SGA_PGA_TOT", memTot);
         }
     }
 
@@ -468,6 +474,8 @@ public class AWRData {
             ret = true;
         } else if (metric.equals("TOP_N_TIMED_EVENTS") && this._topWaitEventsMap.size() > 0) {
             ret = true;
+        } else if (metric.equals("SIZE_GB") && this._sizeOnDiskRecords.size() > 0) {
+            ret = true;
         } else if (_headerTokens.contains(metric.toUpperCase())) {
             ret = true;
         }
@@ -490,12 +498,35 @@ public class AWRData {
 
     public double getMetricSumForSnapshotId(String snapId, String awrMetricName) {
         double metricSum = 0;
+        String metricValS = "";
         for (int i=1; i<=this._numRACInstances; i++) {
             AWRRecord awrRec = this.getAWRRecordByKey(snapId, Integer.toString(i));   
-            String metricValS = awrRec.getVal(awrMetricName);
-            metricSum = metricSum + Double.parseDouble(metricValS);
+            if (awrRec != null) {
+                metricValS = awrRec.getVal(awrMetricName);
+                if (metricValS != null && metricValS.trim().length() > 0) {
+                    metricSum = metricSum + Double.parseDouble(metricValS);
+                }
+            }
         }
         return metricSum;
+    }
+
+    public double getMetricMaxForSnapshotId(String snapId, String awrMetricName) {
+        double metricMax = 0;
+        String metricValS = "";
+        for (int i=1; i<=this._numRACInstances; i++) {
+            AWRRecord awrRec = this.getAWRRecordByKey(snapId, Integer.toString(i));
+            if (awrRec != null) {
+                metricValS = awrRec.getVal(awrMetricName);
+                if (metricValS != null && metricValS.trim().length() > 0) {
+                    double metricVal = Double.parseDouble(metricValS);
+                    if (metricVal > metricMax) {
+                        metricMax = metricVal;
+                    }
+                }
+            }
+        }
+        return metricMax;
     }
     
     public void exportAWRData(String outFileName) throws Exception {
