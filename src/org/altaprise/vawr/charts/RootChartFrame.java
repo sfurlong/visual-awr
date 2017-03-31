@@ -29,6 +29,8 @@ import java.io.OutputStream;
 
 import java.text.SimpleDateFormat;
 
+import java.util.Date;
+
 import javax.imageio.ImageIO;
 
 import javax.swing.BoxLayout;
@@ -45,9 +47,11 @@ import javax.swing.JTextPane;
 
 import javax.swing.border.Border;
 
+import org.altaprise.vawr.awrdata.AWRData;
 import org.altaprise.vawr.awrdata.AWRMetrics;
 
 
+import org.altaprise.vawr.awrdata.AWRRecord;
 import org.altaprise.vawr.ui.RootFrame;
 
 import org.jfree.chart.ChartFactory;
@@ -125,6 +129,7 @@ abstract public class RootChartFrame extends JFrame implements Printable {
 
 
     protected void setChartHeaderText(String chartHeaderText) {
+        String headerText = "";
         _headerTextPane.setContentType("text/html");
         _headerTextPane.setEditable(false);
 
@@ -132,7 +137,11 @@ abstract public class RootChartFrame extends JFrame implements Printable {
         System.out.println("num header lines: " + numHeaderLines);
 
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
-        _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
+        headerText += "<style type=\'text/css\'>";
+        headerText += "<body style=\"font-family:Helvetica, Helvetica, Arial, sans-serif;\">";
+        headerText += "<center>" + chartHeaderText + "</center>";
+        headerText += "</body>";
+        _headerTextPane.setText(headerText);
         THE_HEADER_TEXT_PANEL.add(_headerTextPane);
         THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
     }
@@ -307,4 +316,19 @@ abstract public class RootChartFrame extends JFrame implements Printable {
         }
     }
 
+    protected static Date getMissingSnapshotDate(String snapId) {
+        boolean found = false;
+        int idx = 0;
+        Date snapDate = null;
+        while (!found && idx <= AWRData.getInstance().getNumRACInstances()) {
+            idx++;
+            String instNumS = Integer.toString(idx);
+            AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapId, instNumS);
+            if (awrRec != null) {
+                snapDate = awrRec.getSnapShotDateTime();
+                found = true;
+            }
+        }
+        return snapDate;
+    }
 }
