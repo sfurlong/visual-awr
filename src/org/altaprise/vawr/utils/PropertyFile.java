@@ -106,6 +106,14 @@ public class PropertyFile implements Serializable {
         _theInstance._propertyData.dump();
     }
 
+    public void setLastFilePath(String path) {
+        _theInstance._propertyData.lastFilePath = path;
+    }
+    
+    public String getLastFilePath() {
+        return _theInstance._propertyData.lastFilePath;
+    }
+    
     public static void main(String[] args) {
         PropertyFile propertyFile = PropertyFile.getInstance();
         DBConnectionProps dbConnProps = new DBConnectionProps();
@@ -121,7 +129,9 @@ public class PropertyFile implements Serializable {
     }
 
     private class PropertyData implements Serializable {
-
+        
+        private String lastFilePath = "";
+        
         private HashMap dbConnectInfo = new HashMap();
 
         public void dump() {
