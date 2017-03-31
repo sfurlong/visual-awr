@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import java.util.Date;
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
@@ -114,4 +117,53 @@ public class AWRMemoryTimeSeriesChart extends RootChartFrame {
 
         return xyDataset;
     }
+
+    /**
+     * Creates a dataset, consisting of two series of monthly data.
+     *
+     * @return The dataset.
+     */
+    protected static TimeSeriesCollection createTotMemDataset() {
+
+        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
+        TimeSeries s1 = new TimeSeries("SGA");
+        TimeSeries s2 = new TimeSeries("PGA");
+        TimeSeries s3 = new TimeSeries("SGA+PGA");
+
+        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
+        Iterator iter = snapshotIds.iterator();
+        while (iter.hasNext()) {
+            String snapshotId = (String) iter.next();
+            String metricValS = "0.0";
+            Date snapshotDate = null;
+
+            double sgaVal = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "SGA");
+            double pgaVal = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "PGA");
+            double sga_pga_totVal = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "SGA_PGA_TOT");
+
+            try {
+
+                snapshotDate = getMissingSnapshotDate(snapshotId);
+                if (snapshotDate == null) {
+                    throw new Exception("Could not find the snapshot date to plot.");
+                }
+                    s1.add(new Minute(snapshotDate), sgaVal);
+                    s2.add(new Minute(snapshotDate), pgaVal);
+                    s3.add(new Minute(snapshotDate), sga_pga_totVal);
+            } catch (Exception e) {
+                System.out.println("Error at snapid/inst/sgaValS: " + snapshotId);
+                System.out.println(e.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        xyDataset.addSeries(s1);
+        xyDataset.addSeries(s2);
+        xyDataset.addSeries(s3);
+
+        return xyDataset;
+    }
+
 }
