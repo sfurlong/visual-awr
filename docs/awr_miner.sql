@@ -19,7 +19,7 @@ column cnt_dbid_1 new_value CNT_DBID noprint
 
 define NUM_DAYS = 30
 define SQL_TOP_N = 100
-define AWR_MINER_VER = 4.0.10
+define AWR_MINER_VER = 4.0.11
 define CAPTURE_HOST_NAMES = 'YES'
 
 alter session set cursor_sharing = exact;
@@ -174,18 +174,42 @@ end;
 
 select :T_WAITED_MICRO_COL_1 from dual;
 
-column DB_BLOCK_SIZE_1 new_value DB_BLOCK_SIZE noprint
-with inst as (
-select min(instance_number) inst_num
-  from dba_hist_snapshot
-  where dbid = &DBID
-	)
-SELECT VALUE DB_BLOCK_SIZE_1
-	FROM DBA_HIST_PARAMETER
-	WHERE dbid = &DBID
-	and PARAMETER_NAME = 'db_block_size'
-	AND snap_id = (SELECT MAX(snap_id) FROM dba_hist_osstat WHERE dbid = &DBID AND instance_number = (select inst_num from inst))
-   AND instance_number = (select inst_num from inst);
+define DB_BLOCK_SIZE = 0
+column :DB_BLOCK_SIZE_1 new_value DB_BLOCK_SIZE noprint
+variable DB_BLOCK_SIZE_1 number
+
+
+
+set feedback off
+begin
+
+	:DB_BLOCK_SIZE_1 := 0;
+
+	for c1 in (
+		with inst as (
+		select min(instance_number) inst_num
+		  from dba_hist_snapshot
+		  where dbid = &DBID
+			)
+		SELECT VALUE the_block_size
+			FROM DBA_HIST_PARAMETER
+			WHERE dbid = &DBID
+			and PARAMETER_NAME = 'db_block_size'
+			AND snap_id = (SELECT MAX(snap_id) FROM dba_hist_osstat WHERE dbid = &DBID AND instance_number = (select inst_num from inst))
+		   AND instance_number = (select inst_num from inst))
+	loop
+		:DB_BLOCK_SIZE_1 := c1.the_block_size;
+	end loop; --c1
+	
+	if :DB_BLOCK_SIZE_1 = 0 then
+		:DB_BLOCK_SIZE_1 := 8192;
+	end if;
+
+
+end;
+/
+
+select :DB_BLOCK_SIZE_1 from dual;
 
 column snap_min1 new_value SNAP_ID_MIN noprint
 SELECT min(snap_id) - 1 snap_min1
