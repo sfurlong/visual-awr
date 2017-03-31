@@ -47,9 +47,19 @@ public class AWRMetricSummaryChart extends RootChartFrame {
 
         setChartHeaderText(getChartHeaderHTML());
 
-        //Add tot READ IOPS Chart        
-        TimeSeriesCollection xyDataset = AWRIOPSTimeSeriesChart.createTotIOPSDataset("READ_IOPS");
-        JFreeChart chart = createChart(xyDataset, metricName, 0, metricName + " - Sum All Nodes", "");
+
+        //Add Average Max CPU Chart        
+        TimeSeriesCollection cpuDataset = AWRTimeSeriesChart.createMetricMaxDataset("OS_CPU");
+        JFreeChart cpuChart = createChart(cpuDataset, metricName, 0, "Average CPU - Max For All Nodes", "");
+        XYPlot cpuPlot = (XYPlot) cpuChart.getPlot();
+        cpuPlot.getRenderer(0).setSeriesPaint(0, Color.YELLOW);
+        ChartPanel cpuChartPanel = (ChartPanel) createChartPanel(cpuChart);
+        THE_ROOT_CONTENT_PANEL.add(cpuChartPanel);
+        this._totalNumCharts++;
+
+        //Add tot Read IOPS Chart        
+        TimeSeriesCollection xyDataset = AWRTimeSeriesChart.createMetricSumDataset("READ_IOPS");
+        JFreeChart chart = createChart(xyDataset, metricName, 0, "Total Read IOPS - Sum All Nodes", "");
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.getRenderer(0).setSeriesPaint(0, Color.YELLOW);
         ChartPanel chartPanel = (ChartPanel) createChartPanel(chart);
@@ -57,14 +67,28 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         this._totalNumCharts++;
 
         //Add tot Write IOPS Chart        
-        TimeSeriesCollection wIOPSDataset = AWRIOPSTimeSeriesChart.createTotIOPSDataset("WRITE_IOPS");
-        JFreeChart wIOPSChart = createChart(wIOPSDataset, metricName, 0, metricName + " - Sum All Nodes", "");
+        TimeSeriesCollection wIOPSDataset = AWRTimeSeriesChart.createMetricSumDataset("WRITE_IOPS");
+        JFreeChart wIOPSChart = createChart(wIOPSDataset, metricName, 0, "Total Write IOPS - Sum All Nodes", "");
         XYPlot wIOPSPlot = (XYPlot) wIOPSChart.getPlot();
         wIOPSPlot.getRenderer(0).setSeriesPaint(0, Color.YELLOW);
         ChartPanel wIOPSChartPanel = (ChartPanel) createChartPanel(wIOPSChart);
         THE_ROOT_CONTENT_PANEL.add(wIOPSChartPanel);
         this._totalNumCharts++;
         
+        //Add tot Memory Chart        
+        TimeSeriesCollection memDataset = AWRMemoryTimeSeriesChart.createTotMemDataset();
+        JFreeChart memChart = createChart(memDataset, metricName, 0, "Total DB Memory Consumption - Sum All Nodes", "");
+        ChartPanel memChartPanel = (ChartPanel) createChartPanel(memChart);
+        THE_ROOT_CONTENT_PANEL.add(memChartPanel);
+        this._totalNumCharts++;
+
+        //Add Size On Disk        
+        TimeSeriesCollection sizeOnDiskDataset = SizeOnDiskChart.createSizeOnDiskDataset();
+        JFreeChart sizeOnDiskChart = createChart(sizeOnDiskDataset, metricName, 0, "Database Size On Disk (GB)", "");
+        ChartPanel sizeOnDiskChartPanel = (ChartPanel) createChartPanel(sizeOnDiskChart);
+        THE_ROOT_CONTENT_PANEL.add(sizeOnDiskChartPanel);
+        this._totalNumCharts++;
+
         //Size of Y should be 250 (for header) + 260 * numCharts)
         THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*(_totalNumCharts+1))));
         this.add(THE_SCROLL_PANE, BorderLayout.CENTER);
@@ -85,6 +109,7 @@ public class AWRMetricSummaryChart extends RootChartFrame {
 
     protected void setChartHeaderText(String chartHeaderText) {
         int SIZE_OF_HEADER_TEXT = 300;
+        String headerText = "";
         _headerTextPane.setContentType("text/html");
         _headerTextPane.setEditable(false);
 
@@ -92,17 +117,22 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         System.out.println("num header lines: " + numHeaderLines);
 
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, (30 * (numHeaderLines))+SIZE_OF_HEADER_TEXT));
-        _headerTextPane.setText("<style type=\\'text/css\\'><center>" + chartHeaderText + "</center>");
+        
+        headerText += "<style type=\'text/css\'>";
+        headerText += "<body style=\"font-family:Helvetica, Helvetica, Arial, sans-serif;\">";
+        headerText += "<center>" + chartHeaderText + "</center>";
+        headerText += "</body>";
+        _headerTextPane.setText(headerText);
         THE_HEADER_TEXT_PANEL.add(_headerTextPane);
         THE_ROOT_CONTENT_PANEL.add(_headerTextPane);
     }
     
     public String getChartHeaderHTML() {
+        String ret = "";
+        AWRData awrData = AWRData.getInstance();
 
-         AWRData awrData = AWRData.getInstance();
-
-        String ret = "<center><h1> AWR Summary Report</h></center>";  //AWRMetrics.getInstance().getMetricChartTitle(metricName)
-            ret += "<table border=\"1\" font size=\"1\">";
+        ret += "<center><h1> AWR Summary Report</h1></center>";
+        ret += "<table border=\"1\">";
         ret += "<tr>";
         ret += "<td>";
         ret += "<b>Chart Date</b>";
@@ -111,27 +141,27 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         ret += Calendar.getInstance().getTime().toString();
         ret += "</td>";
         ret += "</tr>";
-        ret += "<tr><td><b>Name</b></td><td>" + awrData.getPlatformInfoAttribute("DB_NAME") + "</td></tr>";
-        ret += "<tr><td><b>Nodes</b></td><td>" + awrData.getPlatformInfoAttribute("INSTANCES") + "</td></tr>";
+        ret += "<tr><td><b>DB Name</b></td><td>" + awrData.getPlatformInfoAttribute("DB_NAME") + "</td></tr>";
+        ret += "<tr><td><b>Nodes (Num RAC instances)</b></td><td>" + awrData.getPlatformInfoAttribute("INSTANCES") + "</td></tr>";
         ret +=
-            "<tr><td><b>Sockets</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPU_SOCKETS") + "</td></tr>";
-        ret += "<tr><td><b>Cores</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPU_CORES") + "</td></tr>";
-        ret += "<tr><td><b>Threads</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPUS") + "</td></tr>";
+            "<tr><td><b>Sockets (CPU sockets per host)</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPU_SOCKETS") + "</td></tr>";
+        ret += "<tr><td><b>Cores (Cores per host)</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPU_CORES") + "</td></tr>";
+        ret += "<tr><td><b>Threads (tot threads per host)</b></td><td>" + awrData.getPlatformInfoAttribute("NUM_CPUS") + "</td></tr>";
         ret +=
             "<tr><td><b>Physical Memory/host(GB)</b></td><td>" + awrData.getPlatformInfoAttribute("PHYSICAL_MEMORY_GB") +
             "</td></tr>";
 
-        ret += "<tr><td><b>CPU</b></td><td>" + this.getCPU() + "</td></tr>";
-        ret += "<tr><td><b>R_IOPS</b></td><td>" + _maxRIOPS + "</td></tr>";
-        ret += "<tr><td><b>W_IOPS</b></td><td>" + _maxWIOPS + "</td></tr>";
-        ret += "<tr><td><b>SGA</b></td><td>" + _maxSGA + "</td></tr>";
-        ret += "<tr><td><b>PGA</b></td><td>" + _maxPGA + "</td></tr>";
-        ret += "<tr><td><b>Mem Used</b></td><td>" + (_maxSGA + _maxPGA) + "</td></tr>";
-        ret += "<tr><td><b>Size GB</b></td><td>" + getMaxSizeOnDisk() + "</td></tr>";
+        ret += "<tr><td><b>CPU (The max of the avg CPU% accross all hosts)</b></td><td>" + this.getCPU() + "</td></tr>";
+        ret += "<tr><td><b>R_IOPS (The max of the avg read iops accross all hosts)</b></td><td>" + _maxRIOPS + "</td></tr>";
+        ret += "<tr><td><b>W_IOPS (The max of the avg write iops accross all hosts)</b></td><td>" + _maxWIOPS + "</td></tr>";
+        ret += "<tr><td><b>SGA (tot sga size in GB accross all hosts)</b></td><td>" + _maxSGA + "</td></tr>";
+        ret += "<tr><td><b>PGA (tot pga size in GB accross all hosts)</b></td><td>" + _maxPGA + "</td></tr>";
+        ret += "<tr><td><b>Mem Used (tot physical mem used accross all hosts)</b></td><td>" + (_maxSGA + _maxPGA) + "</td></tr>";
+        ret += "<tr><td><b>Size GB (tot DB size on disk)</b></td><td>" + getMaxSizeOnDisk() + "</td></tr>";
         ret += "<tr><td><b>Hosts</b></td><td>" + awrData.getPlatformInfoAttribute("HOSTS") + "</td></tr>";
 
 
-        ret += "</table>";
+        ret += "</table></body>";
 
         return ret;
     }
