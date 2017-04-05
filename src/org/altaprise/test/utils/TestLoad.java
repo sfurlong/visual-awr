@@ -21,6 +21,8 @@ import oracle.jdbc.OracleTypes;
 import org.altaprise.vawr.awrdata.db.AWRCollectionSQL;
 
 public class TestLoad {
+    
+    static String _pwd = "";
 
     public TestLoad() {
     }
@@ -29,8 +31,7 @@ public class TestLoad {
         Connection c = null;
         try {
             DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
-            c = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.56.21:1521/flavia.mlg.oracle.com", "system",
-                                            "oracle");
+            c = DriverManager.getConnection("jdbc:oracle:thin:@//192.168.1.250:1521/orapdb", "system", _pwd);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -44,11 +45,8 @@ public class TestLoad {
 
         java.util.Date hireDate = Calendar.getInstance().getTime();
         java.sql.Date hireDateSQL = new java.sql.Date(hireDate.getTime());
-        String sqlStmt = " insert into SCOTT.EMP (empno, ename, job, mgr, " +
-            //" hiredate, " +
-            " sal, comm, DEPTNO) values " + " ( " + empNo + ", 'Emp Name', 'Tech', 2, " +
-            //"'" + hireDateSQL + "' , " +
-            " 1000, 100, 10)";
+        String sqlStmt = " insert into hr.EMPLOYEES (employee_id, first_name, last_name, job_id, manager_id, Department_id, email, hire_date)" +
+            " values " + " ( " + empNo + ", 'FEmp Name', 'LEmp Name', 'IT_PROG', 100, 90, '" + empNo + "', SYSDATE)";
         try {
 
             Statement dbStmt = c.createStatement();
@@ -70,7 +68,7 @@ public class TestLoad {
 
     public static void doDelete(int empNo) {
         Connection c = getConnection();
-        String sqlStmt = " delete from SCOTT.EMP where empno = " + empNo;
+        String sqlStmt = " delete from hr.EMPLOYEES where employee_id = " + empNo;
         try {
 
             Statement dbStmt = c.createStatement();
@@ -90,7 +88,7 @@ public class TestLoad {
 
     public static void doQuery() {
         Connection c = getConnection();
-        String sqlStmt = " select count(*) from SCOTT.EMP ";;
+        String sqlStmt = " select count(*) from hr.EMPLOYEES ";
         int numRecs = 0;
         try {
 
@@ -168,6 +166,8 @@ public class TestLoad {
     }
 
     public static void main(String[] args) throws Exception {
+        
+        _pwd = args[0];
 
         Thread insertThread = new Thread(new InsertLoop());
         insertThread.start();
