@@ -257,10 +257,19 @@
             <url n="runDirectoryURL" path="."/>
             <url n="targetURL" path="src/org/altaprise/vawr/ui/RootFrame.java"/>
          </hash>
+         <hash n="TestLoad">
+            <value n="custom" v="false"/>
+            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser"/>
+            <value n="name" v="TestLoad"/>
+            <value n="programArguments" v="skitaos1"/>
+            <url n="runDirectoryURL" path="."/>
+            <url n="targetURL" path="src/org/altaprise/test/utils/TestLoad.java"/>
+         </hash>
       </hash>
       <list n="runConfigurationList">
          <string v="Debug"/>
          <string v="Default"/>
+         <string v="TestLoad"/>
       </list>
    </hash>
    <hash n="oracle.jdevimpl.config.JProjectLibraries">
