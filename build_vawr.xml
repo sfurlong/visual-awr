@@ -99,6 +99,7 @@
       <fileset dir="${build.root.dir}/testing">
         <include name="**/AWRMiner/**/*EDWPRD*.out"/>
         <include name="**/AWRMiner/**/*XXXX*.out"/>
+        <include name="**/AWRMiner/**/*awr-hist-3486853636*.out"/>
       </fileset>
       <fileset dir="${build.root.dir}/testing">
         <include name="**/IOStat-Linux/**/*.dat"/>
