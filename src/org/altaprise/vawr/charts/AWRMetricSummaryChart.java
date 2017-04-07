@@ -119,7 +119,7 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, (30 * (numHeaderLines))+SIZE_OF_HEADER_TEXT));
         
         headerText += "<style type=\'text/css\'>";
-        headerText += "<body style=\"font-family:Helvetica, Helvetica, Arial, sans-serif;\">";
+        headerText += "<body style=\"font: 10px Helvetica, sans-serif;\">";
         headerText += "<center>" + chartHeaderText + "</center>";
         headerText += "</body>";
         _headerTextPane.setText(headerText);
