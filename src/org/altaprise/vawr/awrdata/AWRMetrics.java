@@ -89,7 +89,7 @@ public class AWRMetrics {
  //       _awrMetrics.put("OS_CPU_SD", new AWRMetric("OS_CPU_SD", "Host CPU Utilization (%)", "% Busy/(Idle+Busy)", "2057", "SD"));
         _awrMetrics.put("DB_WAIT_RATIO", new AWRMetric("DB_WAIT_RATIO", "Database Wait Time Ratio", "% Wait/DB_Time", "2107"));
         _awrMetrics.put("DB_CPU_RATIO", new AWRMetric("DB_CPU_RATIO", "Database CPU Time Ratio", "% Cpu/DB_Time", "2108"));
- //       _awrMetrics.put("CPU_PER_S", new AWRMetric("CPU_PER_S", "CPU Usage Per Sec", "CentiSeconds Per Second", "2075"));
+        _awrMetrics.put("CPU_PER_S", new AWRMetric("CPU_PER_S", "DB CPU Usage Per Sec", "CentiSeconds Per Second", "2075"));
         _awrMetrics.put("H_CPU_PER_S", new AWRMetric("H_CPU_PER_S", "Host CPU Usage Per Sec", "CentiSeconds Per Second", "2155"));
         _awrMetrics.put("AAS", new AWRMetric("AAS", "Average Active Sessions", "Active Sessions", "2147"));
  //       _awrMetrics.put("AAS_SD", new AWRMetric("AAS_SD", "Average Active Sessions", "Active Sessions",  "2147", "SD"));
