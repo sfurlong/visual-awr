@@ -64,65 +64,6 @@ public class AWRTimeSeriesChart extends RootChartFrame {
         return THE_ROOT_CONTENT_PANEL;    
     }
     
-    protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
-
-        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
-        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
-        TimeSeries s1 = new TimeSeries(metricLabel);
-
-        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
-        Iterator iter = snapshotIds.iterator();
-        while (iter.hasNext()) {
-            String snapshotId = (String) iter.next();
-            String metricValS = "0.0";
-            Date snapshotDate = null;
-
-            try {
-                AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapshotId, racInst);
-
-                if (awrRec != null) {
-                    metricValS = awrRec.getVal(awrMetric.toUpperCase());
-                    snapshotDate = awrRec.getSnapShotDateTime();
-                } else {
-                    //How do we get the snapshot Id?
-                    snapshotDate = getMissingSnapshotDate(snapshotId);
-                    if (snapshotDate == null) {
-                        throw new Exception("Could not find the snapshot date to plot.");
-                    }
-                }
-
-                if (SessionMetaData.getInstance().debugOn()) {
-                    System.out.println("TRACE: Adding date/SnapId/InstId/val: " + snapshotDate.toString() + "/" +
-                                       snapshotId + "/" + racInst + "/" + metricValS + "/" + awrRec);
-                }
-
-                double metricValD = Double.parseDouble(metricValS);
-                s1.add(new Minute(snapshotDate), metricValD);
-
-            } catch (org.jfree.data.general.SeriesException se) {
-                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
-                                   snapshotDate.toString());
-                System.out.println(se.getLocalizedMessage());
-                if (SessionMetaData.getInstance().debugOn()) {
-                    //se.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
-                                   snapshotDate.toString());
-                e.printStackTrace();
-            }
-        }
-
-        xyDataset.addSeries(s1);
-
-        final TimeSeries mav =
-            MovingAverage.createMovingAverage(s1, "Moving Average", s1.getItemCount(), s1.getItemCount());
-
-        xyDataset.addSeries(mav);
-
-        return xyDataset;
-    }
 
     public static TimeSeriesCollection createMetricMaxDataset(String awrMetric) {
 
@@ -169,13 +110,6 @@ public class AWRTimeSeriesChart extends RootChartFrame {
 
         xyDataset.addSeries(s2);
 
-        if (s2.getItemCount() > 0) {
-            final TimeSeries mav =
-                MovingAverage.createMovingAverage(s2, "Moving Average", s2.getItemCount(), s2.getItemCount());
-
-            xyDataset.addSeries(mav);
-        }
-        
         return xyDataset;
     }
 
@@ -226,13 +160,6 @@ public class AWRTimeSeriesChart extends RootChartFrame {
         }
 
         xyDataset.addSeries(s2);
-
-        if (s2.getItemCount() > 0) {
-            final TimeSeries mav =
-                MovingAverage.createMovingAverage(s2, "Moving Average", s2.getItemCount(), s2.getItemCount());
-
-            xyDataset.addSeries(mav);
-        }
 
         return xyDataset;
     }
