@@ -31,6 +31,9 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
 import javax.imageio.ImageIO;
 
 import javax.swing.BoxLayout;
@@ -54,6 +57,8 @@ import org.altaprise.vawr.awrdata.AWRMetrics;
 import org.altaprise.vawr.awrdata.AWRRecord;
 import org.altaprise.vawr.ui.RootFrame;
 
+import org.altaprise.vawr.utils.SessionMetaData;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -63,6 +68,9 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.time.Minute;
+import org.jfree.data.time.MovingAverage;
+import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
@@ -178,7 +186,65 @@ abstract public class RootChartFrame extends JFrame implements Printable {
     }
 
 
-    protected abstract TimeSeriesCollection createDataset(String racInst, String awrMetric);
+    protected TimeSeriesCollection createDataset(String racInst, String awrMetric) {
+
+        String metricLabel = AWRMetrics.getInstance().getMetricDescription(awrMetric);
+        TimeSeriesCollection xyDataset = new TimeSeriesCollection();
+        TimeSeries s1 = new TimeSeries(metricLabel);
+
+        LinkedHashSet<String> snapshotIds = AWRData.getInstance().getUniqueSnapshotIds();
+        Iterator iter = snapshotIds.iterator();
+        while (iter.hasNext()) {
+            String snapshotId = (String) iter.next();
+            String metricValS = "0.0";
+            Date snapshotDate = null;
+
+            try {
+                AWRRecord awrRec = AWRData.getInstance().getAWRRecordByKey(snapshotId, racInst);
+
+                if (awrRec != null) {
+                    metricValS = awrRec.getVal(awrMetric.toUpperCase());
+                    snapshotDate = awrRec.getSnapShotDateTime();
+                } else {
+                    //How do we get the snapshot Id?
+                    snapshotDate = getMissingSnapshotDate(snapshotId);
+                    if (snapshotDate == null) {
+                        throw new Exception("Could not find the snapshot date to plot.");
+                    }
+                }
+
+                if (SessionMetaData.getInstance().debugOn()) {
+                    System.out.println("TRACE: Adding date/SnapId/InstId/val: " + snapshotDate.toString() + "/" +
+                                       snapshotId + "/" + racInst + "/" + metricValS + "/" + awrRec);
+                }
+
+                double metricValD = Double.parseDouble(metricValS);
+                s1.add(new Minute(snapshotDate), metricValD);
+
+            } catch (org.jfree.data.general.SeriesException se) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
+                                   snapshotDate.toString());
+                System.out.println(se.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    //se.printStackTrace();
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
+                                   snapshotDate.toString());
+                e.printStackTrace();
+            }
+        }
+
+        xyDataset.addSeries(s1);
+
+        final TimeSeries mav =
+            MovingAverage.createMovingAverage(s1, "Moving Average", s1.getItemCount(), s1.getItemCount());
+
+        xyDataset.addSeries(mav);
+
+        return xyDataset;
+    }
 
 
     /**
