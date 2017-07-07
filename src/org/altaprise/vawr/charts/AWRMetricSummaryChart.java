@@ -75,6 +75,15 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         THE_ROOT_CONTENT_PANEL.add(wIOPSChartPanel);
         this._totalNumCharts++;
         
+        //Add tot Read IOPS vs Flash Hits Chart        
+        //TimeSeriesCollection rFlashHitsDataset = AWRTimeSeriesChart.createMetricSumDataset("WRITE_IOPS");
+        //JFreeChart wIOPSChart = createChart(wIOPSDataset, metricName, 0, "Total Write IOPS - Sum All Nodes", "");
+        //XYPlot wIOPSPlot = (XYPlot) wIOPSChart.getPlot();
+        //wIOPSPlot.getRenderer(0).setSeriesPaint(0, Color.YELLOW);
+        //ChartPanel wIOPSChartPanel = (ChartPanel) createChartPanel(wIOPSChart);
+        //THE_ROOT_CONTENT_PANEL.add(wIOPSChartPanel);
+        //this._totalNumCharts++;
+
         //Add tot Memory Chart        
         TimeSeriesCollection memDataset = AWRMemoryTimeSeriesChart.createTotMemDataset();
         JFreeChart memChart = createChart(memDataset, metricName, 0, "Total DB Memory Consumption - Sum All Nodes", "");
@@ -166,13 +175,60 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         return ret;
     }
 
+    public String getChartHeaderCSV(boolean includeHeader) {
+        String ret = "";
+        AWRData awrData = AWRData.getInstance();
+
+        if (includeHeader){
+        ret += "DBName, ";
+        ret += "Nodes, ";
+        ret += "Sockets, ";
+        ret += "Cores, ";
+        ret += "Threads, ";
+        ret += "Physical-Memory/host(GB), ";
+        ret += "DB-Version, ";
+        ret += "CPU, ";
+        ret += "R_IOPS, ";
+        ret += "%-Read-Cache-Hits, ";
+        ret += "W_IOPS, ";
+        ret += "SGA, ";
+        ret += "PGA, ";
+        ret += "MemUsed, ";
+        ret += "Size(GB), ";
+        ret += "Hosts";
+        ret += "\n";
+        }
+//
+        ret += awrData.getPlatformInfoAttribute("DB_NAME") + ",";
+        ret += awrData.getPlatformInfoAttribute("INSTANCES") + ",";
+        ret += awrData.getPlatformInfoAttribute("NUM_CPU_SOCKETS") + ",";
+        ret += awrData.getPlatformInfoAttribute("NUM_CPU_CORES") + ",";
+        ret += awrData.getPlatformInfoAttribute("NUM_CPUS") + ",";
+        ret += awrData.getPlatformInfoAttribute("PHYSICAL_MEMORY_GB") + ",";
+        ret += awrData.getPlatformInfoAttribute("VERSION") + ",";
+        ret += getCPU() + ",";
+        ret +=  _maxRIOPS + ",";
+        ret +=  this.getReadFlashHitPct() + ",";
+        ret += _maxWIOPS + ",";
+        ret += _maxSGA + ",";
+        ret += _maxPGA + ",";
+        ret += (_maxSGA + _maxPGA) + ",";
+        ret += getMaxSizeOnDisk() + ",";
+        ret += awrData.getPlatformInfoAttribute("HOSTS");
+
+        return ret;
+    }
+
     double _maxRIOPS = 0;
+    double _pctReadCacheHits = 0;
     double _maxWIOPS = 0;
     double _maxSGA = 0;
     double _maxPGA = 0;
     private double getCPU() {
         int totalNumRacInstances = AWRData.getInstance().getNumRACInstances();
         double maxCPU = 0;
+        double totReadIOPS = 0;
+        double totLogicalReadIOPS = 0;
 
         for (int i=1; i <= totalNumRacInstances; i++) {
 
@@ -191,7 +247,10 @@ public class AWRMetricSummaryChart extends RootChartFrame {
                         if (metricValD > maxCPU) {
                             maxCPU = metricValD;
                         }
+                        double logicalRIOPS = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "L_READ_IOPS");
+                        totLogicalReadIOPS += logicalRIOPS;
                         double rIOPS = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "READ_IOPS");
+                        totReadIOPS += rIOPS;
                         if (rIOPS > _maxRIOPS) _maxRIOPS = rIOPS;
                         double wIOPS = AWRData.getInstance().getMetricSumForSnapshotId(snapshotId, "WRITE_IOPS");
                         if (wIOPS > _maxWIOPS) _maxWIOPS = wIOPS;
@@ -205,6 +264,8 @@ public class AWRMetricSummaryChart extends RootChartFrame {
                 }
             }
         }
+        _pctReadCacheHits = totLogicalReadIOPS / totReadIOPS;
+//        "double per =(1.0 - fl) * 100; int res = (int)per;"
         return maxCPU;
     }
 
@@ -224,5 +285,32 @@ public class AWRMetricSummaryChart extends RootChartFrame {
             }
         }
         return maxSizeOnDisk;
+    }
+    
+    private double getReadFlashHitPct() {
+        ArrayList<AWRRecord> sysstatRecs = AWRData.getInstance().getSysstatRecordArray();
+        String snapId = "";
+        String readFlashHitsValS = "0.0";
+        String readIOPSValS = "0.0";
+        double totReadFlashHits = 0;
+        double totReadIOPS = 0;
+        for (int i = 0; i < sysstatRecs.size(); i++) {
+            try {
+                snapId = sysstatRecs.get(i).getVal("SNAP_ID");
+                readFlashHitsValS = sysstatRecs.get(i).getVal("CELL_FLASH_HITS");
+                readIOPSValS = sysstatRecs.get(i).getVal("READ_IOPS");
+                
+                totReadFlashHits += Double.parseDouble(readFlashHitsValS);
+                totReadIOPS += Double.parseDouble(readIOPSValS);
+
+            } catch (Exception e) {
+                System.out.println("Error at snapid: " + snapId);
+                System.out.println(e.getLocalizedMessage());
+                if (SessionMetaData.getInstance().debugOn()) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return totReadFlashHits / totReadIOPS;
     }
 }
