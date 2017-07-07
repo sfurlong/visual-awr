@@ -31,6 +31,7 @@ public class ReadAWRMinerFile {
             readAverageActiveSessions();
             readIOWaitMetrics();
             readTopTimedEvents();
+            readSysStat();
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             throw new Exception("File Not Found: " + fileName);
@@ -529,6 +530,121 @@ public class ReadAWRMinerFile {
     }
 
     /*
+    ~~BEGIN-SYSSTAT~~
+
+       SNAP_ID cell_flash_hits  read_iops    read_mb read_mb_opt cell_int_mb cell_int_ss_mb ehcc_con_dmls
+    ---------- --------------- ---------- ---------- ----------- ----------- -------------- -------------
+         35840           673.5      815.6      395.5       307.1       142.1            6.2         123.4
+         35841           521.5      625.9      347.2       241.6       153.3            6.2          21.1
+         35842          1604.8     1761.1      427.2       322.1       191.1            6.1         358.5
+    */
+    private void readSysStat() throws Exception {
+        String rec = "";
+        DBRecSet sysstatRecSet = new DBRecSet();
+
+        try {
+            //Priming read
+            rec = _fileReader.readLine();
+            int recCount = 0;
+            boolean mainMetricsFound = false;
+
+            while (rec != null && !mainMetricsFound) {
+                if (rec.equals("~~BEGIN-SYSSTAT~~")) {
+                    mainMetricsFound = true;
+                    rec = _fileReader.readLine();
+                } else
+                    //Read the next record
+                    rec = _fileReader.readLine();
+            }
+            boolean endSysstatMetricsFound = false;
+            while (rec != null && mainMetricsFound && !endSysstatMetricsFound) {
+                rec = rec.trim();
+
+                //Skip comment lines.
+                if (rec.length() > 0) {
+                    recCount++;
+                    //System.out.println(rec);
+
+                    if (recCount == 1) {
+                        //Skip the headers
+                        //Do Nothing
+
+                    } else if (recCount == 2) {
+                        //Skip the row in the file that contains the dashes.
+                        //Do nothing
+
+                    } else {
+                        if (rec.equals("~~END-SYSSTAT~~")) {
+                            endSysstatMetricsFound = true;
+                        } else {
+                            //Parse the data rows
+                            DBRec sysstatDBRec = this.createSysstatDataDBRec(rec);
+                            sysstatRecSet.addRec(sysstatDBRec);
+                        }
+                    }
+                }
+                //Read the next record
+                rec = _fileReader.readLine();
+            }
+
+            AWRData.getInstance().parseSysstatRecords(sysstatRecSet);
+
+        } catch (Exception e) {
+            System.out.println("PropertyFileReader::readData\n" + e.getLocalizedMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    /*
+    ~~BEGIN-SYSSTAT~~
+
+       SNAP_ID cell_flash_hits  read_iops    read_mb read_mb_opt cell_int_mb cell_int_ss_mb ehcc_con_dmls
+    ---------- --------------- ---------- ---------- ----------- ----------- -------------- -------------
+         35840           673.5      815.6      395.5       307.1       142.1            6.2         123.4
+         35841           521.5      625.9      347.2       241.6       153.3            6.2          21.1
+         35842          1604.8     1761.1      427.2       322.1       191.1            6.1         358.5
+    */
+    private DBRec createSysstatDataDBRec(String rec) {
+
+        int tokCnt = 0;
+        DBRec sysstatDBRec = new DBRec();
+
+        if (rec.length() > 0) {
+
+            StringTokenizer st = new StringTokenizer(rec);
+            while (st.hasMoreTokens()) {
+                String tok = st.nextToken();
+                tokCnt++;
+                DBAttributes dbAttribs = null;
+                switch (tokCnt) {
+                case 1:
+                    tokCnt = 1;
+                    dbAttribs = new DBAttributes("SNAP_ID", tok);
+                    break;
+                case 2:
+                    tokCnt = 2;
+                    dbAttribs = new DBAttributes("CELL_FLASH_HITS", tok);
+                    break;
+                case 3:
+                    tokCnt = 3;
+                    dbAttribs = new DBAttributes("READ_IOPS", tok);
+                    break;
+                case 4:
+                    tokCnt = 4;
+                    dbAttribs = new DBAttributes("READ_MB", tok);
+                    break;
+                }
+                if (dbAttribs != null) {
+                    sysstatDBRec.addAttrib(dbAttribs);
+                }
+            }
+        }
+        return sysstatDBRec;
+    }
+
+    /*
     SELECT snap_id, " +
             " instance_number, " +
             " MAX (DECODE (stat_name, \'SGA\', stat_value, NULL)) \"SGA\", " +
@@ -646,6 +762,8 @@ public class ReadAWRMinerFile {
         return avgActiveSessDBRec;
     }
 
+
+    
     private DBRec createPlatformInfoDBRec(String rec) {
 
         int tokCnt = 0;
