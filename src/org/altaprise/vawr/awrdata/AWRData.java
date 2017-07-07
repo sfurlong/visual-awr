@@ -27,6 +27,7 @@ public class AWRData {
     private LinkedHashMap<String, AWRRecord> _dataRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _activeSessionRecords = new LinkedHashMap<String, AWRRecord>();
     private LinkedHashMap<String, AWRRecord> _sizeOnDiskRecords = new LinkedHashMap<String, AWRRecord>();
+    private LinkedHashMap<String, AWRRecord> _sysstatRecords = new LinkedHashMap<String, AWRRecord>();
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
     private HashMap<String, DBRec> _platformInfo = new HashMap<String, DBRec>();
     private int _numRACInstances = 0;
@@ -50,6 +51,7 @@ public class AWRData {
         _topWaitEventsMap.clear();
         _sizeOnDiskRecords.clear();
         _platformInfo.clear();
+        _sysstatRecords.clear();
         _numRACInstances = 0;
     }
 
@@ -214,6 +216,30 @@ public class AWRData {
         }
     }
 
+    /*
+       SNAP_ID cell_flash_hits  read_iops    read_mb read_mb_opt cell_int_mb cell_int_ss_mb ehcc_con_dmls
+    ---------- --------------- ---------- ---------- ----------- ----------- -------------- -------------
+         35840           673.5      815.6      395.5       307.1       142.1            6.2         123.4
+         35841           521.5      625.9      347.2       241.6       153.3            6.2          21.1
+         35842          1604.8     1761.1      427.2       322.1       191.1            6.1         358.5
+    */
+    public void parseSysstatRecords(DBRecSet recSet) {
+        for (int i = 0; i < recSet.getSize(); i++) {
+
+            DBRec dbRec = recSet.getRec(i);
+            String snapId = dbRec.getAttribVal("SNAP_ID");
+            String cellFlashHits = dbRec.getAttribVal("CELL_FLASH_HITS");
+            String readIOPS = dbRec.getAttribVal("READ_IOPS");
+            String readMB = dbRec.getAttribVal("READ_MB");
+            AWRRecord sysstatRec = new AWRRecord();
+            sysstatRec.putVal("SNAP_ID", snapId);
+            sysstatRec.putVal("CELL_FLASH_HITS", cellFlashHits);
+            sysstatRec.putVal("READ_IOPS", readIOPS);
+            sysstatRec.putVal("READ_MB", readMB);
+            _sysstatRecords.put(snapId, sysstatRec);
+        }
+    }
+
     public AWRRecord getAWRRecordByKey(String snapId, String racInstNum) {
         AWRRecord awrRec = _dataRecords.get(snapId + "-" + racInstNum);
         return awrRec;
@@ -246,7 +272,9 @@ public class AWRData {
             String avgSess = dbRec.getAttribVal("AVG_SESS");
 
             AWRRecord awrRec = _activeSessionRecords.get(snapId);
-            awrRec.addAvgAcviteSessData(new AvgActiveSessRecord(waitClass, avgSess));
+            if (awrRec != null) {
+                awrRec.addAvgAcviteSessData(new AvgActiveSessRecord(waitClass, avgSess));
+            }
         }
     }
 
@@ -421,6 +449,10 @@ public class AWRData {
 
     public ArrayList<TopWaitEventsRecord> getTopWaitEventsRecordArray() {
         return new ArrayList<TopWaitEventsRecord>(this._topWaitEventsMap.values());
+    }
+
+    public ArrayList<AWRRecord> getSysstatRecordArray() {
+        return new ArrayList<AWRRecord>(this._sysstatRecords.values());
     }
 
     //Parse records read from AWR Files.
