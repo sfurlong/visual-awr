@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
+
+import org.altaprise.vawr.ui.bulkfileschartwizard.BulkChartFilePanel;
 import org.altaprise.vawr.ui.dbchartwizard.DBWizardRootPanel;
 import org.altaprise.vawr.ui.filechartwizard.ChartFilePanel;
 import org.altaprise.vawr.ui.oswchartwizard.OSWWizardRootPanel;
@@ -22,6 +24,7 @@ public class RootPanel extends JPanel {
     JTabbedPane tabbedPane = new JTabbedPane();
     DBConnectionsPanel _dbConnPanel = new DBConnectionsPanel();
     ChartFilePanel _fileTabPanel = new ChartFilePanel();
+    BulkChartFilePanel _bulkFileTabPanel = new BulkChartFilePanel();
     DBWizardRootPanel _dbChartTab = new DBWizardRootPanel();
     StorageWizardRootPanel _storageChartTab = new StorageWizardRootPanel();
     AppAboutPanel _aboutPanel = new AppAboutPanel();
@@ -45,9 +48,13 @@ public class RootPanel extends JPanel {
                           this._fileTabPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
+        tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Bulk Process AWRMiner Files</body></html>",
+                          this._bulkFileTabPanel);
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
+
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>AWR Direct from DB</body></html>",
                           this._dbChartTab);
-        tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+        tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 /*
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Storage Analysis</body></html>",
                           this._storageChartTab);
@@ -55,11 +62,11 @@ public class RootPanel extends JPanel {
 */
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>OSWatcher Analysis</body></html>",
                           this._OSWRootPanel);
-        tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+        tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 
         tabbedPane.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Setup</body></html>",
                           _dbConnPanel);
-        tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+        tabbedPane.setMnemonicAt(4, KeyEvent.VK_6);
 
 
         //Add the tabbed pane to this panel.
