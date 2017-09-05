@@ -106,7 +106,7 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
                 s5.add(new Second(snapShotDate), swapCpuD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage()  + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }
@@ -172,7 +172,7 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
                 s8.add(new Second(snapShotDate), stCpuD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getCause().getLocalizedMessage());
+                System.out.println(e.getCause().getLocalizedMessage() + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }
@@ -225,7 +225,7 @@ public class TopStatTimeSeriesChart extends RootChartFrame {
                 s4.add(new Second(snapShotDate), freeSwapD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

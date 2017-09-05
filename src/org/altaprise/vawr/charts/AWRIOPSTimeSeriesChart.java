@@ -114,7 +114,7 @@ public class AWRIOPSTimeSeriesChart extends RootChartFrame {
 
             } catch (Exception e) {
                 System.out.println("Error at snapid: " + snapId);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: " + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

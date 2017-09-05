@@ -199,7 +199,7 @@ public class ChartFilePanel extends JPanel {
                 } else if (metricName.equals("WRITE_IOPS") || metricName.equals("READ_IOPS")) {
                     new AWRIOPSTimeSeriesChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else if (metricName.equals("SUMMARY")) {
-                    new AWRMetricSummaryChart(metricName);
+                    new AWRMetricSummaryChart(metricName, true);
                 } else if (metricName.equals("SIZE_GB")) {
                     new SizeOnDiskChart(metricName, AWRData.getInstance().getChartHeaderHTML());
                 } else {

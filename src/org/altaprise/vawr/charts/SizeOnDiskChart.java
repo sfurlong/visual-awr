@@ -126,7 +126,7 @@ public class SizeOnDiskChart extends RootChartFrame {
                 }
             } catch (Exception e) {
                 System.out.println("Error at snapid: " + snapId);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: SizeOnDiskChart");
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

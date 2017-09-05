@@ -39,8 +39,9 @@ public class AWRMetricSummaryChart extends RootChartFrame {
 
     }
 
-    public AWRMetricSummaryChart(String metricName) {
+    public AWRMetricSummaryChart(String metricName, boolean setVisible) {
         super("Visual AWR Charting", "");
+        this.setTitle("Visual AWR Charting " + AWRData.getInstance().getPlatformInfoAttribute("DB_NAME"));
         
         this.setLayout(borderLayout);
         this.setSize(new java.awt.Dimension(800, 800));
@@ -102,7 +103,7 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         THE_ROOT_CONTENT_PANEL.setPreferredSize(new java.awt.Dimension(600, 200 + (260*(_totalNumCharts+1))));
         this.add(THE_SCROLL_PANE, BorderLayout.CENTER);
 
-        this.setVisible(true);
+        this.setVisible(setVisible);
     }
 
     public JPanel getChartPanel() {
@@ -123,7 +124,6 @@ public class AWRMetricSummaryChart extends RootChartFrame {
         _headerTextPane.setEditable(false);
 
         int numHeaderLines = countLines(chartHeaderText);
-        System.out.println("num header lines: " + numHeaderLines);
 
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, (30 * (numHeaderLines))+SIZE_OF_HEADER_TEXT));
         
@@ -305,7 +305,7 @@ public class AWRMetricSummaryChart extends RootChartFrame {
 
             } catch (Exception e) {
                 System.out.println("Error at snapid: " + snapId);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: " + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

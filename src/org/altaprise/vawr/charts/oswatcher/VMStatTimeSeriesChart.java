@@ -144,7 +144,7 @@ public class VMStatTimeSeriesChart extends RootChartFrame {
                 s5.add(new Second(snapShotDate), stealCpuD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }
@@ -196,7 +196,7 @@ public class VMStatTimeSeriesChart extends RootChartFrame {
                 s4.add(new Second(snapShotDate), cacheMemD);
             } catch (Exception e) {
                 //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

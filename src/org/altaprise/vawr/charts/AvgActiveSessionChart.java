@@ -135,11 +135,11 @@ public class AvgActiveSessionChart extends RootChartFrame {
                     s10.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(9).getAVG_SESS()));
                     s11.add(new Minute(snapShotDate), Double.parseDouble(avgActiveSessRec.get(10).getAVG_SESS()));
                 } else {
-                    System.out.println("No Avg Active Session Data in file for SnapId: " + snapId);
+                    System.out.println("WARNING: No Avg Active Session Data in file for SnapId: " + snapId);
                 }
             } catch (Exception e) {
                 System.out.println("Error at snapid: " + snapId);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: " + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()) {
                     e.printStackTrace();
                 }

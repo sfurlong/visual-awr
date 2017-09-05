@@ -31,6 +31,7 @@ public class AWRData {
     private HashMap<String, TopWaitEventsRecord> _topWaitEventsMap = new HashMap<String, TopWaitEventsRecord>();
     private HashMap<String, DBRec> _platformInfo = new HashMap<String, DBRec>();
     private int _numRACInstances = 0;
+    private String _awrFileName = "";
 
     private static AWRData _theInstance = null;
 
@@ -53,13 +54,14 @@ public class AWRData {
         _platformInfo.clear();
         _sysstatRecords.clear();
         _numRACInstances = 0;
+        _awrFileName = "";
     }
 
 
     @SuppressWarnings("oracle.jdeveloper.java.semantic-warning")
     public void dumpData() {
 
-        System.out.println("main metric headers");
+        System.out.println("main metric headers for file: " + _awrFileName);
         for (int i = 0; i < getHeaderCount(); i++) {
             System.out.print(getHeaderName(i) + ", ");
         }
@@ -105,6 +107,14 @@ public class AWRData {
                 System.out.println("snapId/val: " + snapId + "/" + val);
             }
         }
+    }
+    
+    public void setAWRFileName(String name) {
+        _awrFileName = name;
+    }
+    
+    public String getAWRFileName() {
+        return _awrFileName;
     }
 
     //Parse records read from the DB

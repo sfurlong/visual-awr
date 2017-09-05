@@ -24,6 +24,7 @@ public class ReadAWRMinerFile {
 
     public void parse(String fileName) throws Exception {
         try {
+            AWRData.getInstance().setAWRFileName(fileName);
             _fileReader = new BufferedReader(new FileReader(fileName));
             readMachineInfo();
             readDbSizeOnDiskData();

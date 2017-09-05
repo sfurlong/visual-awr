@@ -28,6 +28,7 @@ public class BulkChartFilePanel extends JPanel {
     private JButton jButton_selectFile = new JButton();
     private JButton jButton_chart = new JButton();
     private JComboBox jComboBox_metricName = new JComboBox();
+    private JCheckBox jCheckBox_showReport = new JCheckBox();
     private JPanel  jPanel_panelTitle = new JPanel();
     private JPanel jPanel_contentPanel = new JPanel();
     private JLabel jLabel_panelTitle = new JLabel();
@@ -38,7 +39,6 @@ public class BulkChartFilePanel extends JPanel {
     private ReadAWRMinerFile _awrParser = null;
     private JLabel jLabel1 = new JLabel("Platform Details:");
     private JSeparator jSeparator1 = new JSeparator();
-    private JButton jButton_export = new JButton();
 
     /**The default constructor for form
      */
@@ -60,7 +60,7 @@ public class BulkChartFilePanel extends JPanel {
         this.setSize(new Dimension(603, 503));
 
         daiListBox_fileNames.setBounds(new Rectangle(40, 25, 350, 120));
-        jLabel_panelTitle.setText("Select one or more AWRMiner files, then view of the Summary Metrics.");
+        jLabel_panelTitle.setText("Select one or more AWRMiner files, then view the Summary Metrics.");
         jLabel_panelTitle.setBounds(new Rectangle(20, 5, 500, 30));
         jLabel_panelTitle.setFont(new Font("Arial", 1, 16));
 
@@ -81,14 +81,15 @@ public class BulkChartFilePanel extends JPanel {
 
         jLabel1.setBounds(new Rectangle(35, 185, 325, 15));
 
-        jLabel1.setText("Platform Details Output(CPU & Memory values are per host):");
+        jLabel1.setText("Summary Metrics for all workloads(Paste into Excel):");
         jSeparator1.setBounds(new Rectangle(15, 170, 570, 5));
         jPanel_contentPanel.setBounds(new Rectangle(20, 5, 400, 30));
         jPanel_contentPanel.setMinimumSize(new Dimension(48, 200));
-        jPanel_contentPanel.add(jButton_export, null);
         jPanel_contentPanel.add(jSeparator1, null);
         jPanel_contentPanel.add(jLabel1, null);
         jPanel_contentPanel.add(jComboBox_metricName, null);
+        jPanel_contentPanel.add(jCheckBox_showReport, null);
+        
         jPanel_contentPanel.add(jButton_chart, null);
 
         jPanel_contentPanel.add(jButton_selectFile, null);
@@ -113,14 +114,9 @@ public class BulkChartFilePanel extends JPanel {
                     jButton_chart_actionPerformed(e);
                 }
             });
-        jButton_export.setText("Export Metrics");
-        jButton_export.setBounds(new Rectangle(415, 75, 130, 20));
-        jButton_export.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                jButton_export_actionPerformed(e);
-            }
-        });
         jComboBox_metricName.setBounds(new Rectangle(40, 150, 300, 20));
+        jCheckBox_showReport.setBounds(new Rectangle(350, 150, 300, 20));
+        jCheckBox_showReport.setText("Launch Report?");
         //jTextArea_osInfo.setEnabled(false);
         jTextArea_osInfo.setFont(new Font("monospaced", Font.PLAIN, 11));
         setComboBoxOptions();
@@ -158,6 +154,7 @@ public class BulkChartFilePanel extends JPanel {
         RootFrame.startWaitCursor();
 
         try {
+            boolean showReport = this.jCheckBox_showReport.isSelected();
             String results = "";
             //Read and parse the file
             for (int i=0; i<this._selectedFiles.length; i++) {
@@ -168,7 +165,7 @@ public class BulkChartFilePanel extends JPanel {
                 _awrParser.parseMemData(selectedFile);
                 AWR_FILE_NAME = selectedFile;
 
-                AWRMetricSummaryChart chart = new AWRMetricSummaryChart("SUMMARY");
+                AWRMetricSummaryChart chart = new AWRMetricSummaryChart("SUMMARY", showReport);
                 boolean returnHeader = false;
                 if (i==0) {
                     returnHeader = true;
@@ -201,50 +198,6 @@ public class BulkChartFilePanel extends JPanel {
         for (int i = 0; i < metricNames.size(); i++) {
             jComboBox_metricName.addItem(metricNames.get(i));
         }
-    }
-
-    private void jButton_export_actionPerformed(ActionEvent e) {
-        //SetCursor
-        RootFrame.startWaitCursor();
-        
-        try {
-            //Do an Export
-            if (AWRData.getInstance().getAWRDataRecordCount() > 0) {
-                //Get the file name to export
-                String fileName = getExportFileName();
-                
-                //Export it.
-                if (fileName != null && fileName.length() > 0) {
-                    AWRData.getInstance().exportAWRData(fileName);
-                    JOptionPane.showMessageDialog(RootFrame.getFrameRef(), "File Saved.  " + fileName, "Status",
-                                                  JOptionPane.INFORMATION_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(RootFrame.getFrameRef(),
-                                              "No AWR records found. Do Query First", "Error",
-                                              JOptionPane.ERROR_MESSAGE);
-            }        
-        } catch (Exception ex) {
-            daiBeans.daiDetailInfoDialog dialog =
-                new daiBeans.daiDetailInfoDialog(RootFrame.getFrameRef(), "Error", true,
-                                                 ex.getLocalizedMessage());
-            ex.printStackTrace();
-        } finally {
-            //SetCursor
-            RootFrame.stopWaitCursor();
-        }
-    }
-    
-    private String getExportFileName() {
-        String fileName = "";
-        JFileChooser FC = new JFileChooser(System.getProperty("user.dir"));
-        int ret = FC.showSaveDialog(RootFrame.getFrameRef());
-
-        if (ret == FC.APPROVE_OPTION) {
-            File f = FC.getSelectedFile();
-            fileName = f.getAbsolutePath();
-        }
-        return fileName;
     }
 
 }

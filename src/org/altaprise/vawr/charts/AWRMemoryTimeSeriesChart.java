@@ -104,7 +104,7 @@ public class AWRMemoryTimeSeriesChart extends RootChartFrame {
                 }
             } catch (Exception e) {
                 System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: " + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()){
                     e.printStackTrace();
                 }
@@ -152,7 +152,7 @@ public class AWRMemoryTimeSeriesChart extends RootChartFrame {
                     s3.add(new Minute(snapshotDate), sga_pga_totVal);
             } catch (Exception e) {
                 System.out.println("Error at snapid/inst/sgaValS: " + snapshotId);
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage() + " ClassName: AWRMemoryTimeSeriesChart");
                 if (SessionMetaData.getInstance().debugOn()){
                     e.printStackTrace();
                 }

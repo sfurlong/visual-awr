@@ -1,0 +1,999 @@
+~~BEGIN-OS-INFORMATION~~
+STAT_NAME                                                    STAT_VALUE
+------------------------------------------------------------ ------------------------------------------------------------
+NUM_CPUS                                                     1
+NUM_CPU_CORES                                                1
+NUM_CPU_SOCKETS                                              1
+PHYSICAL_MEMORY_GB                                           1.96
+!CPU_COUNT                                                   2
+!CPU_CORE_COUNT                                              2
+!CPU_SOCKET_COUNT                                            2
+!PLATFORM_NAME                                               Linux x86 64-bit
+PLATFORM_NAME                                                Linux_x86_64-bit
+VERSION                                                      11.2.0.3.0
+DB_NAME                                                      FLAVIA
+DBID                                                         1836093013
+INSTANCES                                                    2
+HOSTS                                                        rac1,rac2
+MODULE                                                       SQL*Plus
+AWR_MINER_VER                                                4.0.11
+~~END-OS-INFORMATION~~
+
+
+
+~~BEGIN-MEMORY~~
+
+   SNAP_ID INSTANCE_NUMBER        SGA        PGA      TOTAL
+---------- --------------- ---------- ---------- ----------
+       800               2         .4         .2         .6
+       801               1         .4         .1         .5
+       801               2         .4         .2         .6
+       802               1         .4         .2         .6
+       802               2         .4         .2         .6
+       803               1         .4         .2         .6
+       803               2         .4         .3         .7
+       804               1         .4         .2         .6
+       804               2         .4         .2         .6
+
+~~END-MEMORY~~
+
+
+
+~~BEGIN-MEMORY-SGA-ADVICE~~
+
+   SNAP_ID INSTANCE_NUMBER SGA_TARGET_GB SIZE_FACTOR ESTD_PHYSICAL_READS LEAD_READ_DIFF
+---------- --------------- ------------- ----------- ------------------- --------------
+       800               2            .2          .5               13624          -4006
+       800               2            .4         .75               17630           4396
+       800               2            .5           1               13234              0
+       800               2             1           2               13234              0
+       801               1            .2          .5                4872            217
+       801               1            .4         .75                4655             25
+       801               1            .5           1                4630              0
+       801               1             1           2                4630              0
+       801               2            .2          .5               32330         -18417
+       801               2            .4         .75               50747          24848
+       801               2            .5           1               25899           2761
+       801               2             1           2               23138              0
+       802               1            .2          .5                5669            234
+       802               1            .4         .75                5435             52
+       802               1            .5           1                5383              0
+       802               1             1           2                5383              0
+       802               2            .2          .5               41305         -11772
+       802               2            .4         .75               53077          26432
+       802               2            .5           1               26645           3032
+       802               2             1           2               23613              0
+       803               1            .2          .5                6219            304
+       803               1            .4         .75                5915            116
+       803               1            .5           1                5799              0
+       803               1             1           2                5799              0
+       803               2            .2          .5               46973         -12312
+       803               2            .4         .75               59285          32320
+       803               2            .5           1               26965           3136
+       803               2             1           2               23829              0
+       804               1            .2          .5                7306            402
+       804               1            .4         .75                6904            432
+       804               1            .5           1                6472              0
+       804               1             1           2                6472              0
+       804               2            .2          .5               87443         -16347
+       804               2            .4         .75              103790          46753
+       804               2            .5           1               57037           8704
+       804               2             1           2               48333              0
+
+~~END-MEMORY-SGA-ADVICE~~
+
+
+
+~~BEGIN-MEMORY-PGA-ADVICE~~
+
+   SNAP_ID INSTANCE_NUMBER PGA_TARGET_GB SIZE_FACTOR ESTD_EXTRA_MB_RW LEAD_SIZE_DIFF_MB ESTD_PGA_CACHE_HIT_PERCENTAGE
+---------- --------------- ------------- ----------- ---------------- ----------------- -----------------------------
+       800               2             0        .125             19.6                 0                            71
+       800               2            .1         .25             19.6               8.1                            71
+       800               2            .1          .5             11.4              11.4                            81
+       800               2            .3           1                0                 0                           100
+       800               2           2.1           8                0                 0                           100
+       801               1             0        .125             22.3                 0                            52
+       801               1            .1         .25             22.3              22.3                            52
+       801               1            .3           1                0                 0                           100
+       801               1           2.1           8                0                 0                           100
+       801               2             0        .125             56.9                 0                            74
+       801               2            .1         .25             56.9               8.1                            74
+       801               2            .1          .5             48.8              48.8                            77
+       801               2            .3           1                0                 0                           100
+       801               2           2.1           8                0                 0                           100
+       802               1             0        .125             25.8                 0                            66
+       802               1            .1         .25             25.8              25.8                            66
+       802               1            .3           1                0                 0                           100
+       802               1           2.1           8                0                 0                           100
+       802               2             0        .125             62.8                 0                            78
+       802               2            .1         .25             62.8               8.1                            78
+       802               2            .1          .5             54.7              54.7                            80
+       802               2            .3           1                0                 0                           100
+       802               2           2.1           8                0                 0                           100
+       803               1             0        .125             25.8                 0                            75
+       803               1            .1         .25             25.8              25.8                            75
+       803               1            .3           1                0                 0                           100
+       803               1           2.1           8                0                 0                           100
+       803               2             0        .125             69.1                 0                            82
+       803               2            .1         .25             69.1               8.1                            82
+       803               2            .1          .5               61                61                            84
+       803               2            .3           1                0                 0                           100
+       803               2           2.1           8                0                 0                           100
+       804               1             0        .125             25.8                 0                            81
+       804               1            .1         .25             25.8              25.8                            81
+       804               1            .3           1                0                 0                           100
+       804               1           2.1           8                0                 0                           100
+       804               2             0        .125             78.4                 0                            85
+       804               2            .1         .25             78.4               8.1                            85
+       804               2            .1          .5             70.3              70.3                            87
+       804               2            .3           1                0                 0                           100
+       804               2           2.1           8                0                 0                           100
+
+~~END-MEMORY-PGA-ADVICE~~
+
+
+
+~~BEGIN-SIZE-ON-DISK~~
+
+   SNAP_ID    SIZE_GB
+---------- ----------
+       804       2.52
+
+~~END-SIZE-ON-DISK~~
+
+
+
+~~BEGIN-MAIN-METRICS~~
+
+      snap      dur_m end                  inst     os_cpu os_cpu_max  os_cpu_sd db_wait_ratio db_cpu_ratio  cpu_per_s cpu_per_s_sd h_cpu_per_s h_cpu_per_s_sd        aas     aas_sd    aas_max    db_time db_time_sd sql_res_t_cs bkgd_t_per_s   logons_s logons_total     exec_s   hard_p_s  l_reads_s  commits_s  read_mb_s read_mb_s_max  read_iops read_iops_max   read_bks read_bks_direct write_mb_s write_mb_s_max write_iops write_iops_max  write_bks write_bks_direct  redo_mb_s db_block_gets_s db_block_changes_s gc_cr_rec_s gc_cu_rec_s gc_cr_get_cs gc_cu_get_cs gc_bk_corrupted gc_bk_lost    px_sess    se_sess s_blk_r_lat cell_io_int_mb cell_io_int_mb_max
+---------- ---------- -------------- ---------- ---------- ---------- ---------- ------------- ------------ ---------- ------------ ----------- -------------- ---------- ---------- ---------- ---------- ---------- ------------ ------------ ---------- ------------ ---------- ---------- ---------- ---------- ---------- ------------- ---------- ------------- ---------- --------------- ---------- -------------- ---------- -------------- ---------- ---------------- ---------- --------------- ------------------ ----------- ----------- ------------ ------------ --------------- ---------- ---------- ---------- ----------- -------------- ------------------
+       800         11 14/12/05 18:39          2       18.9       24.1        3.3          79.7         21.7       .009         .018        .187           .033         .4         .9        2.7       44.6       89.1           .3           .8         .1         41.5       26.4        1.4      406.5         .2         .2           1.2       15.6         108.6       17.8               0          0              0          1            2.9         .6                0          0            10.2               12.7           0           0            0            0               0          0          0        2.1        70.2           13.2               76.8
+       801         61 14/12/05 20:00          1       19.3       30.7        6.1          45.6         21.5       .001         .003        .191            .06          0         .1         .5        3.7        8.6           .2           .3          0         39.3        2.9         .1       31.7          0          0            .4        3.5          47.9        1.2               0          0              0         .5            2.2         .1                0          0              .6                 .7          .1         1.4           .2           .1               0          0          0        1.3        59.6            3.7               25.8
+       801         61 14/12/05 20:00          2       15.1       27.8          5          58.5         49.1       .003         .004        .149            .05         .1         .4        2.7       10.7       40.5           .3           .4         .1         41.5        5.8         .2         85         .2         .1            .5        5.8          48.7        3.4              .9          0             .1         .9            4.4         .6                0          0            18.1               17.1          .1          .4           .7           .6               0          0          0        1.6        50.9            6.4               29.9
+       802         60 14/12/05 21:00          1       25.3       30.9        4.6          38.5           34       .001         .002        .251           .046          0         .1         .4        1.8        6.4           .1           .2          0           39        3.3         .1       15.1         .1          0            .1        2.6             9         .3               0          0             .1         .7            7.5         .3                0          0             2.4                2.5          .1          .4           .6           .2               0          0          0        1.1        48.8            3.6               11.9
+       802         60 14/12/05 21:00          2       14.3       30.5          6          44.2         59.4       .001         .001        .141           .059          0          0         .3        1.1        3.9            0           .3         .1         41.6        3.2         .1       18.7         .1         .1            .1        3.8           9.9         .2               0          0              0         .8            4.2         .3                0          0             4.1                4.2          .2          .1           .5           .5               0          0          0        1.4          43            4.7               10.1
+       803         60 14/12/05 22:00          1       14.5       31.2        6.9          23.8         72.5       .001         .001        .144           .068          0          0         .2         .6        2.7            0           .1          0         39.9        1.9          0       10.7         .1          0            .1        2.5           7.8         .1               0          0             .1         .6            6.8         .3                0          0             2.2                2.2          .1          .3           .5           .1               0          0          0        1.1        13.5            3.5               12.1
+       803         60 14/12/05 22:00          2       12.1       26.5          3          32.6           75       .002         .001         .12           .029          0          0         .2         .7        2.4            0           .1         .1         42.7          3          0       17.3         .2         .1            .1        3.7           7.1          0               0          0              0         .8            4.3         .4                0          0             3.3                3.4          .1          .1           .1           .1               0          0          0        1.1          11            4.8                8.9
+       804         59 14/12/05 22:59          1       10.7       19.1        1.6          26.1         73.9       .002         .004        .106           .016          0         .1         .4          1        5.6            0            0         .1         40.8          4          0       24.5         .2          0            .2        2.6          12.1         .2               0          0             .1         .9            6.7         .4                0          0               4                4.3          .1          .7            0           .1               0          0          0          1         5.3            3.7               12.8
+       804         60 14/12/05 23:00          2       13.1       43.9        6.5          32.2         68.5       .012         .046         .13           .064         .2         .8        4.7       17.8       75.5            0           .1          0         41.7       20.8         .5        316         .1         .1             2        6.3          54.8        8.5               0          0             .4        1.4           18.8        1.8               .6          0            40.5               38.8          .5           1           .2           .1               0          0          0        1.1         4.3           10.7              149.4
+
+~~END-MAIN-METRICS~~
+
+
+
+~~BEGIN-DATABASE-PARAMETERS~~
+
+PARAMETER_NAME                                                   VALUE
+---------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+O7_DICTIONARY_ACCESSIBILITY                                      FALSE
+__db_cache_size                                                  213909504
+__dg_broker_service_names
+__java_pool_size                                                 4194304
+__large_pool_size                                                4194304
+__oracle_base                                                    /u01/app/oracle
+__pga_aggregate_target                                           281018368
+__sga_target                                                     524288000
+__shared_io_pool_size                                            0
+__shared_pool_size                                               293601280
+__streams_pool_size                                              0
+active_instance_count
+aq_tm_processes                                                  1
+archive_lag_target                                               0
+asm_diskgroups
+asm_diskstring
+asm_power_limit                                                  1
+asm_preferred_read_failure_groups
+audit_file_dest                                                  /u01/app/oracle/admin/flavia/adump
+audit_sys_operations                                             FALSE
+audit_syslog_level
+audit_trail                                                      DB
+awr_snapshot_time_offset                                         0
+background_core_dump                                             partial
+background_dump_dest                                             /u01/app/oracle/diag/rdbms/flavia/flavia1/trace
+backup_tape_io_slaves                                            FALSE
+bitmap_merge_area_size                                           1048576
+blank_trimming                                                   FALSE
+buffer_pool_keep
+buffer_pool_recycle
+cell_offload_compaction                                          ADAPTIVE
+cell_offload_decryption                                          TRUE
+cell_offload_parameters
+cell_offload_plan_display                                        AUTO
+cell_offload_processing                                          TRUE
+circuits
+client_result_cache_lag                                          3000
+client_result_cache_size                                         0
+clonedb                                                          FALSE
+cluster_database                                                 TRUE
+cluster_database_instances                                       2
+commit_logging
+commit_point_strength                                            1
+commit_wait
+commit_write
+compatible                                                       11.2.0.0.0
+control_file_record_keep_time                                    7
+control_files                                                    +DATA/flavia/controlfile/current.260.783356949
+control_management_pack_access                                   DIAGNOSTIC+TUNING
+core_dump_dest                                                   /u01/app/oracle/diag/rdbms/flavia/flavia1/cdump
+cpu_count                                                        1
+create_bitmap_area_size                                          8388608
+create_stored_outlines
+cursor_bind_capture_destination                                  memory+disk
+cursor_sharing                                                   EXACT
+cursor_space_for_time                                            FALSE
+db_16k_cache_size                                                0
+db_2k_cache_size                                                 0
+db_32k_cache_size                                                0
+db_4k_cache_size                                                 0
+db_8k_cache_size                                                 0
+db_block_buffers                                                 0
+db_block_checking                                                FALSE
+db_block_checksum                                                TYPICAL
+db_block_size                                                    8192
+db_cache_advice                                                  ON
+db_cache_size                                                    0
+db_create_file_dest                                              +DATA
+db_create_online_log_dest_1
+db_create_online_log_dest_2
+db_create_online_log_dest_3
+db_create_online_log_dest_4
+db_create_online_log_dest_5
+db_file_multiblock_read_count                                    97
+db_file_name_convert
+db_files                                                         200
+db_flash_cache_file
+db_flash_cache_size                                              0
+db_flashback_retention_target                                    1440
+db_keep_cache_size                                               0
+db_lost_write_protect                                            NONE
+db_name                                                          flavia
+db_recovery_file_dest                                            +FRA/
+db_recovery_file_dest_size                                       3221225472
+db_recycle_cache_size                                            0
+db_securefile                                                    PERMITTED
+db_ultra_safe                                                    OFF
+db_unique_name                                                   flavia
+db_unrecoverable_scn_tracking                                    TRUE
+db_writer_processes                                              1
+dbwr_io_slaves                                                   0
+ddl_lock_timeout                                                 0
+deferred_segment_creation                                        TRUE
+dg_broker_config_file1                                           /u01/app/oracle/product/11.2.0/dbhome_1/dbs/dr1flavia.dat
+dg_broker_config_file2                                           /u01/app/oracle/product/11.2.0/dbhome_1/dbs/dr2flavia.dat
+dg_broker_start                                                  FALSE
+diagnostic_dest                                                  /u01/app/oracle
+disk_asynch_io                                                   TRUE
+dispatchers                                                      (PROTOCOL=TCP) (SERVICE=flaviaXDB)
+distributed_lock_timeout                                         60
+dml_locks                                                        1084
+dst_upgrade_insert_conv                                          TRUE
+enable_ddl_logging                                               FALSE
+event
+fal_client
+fal_server
+fast_start_io_target                                             0
+fast_start_mttr_target                                           0
+fast_start_parallel_rollback                                     LOW
+file_mapping                                                     FALSE
+fileio_network_adapters
+filesystemio_options                                             none
+fixed_date
+gcs_server_processes                                             1
+global_context_pool_size
+global_names                                                     FALSE
+global_txn_processes                                             1
+hash_area_size                                                   131072
+hi_shared_memory_address                                         0
+hs_autoregister                                                  TRUE
+ifile
+instance_groups
+instance_name                                                    flavia1
+instance_number                                                  1
+instance_type                                                    RDBMS
+java_jit_enabled                                                 TRUE
+java_max_sessionspace_size                                       0
+java_pool_size                                                   0
+java_soft_sessionspace_limit                                     0
+job_queue_processes                                              1000
+large_pool_size                                                  0
+ldap_directory_access                                            NONE
+ldap_directory_sysauth                                           no
+license_max_sessions                                             0
+license_max_users                                                0
+license_sessions_warning                                         0
+listener_networks
+lock_name_space
+lock_sga                                                         FALSE
+log_archive_config
+log_archive_dest
+log_archive_dest_1
+log_archive_dest_10
+log_archive_dest_11
+log_archive_dest_12
+log_archive_dest_13
+log_archive_dest_14
+log_archive_dest_15
+log_archive_dest_16
+log_archive_dest_17
+log_archive_dest_18
+log_archive_dest_19
+log_archive_dest_2
+log_archive_dest_20
+log_archive_dest_21
+log_archive_dest_22
+log_archive_dest_23
+log_archive_dest_24
+log_archive_dest_25
+log_archive_dest_26
+log_archive_dest_27
+log_archive_dest_28
+log_archive_dest_29
+log_archive_dest_3
+log_archive_dest_30
+log_archive_dest_31
+log_archive_dest_4
+log_archive_dest_5
+log_archive_dest_6
+log_archive_dest_7
+log_archive_dest_8
+log_archive_dest_9
+log_archive_dest_state_1                                         enable
+log_archive_dest_state_10                                        enable
+log_archive_dest_state_11                                        enable
+log_archive_dest_state_12                                        enable
+log_archive_dest_state_13                                        enable
+log_archive_dest_state_14                                        enable
+log_archive_dest_state_15                                        enable
+log_archive_dest_state_16                                        enable
+log_archive_dest_state_17                                        enable
+log_archive_dest_state_18                                        enable
+log_archive_dest_state_19                                        enable
+log_archive_dest_state_2                                         enable
+log_archive_dest_state_20                                        enable
+log_archive_dest_state_21                                        enable
+log_archive_dest_state_22                                        enable
+log_archive_dest_state_23                                        enable
+log_archive_dest_state_24                                        enable
+log_archive_dest_state_25                                        enable
+log_archive_dest_state_26                                        enable
+log_archive_dest_state_27                                        enable
+log_archive_dest_state_28                                        enable
+log_archive_dest_state_29                                        enable
+log_archive_dest_state_3                                         enable
+log_archive_dest_state_30                                        enable
+log_archive_dest_state_31                                        enable
+log_archive_dest_state_4                                         enable
+log_archive_dest_state_5                                         enable
+log_archive_dest_state_6                                         enable
+log_archive_dest_state_7                                         enable
+log_archive_dest_state_8                                         enable
+log_archive_dest_state_9                                         enable
+log_archive_duplex_dest
+log_archive_format                                               %t_%s_%r.dbf
+log_archive_local_first                                          TRUE
+log_archive_max_processes                                        4
+log_archive_min_succeed_dest                                     1
+log_archive_start                                                FALSE
+log_archive_trace                                                0
+log_buffer                                                       3534848
+log_checkpoint_interval                                          0
+log_checkpoint_timeout                                           1800
+log_checkpoints_to_alert                                         FALSE
+log_file_name_convert
+max_dispatchers
+max_dump_file_size                                               unlimited
+max_enabled_roles                                                150
+max_shared_servers
+memory_max_target                                                805306368
+memory_target                                                    805306368
+nls_calendar
+nls_comp                                                         BINARY
+nls_currency
+nls_date_format
+nls_date_language
+nls_dual_currency
+nls_iso_currency
+nls_language                                                     AMERICAN
+nls_length_semantics                                             BYTE
+nls_nchar_conv_excp                                              FALSE
+nls_numeric_characters
+nls_sort
+nls_territory                                                    AMERICA
+nls_time_format
+nls_time_tz_format
+nls_timestamp_format
+nls_timestamp_tz_format
+object_cache_max_size_percent                                    10
+object_cache_optimal_size                                        102400
+olap_page_pool_size                                              0
+open_cursors                                                     300
+open_links                                                       4
+open_links_per_instance                                          4
+optimizer_capture_sql_plan_baselines                             FALSE
+optimizer_dynamic_sampling                                       2
+optimizer_features_enable                                        11.2.0.3
+optimizer_index_caching                                          0
+optimizer_index_cost_adj                                         100
+optimizer_mode                                                   ALL_ROWS
+optimizer_secure_view_merging                                    TRUE
+optimizer_use_invisible_indexes                                  FALSE
+optimizer_use_pending_statistics                                 FALSE
+optimizer_use_sql_plan_baselines                                 TRUE
+os_authent_prefix                                                ops$
+os_roles                                                         FALSE
+parallel_adaptive_multi_user                                     TRUE
+parallel_automatic_tuning                                        FALSE
+parallel_degree_limit                                            CPU
+parallel_degree_policy                                           MANUAL
+parallel_execution_message_size                                  16384
+parallel_force_local                                             FALSE
+parallel_instance_group
+parallel_io_cap_enabled                                          FALSE
+parallel_max_servers                                             40
+parallel_min_percent                                             0
+parallel_min_servers                                             0
+parallel_min_time_threshold                                      AUTO
+parallel_server                                                  TRUE
+parallel_server_instances                                        2
+parallel_servers_target                                          16
+parallel_threads_per_cpu                                         2
+permit_92_wrap_format                                            TRUE
+pga_aggregate_target                                             0
+plscope_settings                                                 IDENTIFIERS:NONE
+plsql_ccflags
+plsql_code_type                                                  INTERPRETED
+plsql_debug                                                      FALSE
+plsql_optimize_level                                             2
+plsql_v2_compatibility                                           FALSE
+plsql_warnings                                                   DISABLE:ALL
+pre_page_sga                                                     FALSE
+processes                                                        150
+processor_group_name
+query_rewrite_enabled                                            TRUE
+query_rewrite_integrity                                          enforced
+rdbms_server_dn
+read_only_open_delayed                                           FALSE
+recovery_parallelism                                             0
+recyclebin                                                       on
+redo_transport_user
+remote_dependencies_mode                                         TIMESTAMP
+remote_login_passwordfile                                        EXCLUSIVE
+remote_os_authent                                                FALSE
+remote_os_roles                                                  FALSE
+replication_dependency_tracking                                  TRUE
+resource_limit                                                   FALSE
+resource_manager_cpu_allocation                                  1
+resource_manager_plan                                            SCHEDULER[0x318D]:DEFAULT_MAINTENANCE_PLAN
+result_cache_max_result                                          5
+result_cache_max_size                                            0
+result_cache_mode                                                MANUAL
+result_cache_remote_expiration                                   0
+resumable_timeout                                                0
+rollback_segments
+sec_case_sensitive_logon                                         TRUE
+sec_max_failed_login_attempts                                    10
+sec_protocol_error_further_action                                CONTINUE
+sec_protocol_error_trace_action                                  TRACE
+sec_return_server_release_banner                                 FALSE
+serial_reuse                                                     disable
+session_cached_cursors                                           50
+session_max_open_files                                           10
+sessions                                                         247
+sga_max_size                                                     536870912
+sga_target                                                       0
+shadow_core_dump                                                 partial
+shared_memory_address                                            0
+shared_pool_reserved_size                                        14680064
+shared_pool_size                                                 0
+shared_server_sessions
+shared_servers                                                   1
+skip_unusable_indexes                                            TRUE
+smtp_out_server
+sort_area_retained_size                                          0
+sort_area_size                                                   65536
+spfile                                                           +DATA/flavia/spfileflavia.ora
+sql92_security                                                   FALSE
+sql_trace                                                        FALSE
+sqltune_category                                                 DEFAULT
+standby_archive_dest                                             ?/dbs/arch
+standby_file_management                                          MANUAL
+star_transformation_enabled                                      FALSE
+statistics_level                                                 TYPICAL
+streams_pool_size                                                0
+tape_asynch_io                                                   TRUE
+thread                                                           1
+timed_os_statistics                                              0
+timed_statistics                                                 TRUE
+trace_enabled                                                    TRUE
+tracefile_identifier
+transactions                                                     271
+transactions_per_rollback_segment                                5
+undo_management                                                  AUTO
+undo_retention                                                   900
+undo_tablespace                                                  UNDOTBS01
+use_indirect_data_buffers                                        FALSE
+use_large_pages                                                  TRUE
+user_dump_dest                                                   /u01/app/oracle/diag/rdbms/flavia/flavia1/trace
+utl_file_dir
+workarea_size_policy                                             AUTO
+xml_db_events                                                    enable
+
+~~END-DATABASE-PARAMETERS~~
+
+
+
+~~BEGIN-AVERAGE-ACTIVE-SESSIONS~~
+
+   SNAP_ID WAIT_CLASS             AVG_SESS
+---------- -------------------- ----------
+       800 Administrative                0
+       800 Application                   0
+       800 Commit                        0
+       800 Concurrency                 .03
+       800 Configuration                 0
+       800 DB CPU                      .01
+       800 Network                       0
+       800 Other                       .03
+       800 System I/O                  .03
+       800 User I/O                     .2
+       801 Administrative                0
+       801 Application                   0
+       801 Cluster                       0
+       801 Commit                        0
+       801 Concurrency                   0
+       801 Configuration                 0
+       801 DB CPU                        0
+       801 Network                       0
+       801 Other                       .02
+       801 System I/O                    0
+       801 User I/O                    .03
+       802 Administrative                0
+       802 Application                   0
+       802 Cluster                       0
+       802 Commit                        0
+       802 Concurrency                   0
+       802 Configuration                 0
+       802 DB CPU                        0
+       802 Network                       0
+       802 Other                       .01
+       802 System I/O                    0
+       802 User I/O                      0
+       803 Administrative                0
+       803 Application                   0
+       803 Cluster                       0
+       803 Commit                        0
+       803 Concurrency                   0
+       803 Configuration                 0
+       803 DB CPU                      .01
+       803 Network                       0
+       803 Other                         0
+       803 System I/O                    0
+       803 User I/O                      0
+       804 Administrative                0
+       804 Application                   0
+       804 Cluster                     .01
+       804 Commit                        0
+       804 Concurrency                   0
+       804 Configuration                 0
+       804 DB CPU                      .01
+       804 Network                       0
+       804 Other                         0
+       804 Scheduler                   .01
+       804 System I/O                  .01
+       804 User I/O                    .03
+
+~~END-AVERAGE-ACTIVE-SESSIONS~~
+
+
+
+
+
+
+~~BEGIN-IO-WAIT-HISTOGRAM~~
+
+   SNAP_ID WAIT_CLASS           EVENT_NAME                            WAIT_TIME_MILLI WAIT_COUNT
+---------- -------------------- ------------------------------------- --------------- ----------
+       800 User I/O             db file scattered read                              1          3
+       800 User I/O             db file scattered read                              2          8
+       800 User I/O             db file scattered read                              4          8
+       800 User I/O             db file scattered read                              8         33
+       800 User I/O             db file scattered read                             16         67
+       800 User I/O             db file scattered read                             32        152
+       800 User I/O             db file scattered read                             64        160
+       800 User I/O             db file scattered read                            128         46
+       800 User I/O             db file scattered read                            256         23
+       800 User I/O             db file scattered read                            512          3
+       800 User I/O             db file sequential read                             1         75
+       800 User I/O             db file sequential read                             2         74
+       800 User I/O             db file sequential read                             4        107
+       800 User I/O             db file sequential read                             8        410
+       800 User I/O             db file sequential read                            16        894
+       800 User I/O             db file sequential read                            32       1968
+       800 User I/O             db file sequential read                            64       1746
+       800 User I/O             db file sequential read                           128        545
+       800 User I/O             db file sequential read                           256        304
+       800 User I/O             db file sequential read                           512         76
+       800 User I/O             db file sequential read                          1024         18
+       800 User I/O             db file sequential read                          2048         10
+       800 System I/O           log file parallel write                             1         15
+       800 System I/O           log file parallel write                             2         11
+       800 System I/O           log file parallel write                             4         28
+       800 System I/O           log file parallel write                             8         40
+       800 System I/O           log file parallel write                            16         81
+       800 System I/O           log file parallel write                            32         39
+       800 System I/O           log file parallel write                            64         40
+       800 System I/O           log file parallel write                           128         19
+       800 System I/O           log file parallel write                           256         16
+       800 System I/O           log file parallel write                           512          1
+       800 System I/O           log file parallel write                          1024          1
+       800 System I/O           log file parallel write                          2048          1
+       800 Commit               log file sync                                       8          4
+       800 Commit               log file sync                                      16          7
+       800 Commit               log file sync                                      32          5
+       800 Commit               log file sync                                      64          4
+       800 Commit               log file sync                                     128          2
+       800 Commit               log file sync                                     256          5
+       801 User I/O             db file scattered read                              2          4
+       801 User I/O             db file scattered read                              4          6
+       801 User I/O             db file scattered read                              8          3
+       801 User I/O             db file scattered read                             16         11
+       801 User I/O             db file scattered read                             32         46
+       801 User I/O             db file scattered read                             64         88
+       801 User I/O             db file scattered read                            128         38
+       801 User I/O             db file scattered read                            256         22
+       801 User I/O             db file scattered read                            512          8
+       801 User I/O             db file scattered read                           1024          1
+       801 User I/O             db file sequential read                             1        475
+       801 User I/O             db file sequential read                             2        165
+       801 User I/O             db file sequential read                             4        292
+       801 User I/O             db file sequential read                             8        585
+       801 User I/O             db file sequential read                            16       1154
+       801 User I/O             db file sequential read                            32       3596
+       801 User I/O             db file sequential read                            64       4031
+       801 User I/O             db file sequential read                           128       1392
+       801 User I/O             db file sequential read                           256        587
+       801 User I/O             db file sequential read                           512        191
+       801 User I/O             db file sequential read                          1024         60
+       801 User I/O             db file sequential read                          2048          1
+       801 System I/O           log file parallel write                             1        361
+       801 System I/O           log file parallel write                             2        123
+       801 System I/O           log file parallel write                             4         92
+       801 System I/O           log file parallel write                             8        133
+       801 System I/O           log file parallel write                            16        171
+       801 System I/O           log file parallel write                            32        204
+       801 System I/O           log file parallel write                            64        144
+       801 System I/O           log file parallel write                           128        106
+       801 System I/O           log file parallel write                           256         63
+       801 System I/O           log file parallel write                           512         38
+       801 System I/O           log file parallel write                          1024          6
+       801 System I/O           log file parallel write                          2048          3
+       801 Commit               log file sync                                       1          1
+       801 Commit               log file sync                                       2          2
+       801 Commit               log file sync                                       4          2
+       801 Commit               log file sync                                       8          5
+       801 Commit               log file sync                                      16          8
+       801 Commit               log file sync                                      32         21
+       801 Commit               log file sync                                      64         15
+       801 Commit               log file sync                                     128         15
+       801 Commit               log file sync                                     256          9
+       802 User I/O             db file scattered read                              8          2
+       802 User I/O             db file scattered read                             16         10
+       802 User I/O             db file scattered read                             32         25
+       802 User I/O             db file scattered read                             64         27
+       802 User I/O             db file scattered read                            128         10
+       802 User I/O             db file scattered read                            256          5
+       802 User I/O             db file scattered read                            512          2
+       802 User I/O             db file sequential read                             1         14
+       802 User I/O             db file sequential read                             2         11
+       802 User I/O             db file sequential read                             4         24
+       802 User I/O             db file sequential read                             8         50
+       802 User I/O             db file sequential read                            16        102
+       802 User I/O             db file sequential read                            32        274
+       802 User I/O             db file sequential read                            64        205
+       802 User I/O             db file sequential read                           128         81
+       802 User I/O             db file sequential read                           256         52
+       802 User I/O             db file sequential read                           512         15
+       802 User I/O             db file sequential read                          1024          5
+       802 User I/O             db file sequential read                          2048          1
+       802 System I/O           log file parallel write                             1        328
+       802 System I/O           log file parallel write                             2        136
+       802 System I/O           log file parallel write                             4         80
+       802 System I/O           log file parallel write                             8         78
+       802 System I/O           log file parallel write                            16        133
+       802 System I/O           log file parallel write                            32        135
+       802 System I/O           log file parallel write                            64         84
+       802 System I/O           log file parallel write                           128         52
+       802 System I/O           log file parallel write                           256         39
+       802 System I/O           log file parallel write                           512         22
+       802 System I/O           log file parallel write                          1024          7
+       802 Commit               log file sync                                       1          4
+       802 Commit               log file sync                                       2          4
+       802 Commit               log file sync                                       4          6
+       802 Commit               log file sync                                       8          6
+       802 Commit               log file sync                                      16         12
+       802 Commit               log file sync                                      32         10
+       802 Commit               log file sync                                      64          7
+       802 Commit               log file sync                                     128          4
+       802 Commit               log file sync                                     256          3
+       802 Commit               log file sync                                     512          1
+       802 Commit               log file sync                                    1024          1
+       802 Commit               log file sync                                    2048          1
+       803 User I/O             db file scattered read                              2          5
+       803 User I/O             db file scattered read                              8          7
+       803 User I/O             db file scattered read                             16         27
+       803 User I/O             db file scattered read                             32         40
+       803 User I/O             db file scattered read                             64         12
+       803 User I/O             db file scattered read                            128          2
+       803 User I/O             db file scattered read                            256          3
+       803 User I/O             db file scattered read                            512          1
+       803 User I/O             db file sequential read                             1        130
+       803 User I/O             db file sequential read                             2         61
+       803 User I/O             db file sequential read                             4         28
+       803 User I/O             db file sequential read                             8         90
+       803 User I/O             db file sequential read                            16        192
+       803 User I/O             db file sequential read                            32        357
+       803 User I/O             db file sequential read                            64        175
+       803 User I/O             db file sequential read                           128         24
+       803 User I/O             db file sequential read                           256          3
+       803 User I/O             db file sequential read                           512          2
+       803 User I/O             db file sequential read                          1024          2
+       803 System I/O           log file parallel write                             1        530
+       803 System I/O           log file parallel write                             2        183
+       803 System I/O           log file parallel write                             4         50
+       803 System I/O           log file parallel write                             8         45
+       803 System I/O           log file parallel write                            16         96
+       803 System I/O           log file parallel write                            32        110
+       803 System I/O           log file parallel write                            64         23
+       803 System I/O           log file parallel write                           128         11
+       803 System I/O           log file parallel write                           256          8
+       803 System I/O           log file parallel write                           512          4
+       803 System I/O           log file parallel write                          1024          2
+       803 Commit               log file sync                                       1         16
+       803 Commit               log file sync                                       2          4
+       803 Commit               log file sync                                       4          7
+       803 Commit               log file sync                                       8          7
+       803 Commit               log file sync                                      16         10
+       803 Commit               log file sync                                      32         15
+       803 Commit               log file sync                                      64          4
+       803 Commit               log file sync                                     512          1
+       803 Commit               log file sync                                    1024          2
+       803 Commit               log file sync                                    2048          1
+       804 User I/O             db file scattered read                              1        161
+       804 User I/O             db file scattered read                              2        128
+       804 User I/O             db file scattered read                              4         87
+       804 User I/O             db file scattered read                              8        202
+       804 User I/O             db file scattered read                             16        411
+       804 User I/O             db file scattered read                             32        414
+       804 User I/O             db file scattered read                             64        176
+       804 User I/O             db file scattered read                            128         53
+       804 User I/O             db file scattered read                            256         38
+       804 User I/O             db file scattered read                            512         19
+       804 User I/O             db file scattered read                           1024          4
+       804 User I/O             db file sequential read                             1        725
+       804 User I/O             db file sequential read                             2        155
+       804 User I/O             db file sequential read                             4         77
+       804 User I/O             db file sequential read                             8        426
+       804 User I/O             db file sequential read                            16        960
+       804 User I/O             db file sequential read                            32        821
+       804 User I/O             db file sequential read                            64        311
+       804 User I/O             db file sequential read                           128         44
+       804 User I/O             db file sequential read                           256         13
+       804 User I/O             db file sequential read                           512          6
+       804 User I/O             db file sequential read                          1024          2
+       804 User I/O             db file sequential read                          2048          2
+       804 System I/O           log file parallel write                             1        960
+       804 System I/O           log file parallel write                             2        354
+       804 System I/O           log file parallel write                             4         77
+       804 System I/O           log file parallel write                             8         78
+       804 System I/O           log file parallel write                            16        204
+       804 System I/O           log file parallel write                            32        231
+       804 System I/O           log file parallel write                            64         70
+       804 System I/O           log file parallel write                           128         17
+       804 System I/O           log file parallel write                           256         13
+       804 System I/O           log file parallel write                           512          3
+       804 Commit               log file sync                                       1         12
+       804 Commit               log file sync                                       2          5
+       804 Commit               log file sync                                       4          4
+       804 Commit               log file sync                                       8         11
+       804 Commit               log file sync                                      16         20
+       804 Commit               log file sync                                      32          7
+       804 Commit               log file sync                                      64          2
+       804 Commit               log file sync                                     256          2
+
+~~END-IO-WAIT-HISTOGRAM~~
+
+
+
+~~BEGIN-IO-OBJECT-TYPE~~
+
+   SNAP_ID OBJECT_TYPE     LOGICAL_READ_GB PHYSICAL_READ_GB PHYSICAL_WRITE_GB   GB_ADDED
+---------- --------------- --------------- ---------------- ----------------- ----------
+       800 INDEX                       1.2                0                 0          0
+       800 TABLE                        .6               .1                 0          0
+       801 INDEX                       1.3               .1                 0          0
+       801 LOB                           0                0                 0          0
+       801 TABLE                       1.8               .1                 0          0
+       802 INDEX                        .4                0                 0          0
+       802 LOB                           0                0                 0          0
+       802 TABLE                        .2                0                 0          0
+       803 INDEX                        .7                0                 0          0
+       803 LOB                           0                0                 0          0
+       803 TABLE                       3.6                0                 0          0
+       804 INDEX                       3.2               .1                 0          0
+       804 LOB                           0                0                 0          0
+       804 TABLE                       1.6               .1                 0          0
+
+~~END-IO-OBJECT-TYPE~~
+
+
+
+
+
+
+~~BEGIN-IOSTAT-BY-FUNCTION~~
+
+   SNAP_ID FUNCTION_NAME           SM_R_REQS  SM_W_REQS  LG_R_REQS  LG_W_REQS
+---------- ---------------------- ---------- ---------- ---------- ----------
+       800 ARCH                            0          0          0          0
+       800 Archive Manager                 0          0          0          0
+       800 Buffer Cache Reads           8768          0         41          0
+       800 DBWR                            0        291          0          0
+       800 Data Pump                       0          0          0          0
+       800 Direct Reads                    2          0          0          0
+       800 Direct Writes                   0          0          0          0
+       800 LGWR                            0        260          0          0
+       800 Others                       3050        241          0          0
+       800 RMAN                            0          0          0          0
+       800 Recovery                        0          0          0          0
+       800 Smart Scan                      0          0          0          0
+       800 Streams AQ                    423          0          0          0
+       800 XDB                             0          0          0          0
+       801 ARCH                            0          0          0          0
+       801 Archive Manager                 0          0          0          0
+       801 Buffer Cache Reads          15594          0         17          0
+       801 DBWR                            0       2082          0         25
+       801 Data Pump                       0          0          0          0
+       801 Direct Reads                   36          0         50          0
+       801 Direct Writes                   0          3          0          0
+       801 LGWR                            0       1402          0         18
+       801 Others                      25924       2691          1          0
+       801 RMAN                            0          0          0          0
+       801 Recovery                        0          0          0          0
+       801 Smart Scan                      0          0          0          0
+       801 Streams AQ                     37          0          0          0
+       801 XDB                             0          0          0          0
+       802 ARCH                            0          0          0          0
+       802 Archive Manager                 0          0          0          0
+       802 Buffer Cache Reads            971          0          0          0
+       802 DBWR                            0       1805          0         11
+       802 Data Pump                       0          0          0          0
+       802 Direct Reads                    0          0          0          0
+       802 Direct Writes                   0          0          0          0
+       802 LGWR                            0       1089          0          8
+       802 Others                      21166       2322          0          0
+       802 RMAN                            0          0          0          0
+       802 Recovery                        0          0          0          0
+       802 Smart Scan                      0          0          0          0
+       802 Streams AQ                      0          0          0          0
+       802 XDB                             0          0          0          0
+       803 ARCH                            0          0          0          0
+       803 Archive Manager                 0          0          0          0
+       803 Buffer Cache Reads           1230          0          0          0
+       803 DBWR                            0       1686          0          8
+       803 Data Pump                       0          0          0          0
+       803 Direct Reads                    0          0          0          0
+       803 Direct Writes                   0          0          0          0
+       803 LGWR                            0       1056          0          6
+       803 Others                      22480       2436          0          0
+       803 RMAN                            0          0          0          0
+       803 Recovery                        0          0          0          0
+       803 Smart Scan                      0          0          0          0
+       803 Streams AQ                      0          0          0          0
+       803 XDB                             0          0          0          0
+       804 ARCH                            0          0          0          0
+       804 Archive Manager                 0          0          0          0
+       804 Buffer Cache Reads           7221          0        326          0
+       804 DBWR                            0       3213          0         55
+       804 Data Pump                       0          0          0          0
+       804 Direct Reads                    4          0          0          0
+       804 Direct Writes                   0         11          0         44
+       804 LGWR                            0       1977          0         41
+       804 Others                      23358       2489          0         19
+       804 RMAN                            0          0          0          0
+       804 Recovery                        0          0          0          0
+       804 Smart Scan                      0          0          0          0
+       804 Streams AQ                      0          0          0          0
+       804 XDB                             0          0          0          0
+
+~~END-IOSTAT-BY-FUNCTION~~
+
+
+
+~~BEGIN-TOP-N-TIMED-EVENTS~~
+
+   SNAP_ID WAIT_CLASS           EVENT_NAME                                                       PCTDBT TOTAL_TIME_S
+---------- -------------------- ------------------------------------------------------------ ---------- ------------
+       800 User I/O             db file sequential read                                           62.07    275286458
+       800 System I/O           control file sequential read                                      54.93    243612933
+       800 Concurrency          os thread startup                                                 10.97     48660425
+       800 Other                ASM file metadata operation                                        8.11     35975445
+       800 System I/O           control file parallel write                                        7.42     32911466
+       801 System I/O           control file sequential read                                     201.12   1651251724
+       801 User I/O             db file sequential read                                           77.77    638541210
+       801 System I/O           control file parallel write                                       27.34    224501685
+       801 Other                enq: WP - contention                                               25.7    211023201
+       801 Concurrency          os thread startup                                                 18.94    155520494
+       802 System I/O           control file sequential read                                      992.4    978784404
+       802 System I/O           control file parallel write                                      143.27    141301898
+       802 System I/O           db file parallel write                                           102.93    101522726
+       802 User I/O             db file sequential read                                           59.18     58371468
+       802 Other                Streams AQ: qmn coordinator waiting for slave to start             44.3     43687666
+       803 System I/O           control file sequential read                                     225.81    265239220
+       803 System I/O           control file parallel write                                       50.91     59801139
+       803 Other                Streams AQ: qmn coordinator waiting for slave to start             31.4     36876422
+       803 Other                reliable message                                                  30.59     35925529
+       803 User I/O             db file sequential read                                           18.98     22298987
+       804 System I/O           control file sequential read                                      24.31    145223128
+       804 User I/O             db file sequential read                                           10.33     61701304
+       804 User I/O             db file scattered read                                             8.24     49243581
+       804 Scheduler            resmgr:cpu quantum                                                 7.19     42922812
+       804 System I/O           control file parallel write                                        6.62     39537693
+
+~~END-TOP-N-TIMED-EVENTS~~
+
+
+
+~~BEGIN-SYSSTAT~~
+
+   SNAP_ID cell_flash_hits  read_iops    read_mb read_mb_opt cell_int_mb cell_int_ss_mb ehcc_con_dmls
+---------- --------------- ---------- ---------- ----------- ----------- -------------- -------------
+       800               0         18         .2           0          .3              0
+       801               0        9.4         .1           0          .2              0
+       802               0        6.2         .1           0          .1              0
+       803               0        6.5         .1           0          .1              0
+       804               0        8.7         .2           0          .2              0
+
+~~END-SYSSTAT~~
+
+
+
+~~BEGIN-TOP-SQL-SUMMARY~~
+
+MODULE                                                           ACTION                                                           SQL_ID        OPTIMIZER_COST COMMAND_NAME  PARSING_SCHEMA_NAME             EXEC_RANK  ELAP_RANK LOG_READS_RANK PHYS_READS_RANK      EXECS       ELAP  LOG_READS PHY_READ_GB PLAN_COUNT PX_SERVERS_EXECS
+---------------------------------------------------------------- ---------------------------------------------------------------- ------------- -------------- ------------- ------------------------------ ---------- ---------- -------------- --------------- ---------- ---------- ---------- ----------- ---------- ----------------
+                                                                                                                                  2nszajb0qbyvp              0 PL/SQLEXECUTE APEX_030200                             2          1              1               1          6   19596596       2942           0          1                0
+SQL Developer                                                                                                                     0v05qxsc1dyaq             23 SELECT        SYSTEM                                  5          2              9               8          2    9149407        296           0          1                0
+DBMS_SCHEDULER                                                   MGMT_CONFIG_JOB                                                  44c8h21v4x42s              0 CALLMETHOD    ORACLE_OCM                              6          3              2               2          1    5600750       2747           0          1                0
+DBMS_SCHEDULER                                                   MGMT_STATS_CONFIG_JOB                                            59kggcuf5t6bt              0 CALLMETHOD    ORACLE_OCM                              6          4              3               3          1    4669080       1186           0          1                0
+DBMS_SCHEDULER                                                   ORA$AT_SA_SPC_SY_762                                             13t5kwh3tyfhu              0 PL/SQLEXECUTE MDSYS                                   5          5              4               4          2    3713369        956           0          1                0
+DBMS_SCHEDULER                                                   ORA$AT_SA_SPC_SY_762                                             bcg7084jc4um6              2 SELECT        MDSYS                                   5          6              5               5          2    2577927        590           0          1                0
+SQL*Plus                                                                                                                          9babjv8yq8ru3              0 PL/SQLEXECUTE SYSTEM                                  1          7             10              11         37    1898600         73           0          1                0
+DBMS_SCHEDULER                                                   MGMT_CONFIG_JOB                                                  bkryyh4vf4p55              8 SELECT        ORACLE_OCM                              4          8              6               7          3    1541517        474           0          1                0
+DBMS_SCHEDULER                                                   MGMT_CONFIG_JOB_1                                                73629tmfbjzrh              0 PL/SQLEXECUTE ORACLE_OCM                              6          9              8               6          1     803306        417           0          1                0
+DBMS_SCHEDULER                                                   MGMT_STATS_CONFIG_JOB                                            bkryyh4vf4p55              8 SELECT        ORACLE_OCM                              6         10              7               9          1     704963        441           0          1                0
+DBMS_SCHEDULER                                                   MGMT_CONFIG_JOB                                                  27k1sg83rqtcp              2 SELECT        ORACLE_OCM                              6         11             11              10          1     505236         67           0          1                1
+                                                                                                                                  6abthk1u14yb7              1 SELECT        ORACLE_OCM                              3         12             12              11          4       4975          2           0          1                0
+
+~~END-TOP-SQL-SUMMARY~~
+
+~~BEGIN-TOP-SQL-BY-SNAPID~~
+
+   SNAP_ID PARSING_SCHEMA_NAME               PLAN_HASH MODULE                            ACTION                            SQL_ID        OPTIMIZER_COST COMMAND_NAME       EXECS BUFFER_GETS  ROWS_PROC    CPU_T_S     ELAP_S    READ_MB    IO_WAIT  ELAP_RANK PLAN_CHANGE      PLANS PHY_READ_GB PX_SERVERS_EXECS DIRECT_W_GB IOWAIT_TIME        PIO
+---------- -------------------------------- ---------- --------------------------------- --------------------------------- ------------- -------------- ------------- ---------- ----------- ---------- ---------- ---------- ---------- ---------- ---------- ----------- ---------- ----------- ---------------- ----------- ----------- ----------
+       800 APEX_030200                               0                                                                     2nszajb0qbyvp              0 PL/SQLEXECUTE          2        1391          2         .1       12.9          1        8.7          1           0          1           0                0           0     8741474        131
+       800 ORACLE_OCM                                0 DBMS_SCHEDULER                    MGMT_STATS_CONFIG_JOB             59kggcuf5t6bt              0 CALLMETHOD             1        1186          0         .2        4.7         .3        1.9          2           0          1           0                0           0     1880086         43
+       800 ORACLE_OCM                       2343235087 DBMS_SCHEDULER                    MGMT_STATS_CONFIG_JOB             bkryyh4vf4p55              8 SELECT                 1         441          1         .1         .7         .1         .3          3           0          1           0                0           0      287122         10
+       801 SYSTEM                             74032573 SQL Developer                                                       0v05qxsc1dyaq             23 SELECT                 2         296          2         .1        9.1         .1         .8          1           0          1           0                0           0      784848         13
+       801 APEX_030200                               0                                                                     2nszajb0qbyvp              0 PL/SQLEXECUTE          2        1529          2         .2        6.3         .8        2.9          2           0          1           0                0           0     2925866         96
+       801 SYSTEM                                    0 SQL*Plus                                                            9babjv8yq8ru3              0 PL/SQLEXECUTE         37          73         37          0        1.9          0          0          3           0          1           0                0           0           0          0
+       803 ORACLE_OCM                                0 DBMS_SCHEDULER                    MGMT_CONFIG_JOB                   44c8h21v4x42s              0 CALLMETHOD             1        2747          0         .5        5.6         .7        1.9          1           0          1           0                0           0     1865704         90
+       803 MDSYS                                     0 DBMS_SCHEDULER                    ORA$AT_SA_SPC_SY_762              13t5kwh3tyfhu              0 PL/SQLEXECUTE          2         956          2         .1        3.7         .3         .7          2           0          1           0                0           0      701812         36
+       803 MDSYS                            1388734953 DBMS_SCHEDULER                    ORA$AT_SA_SPC_SY_762              bcg7084jc4um6              2 SELECT                 2         590          2          0        2.6         .3         .7          3           0          1           0                0           0      657498         34
+       803 ORACLE_OCM                       2343235087 DBMS_SCHEDULER                    MGMT_CONFIG_JOB                   bkryyh4vf4p55              8 SELECT                 3         474          3         .3        1.5         .1         .7          4           0          1           0                0           0      679235         15
+       803 ORACLE_OCM                                0 DBMS_SCHEDULER                    MGMT_CONFIG_JOB_1                 73629tmfbjzrh              0 PL/SQLEXECUTE          1         417          1         .1         .8         .2         .2          5           0          1           0                0           0      217144         20
+       803 ORACLE_OCM                       1835394522 DBMS_SCHEDULER                    MGMT_CONFIG_JOB                   27k1sg83rqtcp              2 SELECT                 1          67          2          0         .5          0          0          6           0          1           0                1           0       38207          1
+       803 APEX_030200                               0                                                                     2nszajb0qbyvp              0 PL/SQLEXECUTE          2          22          2          0         .4          0          0          7           0          1           0                0           0         388          0
+       803 ORACLE_OCM                       2848324471                                                                     6abthk1u14yb7              1 SELECT                 4           2          4          0          0          0          0          8           0          1           0                0           0           0          0
+
+~~END-TOP-SQL-BY-SNAPID~~

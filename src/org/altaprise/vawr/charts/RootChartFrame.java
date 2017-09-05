@@ -142,7 +142,6 @@ abstract public class RootChartFrame extends JFrame implements Printable {
         _headerTextPane.setEditable(false);
 
         int numHeaderLines = countLines(chartHeaderText);
-        System.out.println("num header lines: " + numHeaderLines);
 
         _headerTextPane.setPreferredSize(new java.awt.Dimension(800, 30 * numHeaderLines));
         headerText += "<style type=\'text/css\'>";
@@ -215,7 +214,7 @@ abstract public class RootChartFrame extends JFrame implements Printable {
 
                 if (SessionMetaData.getInstance().debugOn()) {
                     System.out.println("TRACE: Adding date/SnapId/InstId/val: " + snapshotDate.toString() + "/" +
-                                       snapshotId + "/" + racInst + "/" + metricValS + "/" + awrRec);
+                                       snapshotId + "/" + racInst + "/" + metricValS + "/" + awrRec );
                 }
 
                 double metricValD = Double.parseDouble(metricValS);
@@ -231,7 +230,7 @@ abstract public class RootChartFrame extends JFrame implements Printable {
 
             } catch (Exception e) {
                 System.out.println("Error plotting SnapShot: " + snapshotId + ", Inst: " + racInst + " " +
-                                   snapshotDate.toString());
+                                   snapshotDate.toString() + " AWRFileName: " + AWRData.getInstance().getAWRFileName() + " MetricName: " + awrMetric);
                 e.printStackTrace();
             }
         }

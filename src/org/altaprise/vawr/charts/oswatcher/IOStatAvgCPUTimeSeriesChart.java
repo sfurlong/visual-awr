@@ -155,8 +155,8 @@ public class IOStatAvgCPUTimeSeriesChart extends JFrame {
                     }
                     s1.add(new Second(snapShotDate), userCpuD);
             } catch (Exception e) {
-                //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getSnapId() + "/" + awrRec.getInst() + "/" + sgaValS);
-                System.out.println(e.getLocalizedMessage());
+                //System.out.println("Error at snapid/inst/sgaValS: " + awrRec.getAttribVal("SNAP_ID") + "/" + awrRec.getInst() + "/" + sgaValS);
+                System.out.println(e.getLocalizedMessage() + this.getClass().getName());
                 if (SessionMetaData.getInstance().debugOn()){
                     e.printStackTrace();
                 }
