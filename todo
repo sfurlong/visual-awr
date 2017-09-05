@@ -1,0 +1,19 @@
+Release 02f:
+- New About (Quickstart) page to start in < 2 mins with file or DB
+- Describe what each report does
+- Save report header settings in serialized file
+- New YouTube Video
+- Printing
+    - Create an image for each JPanel in the SCROLL_PANE, then save it off? or create PDF?
+- AWR SmartScan Info
+- Mininig zip files for OSWData
+- Compare Previous AWR and OSW Runs
+
+Release 02e:
+- Allow Reporting on time slices of OSW data.  Similar to selecting snapshots in AWR
+- Header For Chart Reports
+    - With HTML tag support
+- Calculate Storage Cell Offload Efficiency
+- Show #Flash Hits
+- Export
+

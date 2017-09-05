@@ -19,12 +19,16 @@
   <path id="library.commons-compress-1.8.1.jar">
     <pathelement location="lib/commons-compress-1.8.1.jar"/>
   </path>
+  <path id="library.junit-4.12.jar">
+    <pathelement location="lib/junit-4.12.jar"/>
+  </path>
   <path id="classpath">
     <path refid="library.Jcommon-1.0.22.jar"/>
     <path refid="library.Jfreechart-1.0.17.jar"/>
     <path refid="library.Jcommon-xml-1.0.22.jar"/>
     <path refid="library.Ojdbc5.jar"/>
     <path refid="library.commons-compress-1.8.1.jar"/>
+    <path refid="library.junit-4.12.jar"/>
   </path>
   
    
@@ -60,6 +64,14 @@
     />
   </target>
   
+
+  <target name="junit" description="JUnit Testing" depends="version">
+    <junit>
+        <classpath refid="classpath" />
+      <test name="org.altaprise.test.TestDemoFilesAndCharts" todir="${build.root.dir}" haltonfailure="no" outfile="result"/>
+    </junit>
+  </target>
+
   <target name="dist" description="create the distribution" depends="jar">
     <delete includeemptydirs="true" dir="${build.root.dir}/dist"/>
     <mkdir dir="${build.root.dir}/dist"/>

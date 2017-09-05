@@ -252,10 +252,18 @@
          </hash>
          <hash n="Default">
             <value n="custom" v="false"/>
-            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=c:/git/awr-parser"/>
+            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=D:/DEV/visual-awr"/>
             <value n="name" v="Default"/>
             <url n="runDirectoryURL" path="."/>
             <url n="targetURL" path="src/org/altaprise/vawr/ui/RootFrame.java"/>
+         </hash>
+         <hash n="JUnit Test">
+            <value n="custom" v="false"/>
+            <list n="EnvironmentVariables"/>
+            <value n="javaOptions" v="-Xmx1G -DAPP_HOME=D:/DEV/visual-awr -DDEBUG"/>
+            <value n="name" v="JUnit Test"/>
+            <url n="runDirectoryURL" path="."/>
+            <url n="targetURL" path="src/org/altaprise/test/TestDemoFilesAndCharts.java"/>
          </hash>
          <hash n="TestLoad">
             <value n="custom" v="false"/>
@@ -269,6 +277,7 @@
       <list n="runConfigurationList">
          <string v="Debug"/>
          <string v="Default"/>
+         <string v="JUnit Test"/>
          <string v="TestLoad"/>
       </list>
    </hash>
@@ -316,6 +325,10 @@
          </hash>
          <hash>
             <value n="id" v="Commons-compress-1.8.1.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="JUnit 4 Runtime"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>
@@ -472,6 +485,10 @@
          </hash>
          <hash>
             <value n="id" v="Commons-compress-1.8.1.jar"/>
+            <value n="isJDK" v="false"/>
+         </hash>
+         <hash>
+            <value n="id" v="JUnit 4 Runtime"/>
             <value n="isJDK" v="false"/>
          </hash>
       </list>

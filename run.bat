@@ -19,6 +19,7 @@ set CLASSPATH=%APP_HOME%\lib\vawr.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\vawr-o.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\vawr-utils.jar;%CLASSPATH%
 set CLASSPATH=%APP_HOME%\lib\ojdbc5.jar;%CLASSPATH%
+set CLASSPATH=%APP_HOME%\lib\junit-4.12.jar;%CLASSPATH%
 
 set path=%JAVA_HOME%\bin;%path%
 

@@ -19,12 +19,9 @@
 # if "%ANT_HOME%"=="" goto badvar
 # if "%APP_HOME%"=="" goto badvar
 
-
 echo $CLASSPATH
 echo $APP_HOME
-
 ant -Ddebug="on" -Djdk.home=$JAVA_HOME -Dbuild.root.dir=$APP_HOME -buildfile $APP_HOME/build_vawr.xml $1 $2 $3 $4 
-
 
 # :badvar
 #echo Error - One or more required environment variables not set!
@@ -33,7 +30,6 @@ ant -Ddebug="on" -Djdk.home=$JAVA_HOME -Dbuild.root.dir=$APP_HOME -buildfile $AP
 # if "%ANT_HOME%"=="" set ANT_HOME
 # if "%APP_HOME%"=="" set DEV_ROOT
 # goto end
-
 
 #:help
 #echo Builds the masterplanning project.
@@ -46,6 +42,4 @@ ant -Ddebug="on" -Djdk.home=$JAVA_HOME -Dbuild.root.dir=$APP_HOME -buildfile $AP
 #echo.
 #echo This show all available targets.
 #echo.
-
-
 #:end
