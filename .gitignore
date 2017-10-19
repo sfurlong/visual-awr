@@ -1,4 +1,7 @@
 /classes/
+/testing/OSWatcher/
+/dist/
+/docs/
 .classpath
 .project
 .settings/org.eclipse.jdt.ui.prefs
