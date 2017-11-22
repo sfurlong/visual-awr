@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import org.altaprise.vawr.utils.PropertyFile;
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+
 
 public class RootFrame extends JFrame {
     private GridLayout gridLayout = new GridLayout();
@@ -136,7 +138,9 @@ public class RootFrame extends JFrame {
     public static void main(String[] args) {
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            	//javax.swing.plaf.metal.MetalLookAndFeel
+            //UIManager.getSystemLookAndFeelClassName());
         } catch (Exception exemp) {
             exemp.printStackTrace();
         }
