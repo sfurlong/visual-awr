@@ -33,122 +33,120 @@ import org.altaprise.vawr.utils.PropertyFile;
 import org.altaprise.vawr.ui.RootFrame;
 
 public class DBConnectPanel extends WizardContentBasePanel {
-    //private static daiComboBox comboBox_DBConns = new daiComboBox();
-    private static JComboBox jComboBox_dbConnect = new JComboBox();
-    private JButton jButton_connectDB = new JButton("Connect");
-    private JTextArea textArea_DBConn = new JTextArea();
-    private JScrollPane scrollPaneTextArea = new JScrollPane(textArea_DBConn);
-    private JLabel jLabel1 = new JLabel("Select Database Connection");
+	// private static daiComboBox comboBox_DBConns = new daiComboBox();
+	private static JComboBox jComboBox_dbConnect = new JComboBox();
+	private JButton jButton_connectDB = new JButton("Connect");
+	private JTextArea textArea_DBConn = new JTextArea();
+	private JScrollPane scrollPaneTextArea = new JScrollPane(textArea_DBConn);
+	private JLabel jLabel1 = new JLabel("Select Database Connection");
 
-    public DBConnectPanel() {
-        super();
-        try {
-            jbInit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public DBConnectPanel() {
+		super();
+		try {
+			jbInit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    public DBConnectPanel(boolean b) {
-        super(b);
-    }
+	public DBConnectPanel(boolean b) {
+		super(b);
+	}
 
-    public DBConnectPanel(LayoutManager layoutManager) {
-        super(layoutManager);
-    }
+	public DBConnectPanel(LayoutManager layoutManager) {
+		super(layoutManager);
+	}
 
-    public DBConnectPanel(LayoutManager layoutManager, boolean b) {
-        super(layoutManager, b);
-    }
+	public DBConnectPanel(LayoutManager layoutManager, boolean b) {
+		super(layoutManager, b);
+	}
 
-    private void jbInit() throws Exception {
-        this.setLayout(null);
-     
-        jComboBox_dbConnect.setBounds(new Rectangle(45, 65, 250, 20));
-        jButton_connectDB.setBounds(new Rectangle(315, 65, 75, 21));
-        jButton_connectDB.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    jButton_connectDB_actionPerformed(e);
-                }
-            });
-        this.scrollPaneTextArea.setBounds(new Rectangle(45, 100, 505, 135));
-        jLabel1.setBounds(new Rectangle(45, 50, 215, 15));
+	private void jbInit() throws Exception {
+		this.setLayout(null);
 
-        this.textArea_DBConn.setEnabled(false);
-        this.textArea_DBConn.setFont(new Font("monospaced", Font.PLAIN, 11));
+		jComboBox_dbConnect.setBounds(new Rectangle(45, 65, 250, 20));
+		jButton_connectDB.setBounds(new Rectangle(315, 65, 75, 21));
+		jButton_connectDB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jButton_connectDB_actionPerformed(e);
+			}
+		});
+		this.scrollPaneTextArea.setBounds(new Rectangle(45, 100, 505, 135));
+		jLabel1.setBounds(new Rectangle(45, 50, 215, 15));
 
+		this.textArea_DBConn.setEnabled(false);
+		this.textArea_DBConn.setFont(new Font("monospaced", Font.PLAIN, 11));
 
-        this.add(this.scrollPaneTextArea, null);
-        this.add(jLabel1, null);
-        this.add(jButton_connectDB, null);
-        this.add(jComboBox_dbConnect, null);
-        
-        setDBConnections();
-        
-        //Set the Wizard Label
-        this.setPanelLabel("1. Select the DB Connection for collection AWR data.");
-    }
+		this.add(this.scrollPaneTextArea, null);
+		this.add(jLabel1, null);
+		this.add(jButton_connectDB, null);
+		this.add(jComboBox_dbConnect, null);
 
-    public static String getDBConnectName() {
-        String dbConnName = (String)jComboBox_dbConnect.getSelectedItem();
-        return dbConnName;
-    }
-    
-    //Just in case we added some connections since we started, allow other windows
-    //to call this.
-    public static void setDBConnections() {
-        jComboBox_dbConnect.removeAllItems();
-        PropertyFile propFile = PropertyFile.getInstance();
-        ArrayList<DBConnectionProps> dbProps = propFile.getDBConnectionProps();
-        for (int i=0; i<dbProps.size(); i++) {
-            jComboBox_dbConnect.addItem(dbProps.get(i).getConnectionName());
-        }
-    }
-    
-    private void jButton_connectDB_actionPerformed(ActionEvent e) {
-        
-        //SetCursor
-        RootFrame.startWaitCursor();
-        
-        String dbConnName = (String)jComboBox_dbConnect.getSelectedItem();
-        DBConnectionProps dbProps = PropertyFile.getInstance().getDBConnectionProps(dbConnName);
-        
-        String dbURL = "jdbc:oracle:thin:@"; //@192.168.1.7:1521:orcl"
-        String dbDriverName = "oracle.jdbc.driver.OracleDriver";
-        String dbUserId = "";
-               
-        dbconnect dbConn = dbconnect.getInstance();
+		setDBConnections();
 
+		// Set the Wizard Label
+		this.setPanelLabel("1. Select the DB Connection for collection AWR data.");
+	}
 
-        if (dbProps.isUseSID()) {
-            dbURL += dbProps.getHostName() + ":" + dbProps.getPort() + ":" + dbProps.getSID();
-            
-        } else {
-            dbURL += dbProps.getHostName() + ":" + dbProps.getPort() + "/" + dbProps.getServiceName();
-        }
-        if (dbProps.getUserRole() != null && dbProps.getUserRole().trim().length() > 0) {
-            dbUserId = dbProps.getUId() + " as " + dbProps.getUserRole();
-        } else {
-            dbUserId = dbProps.getUId();
-        }
-        
-        System.out.println(dbURL);
-        String dbConnectResult = null;
-        try {
-            dbConnectResult = dbConn.connectToDB(dbURL,
-                               dbDriverName, dbUserId,
-                               dbProps.getPwd());
+	public static String getDBConnectName() {
+		String dbConnName = (String) jComboBox_dbConnect.getSelectedItem();
+		return dbConnName;
+	}
 
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            dbConnectResult = ex.getLocalizedMessage();
-        }
-        
-        this.textArea_DBConn.setText(dbConnectResult);
-        this.textArea_DBConn.setCaretPosition(0);
+	// Just in case we added some connections since we started, allow other windows
+	// to call this.
+	public static void setDBConnections() {
+		jComboBox_dbConnect.removeAllItems();
+		PropertyFile propFile = PropertyFile.getInstance();
+		ArrayList<DBConnectionProps> dbProps = propFile.getDBConnectionProps();
+		for (int i = 0; i < dbProps.size(); i++) {
+			jComboBox_dbConnect.addItem(dbProps.get(i).getConnectionName());
+		}
+	}
 
-        RootFrame.stopWaitCursor();
+	private void jButton_connectDB_actionPerformed(ActionEvent e) {
 
-    }
+		// SetCursor
+		RootFrame.startWaitCursor();
+
+		String dbConnName = (String) jComboBox_dbConnect.getSelectedItem();
+		DBConnectionProps dbProps = PropertyFile.getInstance().getDBConnectionProps(dbConnName);
+
+		String dbURL = "jdbc:oracle:thin:@"; // @192.168.1.7:1521:orcl"
+		String dbDriverName = "oracle.jdbc.driver.OracleDriver";
+		String dbUserId = "";
+
+		dbconnect dbConn = dbconnect.getInstance();
+		String dbConnectResult = null;
+
+		try {
+
+			if (dbProps.isUseSID()) {
+				dbURL += dbProps.getHostName() + ":" + dbProps.getPort() + ":" + dbProps.getSID();
+
+			} else {
+				dbURL += dbProps.getHostName() + ":" + dbProps.getPort() + "/" + dbProps.getServiceName();
+			}
+			if (dbProps.getUserRole() != null && dbProps.getUserRole().trim().length() > 0) {
+				dbUserId = dbProps.getUId() + " as " + dbProps.getUserRole();
+			} else {
+				dbUserId = dbProps.getUId();
+			}
+
+			System.out.println(dbURL);
+			dbConnectResult = dbConn.connectToDB(dbURL, dbDriverName, dbUserId, dbProps.getPwd());
+
+		} catch (Exception ex) {
+
+			ex.printStackTrace();
+			dbConnectResult = ex.getLocalizedMessage();
+
+		} finally {
+
+			this.textArea_DBConn.setText(dbConnectResult);
+			this.textArea_DBConn.setCaretPosition(0);
+
+			RootFrame.stopWaitCursor();
+		}
+	}
 }

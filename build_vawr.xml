@@ -31,7 +31,14 @@
     <path refid="library.junit-4.12.jar"/>
   </path>
   
-   
+  <!-- TARGET ALL -->
+  <target name="all">
+  	<antcall target="clean"></antcall>
+  	<antcall target="build"></antcall>
+  	<antcall target="jar"></antcall>
+  	<antcall target="dist"></antcall>
+  </target>
+  
   <!-- TARGET CLEAN -->
   <target name="clean" description="Clean the project">
     <delete includeemptydirs="true" quiet="true">
@@ -92,11 +99,6 @@
       </fileset>
     </copy>
 
-    <!-- Obfiscate --> 
-    <antcall target="obfuscate"/>
-    
-    <delete file="${build.root.dir}/dist/lib/vawr.jar"/>
-    
     <copy todir="${build.root.dir}/dist">
       <fileset dir="${build.root.dir}">
         <include name="vawr-readme.html"/>
@@ -131,69 +133,5 @@
          basedir="./dist/" excludes="jdk/**, *.zip"/>
 
   </target>
-  
-  <!-- TARGET OBFUSCATE -->
-  <target name="obfuscate" description="Obfuscate the code">
-  <taskdef resource="proguard/ant/task.properties"
-           classpath="./lib/proguard.jar" />
-  
-  
-  <proguard>
-
-    <!-- Specify the input jars, output jars, and library jars. -->
-
-    -injars '${build.root.dir}/dist/lib/vawr.jar'
-    -outjars '${build.root.dir}/dist/lib/vawr-o.jar'
-    
-    -libraryjars 'D:\oracle\jdk1.8.0_71\jre\lib\rt.jar'
-    -libraryjars '${build.root.dir}\dist\lib\jcommon-1.0.22.jar'
-    -libraryjars '${build.root.dir}\dist\lib\jfreechart-1.0.17.jar'
-    -libraryjars '${build.root.dir}\dist\lib\commons-compress-1.8.1.jar'
-    -libraryjars '${build.root.dir}\dist\lib\ojdbc5.jar'
-    -libraryjars '${build.root.dir}\dist\lib\vawr-utils.jar'
-    
-    -dontshrink
-
-
-    <!-- Keep - Applications. Keep all application classes, along with their 'main' -->
-    <!-- methods.                                                                   -->
-    -keepclasseswithmembers public class * {
-        public static void main(java.lang.String[]);
-    }
-    
-    -keepclassmembers class * implements java.io.Serializable {
-            static final long serialVersionUID;
-            static final java.io.ObjectStreamField[] serialPersistentFields;
-            private void writeObject(java.io.ObjectOutputStream);
-            private void readObject(java.io.ObjectInputStream);
-            java.lang.Object writeReplace();
-            java.lang.Object readResolve();
-    }
-    
-    <!-- Also keep - Enumerations. Keep the special static methods that are required in -->
-    <!-- enumeration classes.                                                           -->
-    -keepclassmembers enum  * {
-        public static **[] values();
-        public static ** valueOf(java.lang.String);
-    }
-    
-    <!-- Also keep - Database drivers. Keep all implementations of java.sql.Driver. -->
-    -keep class * extends java.sql.Driver
-    
-    <!-- Also keep - Swing UI L&F. Keep all extensions of javax.swing.plaf.ComponentUI, -->
-    <!-- along with the special 'createUI' method.                                      -->
-    -keep class * extends javax.swing.plaf.ComponentUI {
-        public static javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent);
-    }
-    
-    <!-- Keep names - Native method names. Keep all native class/method names.  
-    -keepclasseswithmembers,allowshrinking class * {
-        native <methods>;
-    }
-    -->
-    
-  </proguard>
-  
-</target>
 
 </project>
