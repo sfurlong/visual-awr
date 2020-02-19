@@ -75,7 +75,8 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
-import sun.awt.image.BufferedImageGraphicsConfig;
+//import sun.awt.image.BufferedImageGraphicsConfig;
+import java.awt.image.BufferedImage;
 
 abstract public class RootChartFrame extends JFrame implements Printable {
 
