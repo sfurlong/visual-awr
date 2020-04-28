@@ -2,9 +2,17 @@
 # run the eCorp, by Digital Artifacts, Inc.  This batch file should be
 # used on Win32 platforms only.
 export APP_HOME=.
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home
+
+# Java 12. (Doesn't work, sun.*.* not supported.)
+export JAVA_HOME=/e/jdk-12.0.1
+
+# Java 8.
+#export JAVA_HOME=/e/jdk-1.8.0-241
+
+# Java 6 (Doesn't work with ANT!)
+#export JAVA_HOME=/e/app/client/hisg494/product/12.1.0/client_1/jdk
 export JAVA_OPTS="-Xms64M -Xmx256M"
-export ANT_HOME=/Users/furlons/DEV/ant
+export ANT_HOME=/e/apache-ant-1.10.7
 
 # ##########################################
 export CLASSPATH=
