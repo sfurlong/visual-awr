@@ -20,7 +20,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,6 +37,7 @@ import java.util.LinkedHashSet;
 import javax.imageio.ImageIO;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -73,15 +74,18 @@ import org.jfree.data.time.MovingAverage;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
+import org.jfree.graphics2d.svg.SVGUtils;
 import org.jfree.ui.RectangleInsets;
 
-import sun.awt.image.BufferedImageGraphicsConfig;
+//import sun.awt.image.BufferedImageGraphicsConfig;
 
 abstract public class RootChartFrame extends JFrame implements Printable {
 
     private JMenuBar menubarFrame = new JMenuBar();
     private JMenu menuFile = new JMenu();
     private JMenuItem itemFilePrint = new JMenuItem();
+    private JMenuItem itemFileSVG = new JMenuItem();
     private JMenuItem itemFileExit = new JMenuItem();
     private BufferedImage[] IMAGES_TO_PRINT = null;
 
@@ -110,6 +114,13 @@ abstract public class RootChartFrame extends JFrame implements Printable {
                 doPrintJob();
             }
         });
+        itemFileSVG.setText("ShowSVG");
+        itemFileSVG.setMnemonic('S');
+        itemFileSVG.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doSVG();
+            }
+        });
         itemFileExit.setText("Exit");
         itemFileExit.setMnemonic('X');
         itemFileExit.addActionListener(new ActionListener() {
@@ -120,6 +131,7 @@ abstract public class RootChartFrame extends JFrame implements Printable {
 
         setJMenuBar(menubarFrame);
         menuFile.add(itemFilePrint);
+        menuFile.add(itemFileSVG);
         menuFile.addSeparator();
         menuFile.add(itemFileExit);
         menubarFrame.add(menuFile);
@@ -350,7 +362,7 @@ abstract public class RootChartFrame extends JFrame implements Printable {
     }
 
     private void doPrintJob() {
-
+    	
         try {
             IMAGES_TO_PRINT = new BufferedImage[THE_ROOT_CONTENT_PANEL.getComponents().length];
             Component[] comp = THE_ROOT_CONTENT_PANEL.getComponents();
@@ -381,6 +393,24 @@ abstract public class RootChartFrame extends JFrame implements Printable {
         }
     }
 
+    public JComponent getPrintableContentPanel() {
+    	return this.THE_ROOT_CONTENT_PANEL;
+    }
+    
+    public void doSVG() {
+        JComponent c = this.THE_ROOT_CONTENT_PANEL;
+    	SVGGraphics2D g2 = new SVGGraphics2D(c.getWidth(), c.getHeight()); 
+        c.paint(g2); 
+        String awrFileName = AWRData.getInstance().getAWRFileName();
+        String stripPathFileName = "./" + new File(awrFileName).getName();
+        File f = new File(stripPathFileName + ".svg"); 
+        try { 
+            SVGUtils.writeToSVG(f, g2.getSVGElement()); 
+        } catch (IOException ex) { 
+            System.err.println(ex); 
+        } 
+    }
+    
     protected static Date getMissingSnapshotDate(String snapId) {
         boolean found = false;
         int idx = 0;

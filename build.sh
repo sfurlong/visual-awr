@@ -21,7 +21,7 @@
 
 echo $CLASSPATH
 echo $APP_HOME
-ant -Ddebug="on" -Djdk.home=$JAVA_HOME -Dbuild.root.dir=$APP_HOME -buildfile $APP_HOME/build_vawr.xml $1 $2 $3 $4 
+$ANT_HOME/bin/ant -Ddebug="on" -Djdk.home=$JAVA_HOME -Dbuild.root.dir=$APP_HOME -buildfile $APP_HOME/build_vawr.xml $1 $2 $3 $4 
 
 # :badvar
 #echo Error - One or more required environment variables not set!

@@ -22,7 +22,26 @@ public class ReadAWRMinerFile {
 
     }
 
+    private void checkFileIntegrity(String fileName) throws Exception {
+    	
+        try {
+            _fileReader = new BufferedReader(new FileReader(fileName));
+            //Loop through the file looking for header sections.
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            throw new Exception("File Not Found: " + fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (_fileReader != null) {
+                _fileReader.close();
+            }
+        }
+    }
+    
     public void parse(String fileName) throws Exception {
+    	
         try {
             AWRData.getInstance().setAWRFileName(fileName);
             _fileReader = new BufferedReader(new FileReader(fileName));
@@ -492,7 +511,7 @@ public class ReadAWRMinerFile {
                 //Skip comment lines.
                 if (rec.length() > 0) {
                     recCount++;
-                    //System.out.println(rec);
+                    System.out.println(rec);
 
 
                     if (recCount == 1) {

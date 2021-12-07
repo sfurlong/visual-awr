@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
+		<attributes>
+			<attribute name="module" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/jfreechart-1.0.17.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/jcommon-1.0.22.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/jfreesvg-3.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/jfreesvg-3.3.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/ojdbc5.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/commons-compress-1.8.1.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/jaxb-api-2.3.1.jar"/>
+	<classpathentry kind="lib" path="/Users/stevefurlong/dev/visual-awr/lib/javax.activation-api-1.2.0.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

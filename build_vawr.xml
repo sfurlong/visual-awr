@@ -87,6 +87,7 @@
     <copy todir="${build.root.dir}/dist/lib">
       <fileset dir="${build.root.dir}/lib">
         <include name="jfreechart*.jar"/>
+        <include name="jfreesvg*.jar"/>
         <include name="jcommon*.jar"/>
         <include name="commons-compress*.jar"/>
         <include name="ojdbc*.jar"/>

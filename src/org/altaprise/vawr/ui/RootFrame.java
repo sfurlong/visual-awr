@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import org.altaprise.vawr.utils.PropertyFile;
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+//import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
 
 public class RootFrame extends JFrame {
@@ -38,7 +38,7 @@ public class RootFrame extends JFrame {
     public RootFrame() {
         //Phone home if possible
         PhoneHome ph = new PhoneHome();
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
